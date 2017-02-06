@@ -1,0 +1,698 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android source analysis," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:
+
+从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。
+
+RecyclerViewDataObserver 数据观察器
+Recycler View循环复用系统，核心部件
+SavedState Recy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="recyclerview-structure">
+<meta property="og:url" content="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:
+
+从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。
+
+RecyclerViewDataObserver 数据观察器
+Recycler View循环复用系统，核心部件
+SavedState Recy">
+<meta property="og:image" content="http://xu6148152.github.io/./RecyclerView.jpg">
+<meta property="og:updated_time" content="2016-06-04T08:58:30.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="recyclerview-structure">
+<meta name="twitter:description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:
+
+从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。
+
+RecyclerViewDataObserver 数据观察器
+Recycler View循环复用系统，核心部件
+SavedState Recy">
+<meta name="twitter:image" content="http://xu6148152.github.io/./RecyclerView.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/"/>
+
+
+
+
+
+  <title> recyclerview-structure | Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Binea">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/upload_file/tmp.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                recyclerview-structure
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-06-04T16:51:53+08:00">
+                2016-06-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本系列主要分析<code>RecyclerView</code>的源码。本文主要分析<code>RecyclerView</code>的源码结构，以及其各机构的作用。首先来看一下<code>RecyclerView</code>的源码结构:</p>
+<p><img src="./RecyclerView.jpg" alt=""></p>
+<p>从图上可以看出<code>RecyclerView</code>依赖了很多别的类。接下来我们首先介绍各个类的作用。</p>
+<ul>
+<li>RecyclerViewDataObserver 数据观察器</li>
+<li>Recycler View循环复用系统，核心部件</li>
+<li>SavedState RecyclerView状态</li>
+<li>AdapterHelper 适配器更新</li>
+<li>ChildHelper 管理子View</li>
+<li>ViewInfoStore 存储子VIEW的动画信息</li>
+<li>Adapter 数据适配器</li>
+<li>LayoutManager 负责子VIEW的布局，核心部件</li>
+<li>ItemAnimator Item动画</li>
+<li>ViewFlinger 快速滑动管理</li>
+<li>NestedScrollingChildHelper 管理子VIEW嵌套滑动</li>
+</ul>
+<p>###创建布局管理器</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div></pre></td><td class="code"><pre><div class="line">private void createLayoutManager(Context context, String className, AttributeSet attrs,</div><div class="line">            int defStyleAttr, int defStyleRes) &#123;</div><div class="line">        if (className != null) &#123;</div><div class="line">            className = className.trim();</div><div class="line">            if (className.length() != 0) &#123;  // Can&apos;t use isEmpty since it was added in API 9.</div><div class="line">                className = getFullClassName(context, className);</div><div class="line">                try &#123;</div><div class="line">                    ClassLoader classLoader;</div><div class="line">                    if (isInEditMode()) &#123;</div><div class="line">                        // Stupid layoutlib cannot handle simple class loaders.</div><div class="line">                        classLoader = this.getClass().getClassLoader();</div><div class="line">                    &#125; else &#123;</div><div class="line">                        classLoader = context.getClassLoader();</div><div class="line">                    &#125;</div><div class="line">                    Class&lt;? extends LayoutManager&gt; layoutManagerClass =</div><div class="line">                            classLoader.loadClass(className).asSubclass(LayoutManager.class);</div><div class="line">                    Constructor&lt;? extends LayoutManager&gt; constructor;</div><div class="line">                    Object[] constructorArgs = null;</div><div class="line">                    try &#123;</div><div class="line">                        constructor = layoutManagerClass</div><div class="line">                                .getConstructor(LAYOUT_MANAGER_CONSTRUCTOR_SIGNATURE);</div><div class="line">                        constructorArgs = new Object[]&#123;context, attrs, defStyleAttr, defStyleRes&#125;;</div><div class="line">                    &#125; catch (NoSuchMethodException e) &#123;</div><div class="line">                        try &#123;</div><div class="line">                            constructor = layoutManagerClass.getConstructor();</div><div class="line">                        &#125; catch (NoSuchMethodException e1) &#123;</div><div class="line">                            e1.initCause(e);</div><div class="line">                            throw new IllegalStateException(attrs.getPositionDescription() +</div><div class="line">                                    &quot;: Error creating LayoutManager &quot; + className, e1);</div><div class="line">                        &#125;</div><div class="line">                    &#125;</div><div class="line">                    constructor.setAccessible(true);</div><div class="line">                    setLayoutManager(constructor.newInstance(constructorArgs));</div><div class="line">                &#125; catch (ClassNotFoundException e) &#123;</div><div class="line">                    throw new IllegalStateException(attrs.getPositionDescription()</div><div class="line">                            + &quot;: Unable to find LayoutManager &quot; + className, e);</div><div class="line">                &#125; catch (InvocationTargetException e) &#123;</div><div class="line">                    throw new IllegalStateException(attrs.getPositionDescription()</div><div class="line">                            + &quot;: Could not instantiate the LayoutManager: &quot; + className, e);</div><div class="line">                &#125; catch (InstantiationException e) &#123;</div><div class="line">                    throw new IllegalStateException(attrs.getPositionDescription()</div><div class="line">                            + &quot;: Could not instantiate the LayoutManager: &quot; + className, e);</div><div class="line">                &#125; catch (IllegalAccessException e) &#123;</div><div class="line">                    throw new IllegalStateException(attrs.getPositionDescription()</div><div class="line">                            + &quot;: Cannot access non-public constructor &quot; + className, e);</div><div class="line">                &#125; catch (ClassCastException e) &#123;</div><div class="line">                    throw new IllegalStateException(attrs.getPositionDescription()</div><div class="line">                            + &quot;: Class is not a LayoutManager &quot; + className, e);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>如果在布局文件里面设置了布局管理器的类型，那么这里会通过反射的方式实例化出对应的布局管理器。最后将实例化出的布局管理器设置到当前的<code>RecyclerView</code></p>
+<p>###设置布局管理器</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">public void setLayoutManager(LayoutManager layout) &#123;</div><div class="line">        if (layout == mLayout) &#123;</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        //停止滚动</div><div class="line">        stopScroll();</div><div class="line">        // TODO We should do this switch a dispachLayout pass and animate children. There is a good</div><div class="line">        // chance that LayoutManagers will re-use views.</div><div class="line">        if (mLayout != null) &#123;</div><div class="line">            if (mIsAttached) &#123;</div><div class="line">                mLayout.dispatchDetachedFromWindow(this, mRecycler);</div><div class="line">            &#125;</div><div class="line">            mLayout.setRecyclerView(null);</div><div class="line">        &#125;</div><div class="line">        //清空缓存</div><div class="line">        mRecycler.clear();</div><div class="line">        mChildHelper.removeAllViewsUnfiltered();</div><div class="line">        mLayout = layout;</div><div class="line">        if (layout != null) &#123;</div><div class="line">            if (layout.mRecyclerView != null) &#123;</div><div class="line">                throw new IllegalArgumentException(&quot;LayoutManager &quot; + layout +</div><div class="line">                        &quot; is already attached to a RecyclerView: &quot; + layout.mRecyclerView);</div><div class="line">            &#125;</div><div class="line">            mLayout.setRecyclerView(this);</div><div class="line">            if (mIsAttached) &#123;</div><div class="line">                mLayout.dispatchAttachedToWindow(this);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">        requestLayout();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>设置布局管理器之前会先清空所有之前的缓存VIEW。最后通知VIEW刷新</p>
+<p>###onMeasure<br>onMeasure这个回调方法用于测量<code>VIEW</code>的大小</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line">protected void onMeasure(int widthSpec, int heightSpec) &#123;</div><div class="line">        if (mLayout == null) &#123;</div><div class="line">            defaultOnMeasure(widthSpec, heightSpec);</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line">        if (mLayout.mAutoMeasure) &#123;</div><div class="line">            final int widthMode = MeasureSpec.getMode(widthSpec);</div><div class="line">            final int heightMode = MeasureSpec.getMode(heightSpec);</div><div class="line">            final boolean skipMeasure = widthMode == MeasureSpec.EXACTLY</div><div class="line">                    &amp;&amp; heightMode == MeasureSpec.EXACTLY;</div><div class="line">            mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);</div><div class="line">            if (skipMeasure || mAdapter == null) &#123;</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">            if (mState.mLayoutStep == State.STEP_START) &#123;</div><div class="line">                dispatchLayoutStep1();</div><div class="line">            &#125;</div><div class="line">            // set dimensions in 2nd step. Pre-layout should happen with old dimensions for</div><div class="line">            // consistency</div><div class="line">            mLayout.setMeasureSpecs(widthSpec, heightSpec);</div><div class="line">            mState.mIsMeasuring = true;</div><div class="line">            dispatchLayoutStep2();</div><div class="line"></div><div class="line">            // now we can get the width and height from the children.</div><div class="line">            mLayout.setMeasuredDimensionFromChildren(widthSpec, heightSpec);</div><div class="line"></div><div class="line">            // if RecyclerView has non-exact width and height and if there is at least one child</div><div class="line">            // which also has non-exact width &amp; height, we have to re-measure.</div><div class="line">            if (mLayout.shouldMeasureTwice()) &#123;</div><div class="line">                mLayout.setMeasureSpecs(</div><div class="line">                        MeasureSpec.makeMeasureSpec(getMeasuredWidth(), MeasureSpec.EXACTLY),</div><div class="line">                        MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MeasureSpec.EXACTLY));</div><div class="line">                mState.mIsMeasuring = true;</div><div class="line">                dispatchLayoutStep2();</div><div class="line">                // now we can get the width and height from the children.</div><div class="line">                mLayout.setMeasuredDimensionFromChildren(widthSpec, heightSpec);</div><div class="line">            &#125;</div><div class="line">        &#125; else &#123;</div><div class="line">            if (mHasFixedSize) &#123;</div><div class="line">                mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);</div><div class="line">                return;</div><div class="line">            &#125;</div><div class="line">            // custom onMeasure</div><div class="line">            if (mAdapterUpdateDuringMeasure) &#123;</div><div class="line">                eatRequestLayout();</div><div class="line">                processAdapterUpdatesAndSetAnimationFlags();</div><div class="line"></div><div class="line">                if (mState.mRunPredictiveAnimations) &#123;</div><div class="line">                    mState.mInPreLayout = true;</div><div class="line">                &#125; else &#123;</div><div class="line">                    // consume remaining updates to provide a consistent state with the layout pass.</div><div class="line">                    mAdapterHelper.consumeUpdatesInOnePass();</div><div class="line">                    mState.mInPreLayout = false;</div><div class="line">                &#125;</div><div class="line">                mAdapterUpdateDuringMeasure = false;</div><div class="line">                resumeRequestLayout(false);</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            if (mAdapter != null) &#123;</div><div class="line">                mState.mItemCount = mAdapter.getItemCount();</div><div class="line">            &#125; else &#123;</div><div class="line">                mState.mItemCount = 0;</div><div class="line">            &#125;</div><div class="line">            eatRequestLayout();</div><div class="line">            mLayout.onMeasure(mRecycler, mState, widthSpec, heightSpec);</div><div class="line">            resumeRequestLayout(false);</div><div class="line">            mState.mInPreLayout = false; // clear</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>从上述代码可以看出，</p>
+<ul>
+<li>如果布局是空的，那么<code>RecyclerView</code>会创建调用<code>defaultOnMeasure</code>方法 </li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">    * Used when onMeasure is called before layout manager is set</div><div class="line">    */</div><div class="line">   void defaultOnMeasure(int widthSpec, int heightSpec) &#123;</div><div class="line">       // calling LayoutManager here is not pretty but that API is already public and it is better</div><div class="line">       // than creating another method since this is internal.</div><div class="line">       final int width = LayoutManager.chooseSize(widthSpec,</div><div class="line">               getPaddingLeft() + getPaddingRight(),</div><div class="line">               ViewCompat.getMinimumWidth(this));</div><div class="line">       final int height = LayoutManager.chooseSize(heightSpec,</div><div class="line">               getPaddingTop() + getPaddingBottom(),</div><div class="line">               ViewCompat.getMinimumHeight(this));</div><div class="line"></div><div class="line">       setMeasuredDimension(width, height);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>默认测量是布局管理器根据指定的宽，高规格，算出宽高。</p>
+<ul>
+<li>如果是自动布局，如果宽高都是明确指定的，那么跳过测量。否则，如果</li>
+<li>目前是初始阶段，那么调用<code>dispatchLayoutStep1</code></li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">/**</div><div class="line">    * The first step of a layout where we;</div><div class="line">    * - process adapter updates</div><div class="line">    * - decide which animation should run</div><div class="line">    * - save information about current views</div><div class="line">    * - If necessary, run predictive layout and save its information</div><div class="line">    */</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>第二步，用老的尺寸规格来预布局，然后调用<code>dispatchLayoutStep2</code></li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">private void dispatchLayoutStep2() &#123;</div><div class="line">        eatRequestLayout();</div><div class="line">        onEnterLayoutOrScroll();</div><div class="line">        mState.assertLayoutStep(State.STEP_LAYOUT | State.STEP_ANIMATIONS);</div><div class="line">        mAdapterHelper.consumeUpdatesInOnePass();</div><div class="line">        mState.mItemCount = mAdapter.getItemCount();</div><div class="line">        mState.mDeletedInvisibleItemCountSincePreviousLayout = 0;</div><div class="line"></div><div class="line">        // Step 2: Run layout</div><div class="line">        mState.mInPreLayout = false;</div><div class="line">        mLayout.onLayoutChildren(mRecycler, mState);</div><div class="line"></div><div class="line">        mState.mStructureChanged = false;</div><div class="line">        mPendingSavedState = null;</div><div class="line"></div><div class="line">        // onLayoutChildren may have caused client code to disable item animations; re-check</div><div class="line">        mState.mRunSimpleAnimations = mState.mRunSimpleAnimations &amp;&amp; mItemAnimator != null;</div><div class="line">        mState.mLayoutStep = State.STEP_ANIMATIONS;</div><div class="line">        onExitLayoutOrScroll();</div><div class="line">        resumeRequestLayout(false);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>这之后我们就能够获取子<code>VIEW</code>的宽高了。如果<code>RecyclerView</code>没有明确的宽高，那么我们需要再次测量，然后重复上述步骤。</li>
+<li>如果不是自动布局，如果是固定大小，那么直接用现有规格测量。否则首先进行一些动画前置操作，最后依然由布局管理器来测量。</li>
+</ul>
+<p>###onLayout<br><code>onLayout</code>是确定位置时的回调方法。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">   protected void onLayout(boolean changed, int l, int t, int r, int b) &#123;</div><div class="line">       TraceCompat.beginSection(TRACE_ON_LAYOUT_TAG);</div><div class="line">       dispatchLayout();</div><div class="line">       TraceCompat.endSection();</div><div class="line">       mFirstLayoutComplete = true;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</p>
+<p><code>dispatchLayout</code>  </p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">void dispatchLayout() &#123;</div><div class="line">       if (mAdapter == null) &#123;</div><div class="line">           Log.e(TAG, &quot;No adapter attached; skipping layout&quot;);</div><div class="line">           // leave the state in START</div><div class="line">           return;</div><div class="line">       &#125;</div><div class="line">       if (mLayout == null) &#123;</div><div class="line">           Log.e(TAG, &quot;No layout manager attached; skipping layout&quot;);</div><div class="line">           // leave the state in START</div><div class="line">           return;</div><div class="line">       &#125;</div><div class="line">       mState.mIsMeasuring = false;</div><div class="line">       if (mState.mLayoutStep == State.STEP_START) &#123;</div><div class="line">           dispatchLayoutStep1();</div><div class="line">           mLayout.setExactMeasureSpecsFrom(this);</div><div class="line">           dispatchLayoutStep2();</div><div class="line">       &#125; else if (mAdapterHelper.hasUpdates() || mLayout.getWidth() != getWidth() ||</div><div class="line">               mLayout.getHeight() != getHeight()) &#123;</div><div class="line">           // First 2 steps are done in onMeasure but looks like we have to run again due to</div><div class="line">           // changed size.</div><div class="line">           mLayout.setExactMeasureSpecsFrom(this);</div><div class="line">           dispatchLayoutStep2();</div><div class="line">       &#125; else &#123;</div><div class="line">           // always make sure we sync them (to ensure mode is exact)</div><div class="line">           mLayout.setExactMeasureSpecsFrom(this);</div><div class="line">       &#125;</div><div class="line">       dispatchLayoutStep3();</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>如果是初始状态，调用<code>dispatchLayoutStep1</code>，测量，调用<code>dispatchLayoutStep2</code>。如果高度或宽度发生变化，测量，调用<code>dispatchLayoutStep2</code>。其他情况制作测量。最后统一调用<code>dispatchLayoutStep3</code>主要处理动画。</li>
+</ul>
+<p>###onDraw<br><code>onDraw</code>是绘制时的回调  </p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">   public void onDraw(Canvas c) &#123;</div><div class="line">       super.onDraw(c);</div><div class="line"></div><div class="line">       final int count = mItemDecorations.size();</div><div class="line">       for (int i = 0; i &lt; count; i++) &#123;</div><div class="line">           mItemDecorations.get(i).onDraw(c, this, mState);</div><div class="line">       &#125;</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>主要对<code>ItemDecoration</code>的绘制</p>
+<p>至此，<code>RecyclerView</code>的主要回调方法已经简单介绍完毕。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-source-analysis/" rel="tag"># Android source analysis</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/05/04/OpenGl-Learning-1/" rel="next" title="OpenGL Learning(1)">
+                <i class="fa fa-chevron-left"></i> OpenGL Learning(1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/06/11/Little-stories-about-an-Android-application-architecture/" rel="prev" title="Little stories about an Android application architecture">
+                Little stories about an Android application architecture <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload_file/tmp.jpg"
+               alt="Binea" />
+          <p class="site-author-name" itemprop="name">Binea</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid="></script>
+      <!-- UY END -->
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

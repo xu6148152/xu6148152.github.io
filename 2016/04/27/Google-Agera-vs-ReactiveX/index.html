@@ -1,0 +1,702 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文
+介绍如果你经常关注Android开发动态的话，或者关注Reactive相关的动态,最近Google有个重大发布。它们发布了针对于Android的反应式编程库:Agera。
+By Google是Google一个从事Google Play Movies的小组。当然，这听起来更像Google.
+不管是谁发布的，我们要关注的是，它与现有的反应式编程库RxJava,Reactor以及Akka-Stre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google Agera vs. ReactiveX">
+<meta property="og:url" content="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="原文
+介绍如果你经常关注Android开发动态的话，或者关注Reactive相关的动态,最近Google有个重大发布。它们发布了针对于Android的反应式编程库:Agera。
+By Google是Google一个从事Google Play Movies的小组。当然，这听起来更像Google.
+不管是谁发布的，我们要关注的是，它与现有的反应式编程库RxJava,Reactor以及Akka-Stre">
+<meta property="og:updated_time" content="2016-04-27T06:48:15.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Google Agera vs. ReactiveX">
+<meta name="twitter:description" content="原文
+介绍如果你经常关注Android开发动态的话，或者关注Reactive相关的动态,最近Google有个重大发布。它们发布了针对于Android的反应式编程库:Agera。
+By Google是Google一个从事Google Play Movies的小组。当然，这听起来更像Google.
+不管是谁发布的，我们要关注的是，它与现有的反应式编程库RxJava,Reactor以及Akka-Stre">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/"/>
+
+
+
+
+
+  <title> Google Agera vs. ReactiveX | Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Binea">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/upload_file/tmp.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Google Agera vs. ReactiveX
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-04-27T14:48:15+08:00">
+                2016-04-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><a href="http://akarnokd.blogspot.com/2016/04/google-agera-vs-reactivex.html" target="_blank" rel="external">原文</a></p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>如果你经常关注<code>Android</code>开发动态的话，或者关注<code>Reactive</code>相关的动态,最近<code>Google</code>有个重大发布。它们发布了针对于<code>Android</code>的反应式编程库:<code>Agera</code>。</p>
+<p><code>By Google</code>是<code>Google</code>一个从事<code>Google Play Movies</code>的小组。当然，这听起来更像<code>Google</code>.</p>
+<p>不管是谁发布的，我们要关注的是，它与现有的反应式编程库<code>RxJava</code>,<code>Reactor</code>以及<code>Akka-Streams</code>有什么区别</p>
+<h3 id="核心API"><a href="#核心API" class="headerlink" title="核心API"></a>核心API</h3><p><code>Agera</code>基于少值观察者模式:被观察者通过<code>update()</code>拿到更新和变化的信号.然后响应这些变化来算出什么改变了。以下是一个无参反应式数据流，它依赖一端<code>update</code></p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">interface Updatable &#123;</div><div class="line">    void update();</div><div class="line">&#125;</div><div class="line"> </div><div class="line">interface Observable &#123;</div><div class="line">   void addUpdatable(Updatable u);</div><div class="line">   void removeUpdatable(Updatable u);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>它们看起来挺合理的？不幸的事，它们也有<code>java.util.Observable</code>和其他基于<code>addListener/removeListener</code>的反应式API</p>
+<h3 id="Agera-Observable"><a href="#Agera-Observable" class="headerlink" title="Agera Observable"></a>Agera Observable</h3><p>这对方法的问题是每个添加了<code>Updatable</code>行为的<code>Observable</code>都不得不去记住原始的<code>Updatable</code>以便能移除同样的<code>Updatable</code>:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div></pre></td><td class="code"><pre><div class="line">public final class DoOnUpdate implements Observable &#123;</div><div class="line">    final Observable source;</div><div class="line"> </div><div class="line">    final Runnable action;</div><div class="line"> </div><div class="line">    final ConcurrentHashMap&lt;Updatable, DoOnUpdatable&gt; map;</div><div class="line"> </div><div class="line">    public DoOnUpdate(Observable source, Runnable action) &#123;</div><div class="line">         this.source = source;</div><div class="line">         this.action = action;</div><div class="line">         this.map = new ConcurrentHashMap&lt;&gt;();</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    @Override</div><div class="line">    public void addUpdatable(Updatable u) &#123;</div><div class="line">        DoOnUpdatable wrapper = new DoOnUpdatable(u, action);</div><div class="line">        if (map.putIfAbsent(u, wrapper) != null) &#123;</div><div class="line">            throw new IllegalStateException(&quot;Updatable already registered&quot;);</div><div class="line">        &#125;</div><div class="line">        source.addUpdatable(wrapper);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    public void removeUpdatable(Updatable u) &#123;</div><div class="line">        DoOnUpdatable wrapper = map.remove(u);</div><div class="line">        if (wrapper == null) &#123;</div><div class="line">            throw new IllegalStateException(&quot;Updatable already removed&quot;);</div><div class="line">        &#125;</div><div class="line">        source.removeUpdatable(wrapper);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    static final class DoOnUpdatable &#123;</div><div class="line">        final Updatable actual;</div><div class="line"> </div><div class="line">        final Runnable run;</div><div class="line"> </div><div class="line">        public DoOnUpdatable(Updatable actual, Runnable run) &#123;</div><div class="line">            this.actual = actual;</div><div class="line">            this.run = run;</div><div class="line">        &#125;</div><div class="line"> </div><div class="line">        @Override</div><div class="line">        public void update() &#123;</div><div class="line">            run.run();</div><div class="line">            actual.update();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>这导致一个争论点，在管道的每个阶段独立的下游<code>Updatabels</code>。是的，<code>RxJava&#39;s Subjects</code>和<code>ConnectableObservables</code>也有类似的争议点，但它们之后的链式操作符不会有争议。不幸的是，反应式流规范，在当前版本，<code>Publishers</code>也有类似的问题。现在<code>RxJava2.x</code>,<code>Rsc</code>和<code>Reactor</code>完全忽略了这些东西,结果是操作起来变得更严格了。</p>
+<p>第二个微不足道的问题是你不能多次添加相同的<code>Updatable</code>。因为你无法在不同的<code>subscriptions</code>中通过<code>Map</code>区分它们，如果这么干，会出现异常。通常这是很少发生的，因为大多数的终端需求都很单一。</p>
+<p>第三个比较大的问题：当<code>Updatable</code>不再注册在<code>Observable</code>时抛出。这在终端用户触发移除操作时，而这个操作又引发别的操作，它们当中一个会抛出异常。这就是为何现在反应式变成不能够被取消的缘故。</p>
+<p>第四个理论问题,<code>addUpdatable</code>和<code>removeUpdatable</code>会相互竞争，一些下游的操作符想在某个上游操作符已经调用了<code>addUpdatable</code>之后断开。一个可能的问题是<code>removeUpdate</code>调用抛出异常而<code>addUpdatable</code>成功，这回导致信号流向任何地方和导致相关的对象不想要的持有。</p>
+<h3 id="Agera-Updatable"><a href="#Agera-Updatable" class="headerlink" title="Agera Updatable"></a>Agera Updatable</h3><p>我们来从消费者角度看看API。<code>Updatable</code>是一个单一函数接口的方法，这让它能简单的给<code>Observable</code>添加监听</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Observable source = ...</div><div class="line">source.addUpdatable(() -&gt; System.out.println(&quot;Something happened&quot;));</div></pre></td></tr></table></figure>
+</p>
+<p>相当简单，现在我们移除我们的监听</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">source.removeUpdatable(() -&gt; System.out.println(&quot;Something happened&quot;);</div></pre></td></tr></table></figure>
+</p>
+<p>这会产生一个异常:两个<code>lambdas</code>不是相同的对象。这在基于<code>addListener/removeListener</code>的API当中是相当常见的问题。解决方案是存储<code>lambda</code>，当需要的时候去用它：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">Updatable u = () -&gt; System.out.println(&quot;Something happened&quot;);</div><div class="line"> </div><div class="line">source.addUpdatable(u);</div><div class="line"> </div><div class="line">// ...</div><div class="line"> </div><div class="line">source.removeUpdatable(u);</div></pre></td></tr></table></figure>
+</p>
+<p>有点不方便，但不会更糟了。如果你有很多<code>Observables</code>和很多<code>Updatables</code>呢？你需要记住谁注册在谁上，在相同的字段保持引用它们。<code>Rx.NET</code>的原始设计有个好主意来减少这种必须的单引用：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">interface Removable extends Closeable &#123;</div><div class="line">    @Override</div><div class="line">    void close(); // remove the necessity of try-catch around close()</div><div class="line">&#125;</div><div class="line"> </div><div class="line">public static Removable registerWith(Observable source, Updatable consumer) &#123;</div><div class="line">    source.addUpdatable(consumer);</div><div class="line">    return () -&gt; source.removeUpdatable(consumer);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>当然，我们在调用<code>close()</code>时同样需要考虑：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">public static Removable registerWith(Observable source, Updatable consumer) &#123;</div><div class="line">    source.addUpdatable(consumer);</div><div class="line">    final AtomicBoolean once = new AtomicBoolean();</div><div class="line">    return () -&gt; &#123;</div><div class="line">        if (once.compareAndSet(false, true)) &#123;</div><div class="line">            source.removeUpdatable(consumer);</div><div class="line">        &#125;</div><div class="line">    &#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<h4 id="Agera-MutableRepository"><a href="#Agera-MutableRepository" class="headerlink" title="Agera MutableRepository"></a>Agera MutableRepository</h4><p>如果值发生变化，<code>Agera MutableRepository</code>会通过<code>update()</code>通知注册的<code>Updatables</code>。这和<code>BehaviorSubject</code>很像，区别是新值如果不调用<code>get()</code>不会流到消费者:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">MutableRepository&lt;integer&gt; repo = Repositories.mutableRepository(0);</div><div class="line"> </div><div class="line">repo.addUpdatable(() -&gt; System.out.println(&quot;Value: &quot; + repo.get());</div><div class="line"> </div><div class="line">new Thread(() -&gt; &#123;</div><div class="line">    repo.accept(1);</div><div class="line">&#125;).start();</div></pre></td></tr></table></figure>
+</p>
+<p>当通过工厂方法创建仓库时，<code>Looper</code>中会调用<code>update()</code>。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</div><div class="line"> </div><div class="line">MutableRepository&lt;integer&gt; repo = Repositories.mutableRepository(0);</div><div class="line"> </div><div class="line">repo.addUpdatable(() -&gt; set.add(repo.get()));</div><div class="line"> </div><div class="line">new Thread(() -&gt; &#123;</div><div class="line">    for (int i = 0; i &lt; 100_000; i++) &#123;</div><div class="line">        repo.accept(i);</div><div class="line">    &#125;</div><div class="line">&#125;).start();</div><div class="line"> </div><div class="line">Thread.sleep(20_000);</div><div class="line"> </div><div class="line">System.out.println(set.size());</div></pre></td></tr></table></figure>
+</p>
+<p>20秒之后<code>Set</code>最终会有多大？有人可能会认为是100,000。事实上，值可能在1~100,000之间!原因是<code>accept()</code>和<code>get()</code>并发运行，如果消费者运行比较慢，<code>accept()</code>会覆盖当前仓库的值。</p>
+<h4 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h4><p>使用异步通常意味着会碰到异步相关的问题。<code>RxJava</code>和其他类似的东西都会有这种问题：出现某种错误了，这个流程自动清掉，而开发者希望的是能够重新开始。错误和清理在某些情况下很复杂，成熟的库都花费了大量的精力来解决这些问题，因此开发者不需要在这上面浪费很多时间。</p>
+<p><code>Agera</code>基础API不会自己处理错误，你需要自己对错误进行处理。如果你用<code>Agera</code>组成多个服务，你需要建立自己的错误处理框架.由于并发和中断状态使它处理起来很笨重和延迟。</p>
+<h4 id="终结"><a href="#终结" class="headerlink" title="终结"></a>终结</h4><p><code>Agera</code>对一个完成流不会发出通知，你需要自己知道它什么时候会完成。这在简单用户界面上不会有什么问题。然而，后台异步操作需要知道要发出多少信号，没有数据的话，你如何收到<code>update()</code>相关通知</p>
+<h3 id="如何设计现代化的无参反应式API"><a href="#如何设计现代化的无参反应式API" class="headerlink" title="如何设计现代化的无参反应式API"></a>如何设计现代化的无参反应式API</h3><p>看看以下例子：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">rx.Observable&lt;Void&gt; signaller = ...</div><div class="line"> </div><div class="line">rx.Observer&lt;Void&gt; consumer = ...</div><div class="line"> </div><div class="line">Subscription s = signaller.subscribe(consumer);</div><div class="line"> </div><div class="line">// ...</div><div class="line"> </div><div class="line">s.unsubscribe();</div></pre></td></tr></table></figure>
+</p>
+<p>你很简单的就能获得它该有的功能。你如果要处理别的类型信号，将<code>Void</code>替换成你想要的类型就可以了。</p>
+<p>如果一个库由于需要学习很多操作符而让人感到很笨重的话，你可以拷贝它，删除你不需要的东西。当然，你需要更新修复问题和性能优化后的代码。</p>
+<p>如果拷贝和修改听起来不够有吸引力，你能按照<code>Reactive-Streams</code>规定开发自己的库;<code>Publisher&lt;Void&gt;</code>,<code>&lt;Subscriber&lt;Void&gt;</code>和其他东西。你能很方便的与其他的<code>Reactive-Streams</code>库一起工作，你能通过它的兼容性测试来测试你的库。</p>
+<p>当然，编写反应式库很麻烦，按照<code>Reactive-Streams</code>编写更麻烦。所以，综合考虑，你可以拓展API</p>
+<p>如果你真的想要编写无参反应式流，这有几个你需要考虑的建议：</p>
+<p><strong>1)不要分开<code>addListener</code>和<code>removeListener</code>。</strong>单一的入口简化中间操作的开发。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">interface Observable &#123;</div><div class="line">    Removable register(Updatable u);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">interface Removable &#123;</div><div class="line">    void remove();</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><strong>2)考虑支持取消和移除而不是返回一个可以取消的令牌或者可移除的动作：</strong></p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">interface Observable &#123;</div><div class="line">    void register(Updatable u);</div><div class="line">&#125;</div><div class="line"> </div><div class="line">interface Updatable &#123;</div><div class="line">    void onRegister(Removable remover);</div><div class="line">    void update();</div><div class="line">&#125;</div><div class="line"> </div><div class="line">// or</div><div class="line"> </div><div class="line">interface Updatable &#123;</div><div class="line">    void update(Removable remover);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><strong>3)考虑至少添加一个错误信号接收：</strong></p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">interface Updatable &#123;</div><div class="line">    void onRegister(Removable remover);</div><div class="line">    void update();</div><div class="line">    void error(Throwable ex);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><strong>4)考虑提供队列的异步操作.</strong></p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>其实作者就是来黑<code>Agera</code>的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/04/smaller-apk/" rel="next" title="APK瘦身">
+                <i class="fa fa-chevron-left"></i> APK瘦身
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/04/28/A-successful-git-branching-model/" rel="prev" title="优秀的git分支模型">
+                优秀的git分支模型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload_file/tmp.jpg"
+               alt="Binea" />
+          <p class="site-author-name" itemprop="name">Binea</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#介绍"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#核心API"><span class="nav-number">2.</span> <span class="nav-text">核心API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Agera-Observable"><span class="nav-number">3.</span> <span class="nav-text">Agera Observable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Agera-Updatable"><span class="nav-number">4.</span> <span class="nav-text">Agera Updatable</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Agera-MutableRepository"><span class="nav-number">4.1.</span> <span class="nav-text">Agera MutableRepository</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#错误处理"><span class="nav-number">4.2.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#终结"><span class="nav-number">4.3.</span> <span class="nav-text">终结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何设计现代化的无参反应式API"><span class="nav-number">5.</span> <span class="nav-text">如何设计现代化的无参反应式API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结论"><span class="nav-number">6.</span> <span class="nav-text">结论</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid="></script>
+      <!-- UY END -->
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

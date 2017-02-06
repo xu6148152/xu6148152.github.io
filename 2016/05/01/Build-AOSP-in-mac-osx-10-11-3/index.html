@@ -1,0 +1,763 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Android AOSP," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="配置OSX系统
+安装Xcode
+找到Xcode安装目录，右键打开show package content
+创建/Developer/SDK目录
+将MacOSX10.11.sdk从Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/复制到/Developer/SDK
+将Xcode.app复制到到/Developer目录下
+
+完成Xc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Build AOSP in mac osx 10.11.3">
+<meta property="og:url" content="http://xu6148152.github.io/2016/05/01/Build-AOSP-in-mac-osx-10-11-3/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="配置OSX系统
+安装Xcode
+找到Xcode安装目录，右键打开show package content
+创建/Developer/SDK目录
+将MacOSX10.11.sdk从Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/复制到/Developer/SDK
+将Xcode.app复制到到/Developer目录下
+
+完成Xc">
+<meta property="og:updated_time" content="2016-12-14T07:26:38.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Build AOSP in mac osx 10.11.3">
+<meta name="twitter:description" content="配置OSX系统
+安装Xcode
+找到Xcode安装目录，右键打开show package content
+创建/Developer/SDK目录
+将MacOSX10.11.sdk从Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/复制到/Developer/SDK
+将Xcode.app复制到到/Developer目录下
+
+完成Xc">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xu6148152.github.io/2016/05/01/Build-AOSP-in-mac-osx-10-11-3/"/>
+
+
+
+
+
+  <title> Build AOSP in mac osx 10.11.3 | Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/05/01/Build-AOSP-in-mac-osx-10-11-3/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Binea">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/upload_file/tmp.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Build AOSP in mac osx 10.11.3
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-05-01T16:01:03+08:00">
+                2016-05-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="配置OSX系统"><a href="#配置OSX系统" class="headerlink" title="配置OSX系统"></a>配置OSX系统</h3><ol>
+<li>安装<code>Xcode</code></li>
+<li>找到<code>Xcode</code>安装目录，右键打开<code>show package content</code></li>
+<li>创建<code>/Developer/SDK</code>目录</li>
+<li>将<code>MacOSX10.11.sdk</code>从<code>Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/</code>复制到<code>/Developer/SDK</code></li>
+<li>将<code>Xcode.app</code>复制到到/Developer目录下</li>
+</ol>
+<h4 id="完成Xcode的配置"><a href="#完成Xcode的配置" class="headerlink" title="完成Xcode的配置"></a>完成<code>Xcode</code>的配置</h4><ol>
+<li>打开<code>Xcode</code></li>
+<li>从<code>Xcode</code>的菜单打开<code>Preferences</code></li>
+<li>选择<code>Location</code>标签</li>
+<li>在<code>Command Line Tools</code>中选择<code>Xcodd 7.2</code>(具体版本依个人电脑上的Xcode版本而定)</li>
+</ol>
+<h4 id="安装MacPorts"><a href="#安装MacPorts" class="headerlink" title="安装MacPorts"></a>安装<code>MacPorts</code></h4><ol>
+<li>获取最新版的<a href="https://www.macports.org/install.php" target="_blank" rel="external">MacPorts</a>!</li>
+<li>打开控制台，编辑<code>bash</code>配置文件</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ vim ~/.bash_profile</div></pre></td></tr></table></figure>
+</p>
+<ol>
+<li>在配置文件中插入</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ export PATH=/opt/local/bin:$PATH</div></pre></td></tr></table></figure>
+</p>
+<ol>
+<li>重新载入配置信息</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ . ~/.bash_profile</div></pre></td></tr></table></figure>
+</p>
+<ol>
+<li>运行<code>port</code>命令检测是否成功安装</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ port</div></pre></td></tr></table></figure>
+</p>
+<ol>
+<li>安装需要的依赖包</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ POSIXLY_CORRECT=1 sudo port install gmake libsdl git gnupg</div></pre></td></tr></table></figure>
+</p>
+<h4 id="安装java开发包-JDK1-7"><a href="#安装java开发包-JDK1-7" class="headerlink" title="安装java开发包(JDK1.7)"></a>安装<code>java</code>开发包(JDK1.7)</h4><h4 id="安装Repo"><a href="#安装Repo" class="headerlink" title="安装Repo"></a>安装<code>Repo</code></h4><p><code>Repo</code>是基于<code>git</code>的一种工具，能很方便的用来管理<code>Android</code>源码。更多信息请<a href="http://source.android.com/source/developing.html" target="_blank" rel="external">查看</a></p>
+<ol>
+<li>确保根目录下有<code>/bin</code>目录</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ mkdir ~/bin</div><div class="line">$ PATH=~/bin:$PATH</div></pre></td></tr></table></figure>
+</p>
+<ol>
+<li>下载<code>Repo</code>工具，确保它可以运行</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">$ curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/bin/repo</div><div class="line">$ chmod a+x ~/bin/repo</div></pre></td></tr></table></figure>
+</p>
+<h4 id="设置文件描述符"><a href="#设置文件描述符" class="headerlink" title="设置文件描述符"></a>设置文件描述符</h4><p><code>OSX</code>系统的默认文件描述符的数量太小，高并行构建可能会超出这个限制。为了突破这个限制，添加以下命令到<code>.bash_profile</code>中</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">$ vim ~/.bash_profile</div><div class="line">~~~~~</div><div class="line"># set the number of open files to be 1024</div><div class="line">ulimit -S -n 1024</div></pre></td></tr></table></figure>
+</p>
+<h4 id="创建字符大小写敏感的虚拟驱动"><a href="#创建字符大小写敏感的虚拟驱动" class="headerlink" title="创建字符大小写敏感的虚拟驱动"></a>创建字符大小写敏感的虚拟驱动</h4><p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hdiutil create -type SPARSE -fs &apos;Case-sensitive Journaled HFS+&apos; -size 100g ~/android.dmg</div></pre></td></tr></table></figure>
+</p>
+<p>源码很大，因此建议要创建大一点的虚拟光驱</p>
+<p>挂载这个驱动:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hdiutil attach ~/android.dmg -mountpoint /Volumes/android</div></pre></td></tr></table></figure>
+</p>
+<p>你也可以用另一种方式，在配置文件中加入如下方法：</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">function mountAndroid &#123; hdiutil attach ~/android.dmg.sparseimage -mountpoint /Volumes/android; &#125;</div></pre></td></tr></table></figure>
+</p>
+<p>然后运行如下命令:</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mountAndroid</div></pre></td></tr></table></figure>
+</p>
+<h3 id="下载源文件"><a href="#下载源文件" class="headerlink" title="下载源文件"></a>下载源文件</h3><p>首先我们确定我们要下载的是哪个版本的源码，本文以<code>android-6.0.1_r30</code>为例</p>
+<p>首先在<code>/Volumes/android</code>创建一个工作目录</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$ cd /Volumes/android</div><div class="line">$ mkdir WORKING_DIRECTORY</div><div class="line">$ cd WORKING_DIRECTORY</div></pre></td></tr></table></figure>
+</p>
+<p>运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ repo init -u https://android.googlesource.com/platform/manifest -b android-5.0.0_r7.0.1</div></pre></td></tr></table></figure></p>
+<p>最后运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">repo sync</div></pre></td></tr></table></figure></p>
+<p>来下载源码</p>
+<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>在源码根目录运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ source build/envsetup.sh</div></pre></td></tr></table></figure></p>
+<p>运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ lunch</div></pre></td></tr></table></figure></p>
+<p>按”1”选择<code>aosp_arm-eng</code>。</p>
+<p>运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make -j4</div></pre></td></tr></table></figure></p>
+<p>开始漫长的编译过程</p>
+<p>运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">make idegen &amp;&amp; development/tools/idegen/idegen.sh</div></pre></td></tr></table></figure></p>
+<p>生成可被<code>IDE</code>识别的工程。</p>
+<h3 id="碰到的一些问题"><a href="#碰到的一些问题" class="headerlink" title="碰到的一些问题"></a>碰到的一些问题</h3><ul>
+<li>下载源码时，需要比较长的时间，还好支持断点续传。(被盾的地方，必须使用VPN)</li>
+<li>源码下载完之后，编译会碰到找不到MacOSsdk。按照文中开头的步骤即可解决</li>
+<li>编译过程中会出现<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fatal error: linux/netfilter/xt_DSCP.h: No such file or directory</div></pre></td></tr></table></figure>
+</p>
+</li>
+</ul>
+<p>这是由于我的源码没有直接在<code>/Volumns/android</code>下下载，是从别的地方下载完之后拷贝过来的。而编译源码会严格区分大小写的。相应目录下有小写的头文件。</p>
+<p>解决方案是：</p>
+<ol>
+<li>严格按照官方文档描述，在相应目录下下载源码</li>
+<li>在<code>./external/iptables/include/linux/netfilter</code>中创建头文件<code>xt_DSCP.h</code>。在该头文件中加入如下代码:</li>
+</ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line">* based on ipt_FTOS.c (C) 2000 by Matthew G. Marsh &lt;mgm@paktronix.com&gt;</div><div class="line">* This software is distributed under GNU GPL v2, 1991</div><div class="line">*</div><div class="line">* See RFC2474 for a description of the DSCP field within the IP Header.</div><div class="line">*</div><div class="line">* xt_DSCP.h,v 1.7 2002/03/14 12:03:13 laforge Exp</div><div class="line">*/</div><div class="line">#ifndef _XT_DSCP_TARGET_H</div><div class="line">#define _XT_DSCP_TARGET_H</div><div class="line">#include &lt;linux/netfilter/xt_dscp.h&gt;</div><div class="line">#include &lt;linux/types.h&gt;</div><div class="line"></div><div class="line">/* target info */</div><div class="line">struct xt_DSCP_info &#123;</div><div class="line">    __u8 dscp;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">struct xt_tos_target_info &#123;</div><div class="line">    __u8 tos_value;</div><div class="line">    __u8 tos_mask;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">#endif /* _XT_DSCP_TARGET_H */</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>Java文件找不到</li>
+</ul>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">external/doclava/src/com/google/doclava/ClassInfo.java:20: error: package com.sun.javadoc does not exist import com.sun.javadoc.ClassDoc</div></pre></td></tr></table></figure>
+</p>
+<p>解决方案是在配置文件中加入</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/bin:$PATH</div></pre></td></tr></table></figure>
+</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-AOSP/" rel="tag"># Android AOSP</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/04/28/A-successful-git-branching-model/" rel="next" title="优秀的git分支模型">
+                <i class="fa fa-chevron-left"></i> 优秀的git分支模型
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/05/04/OpenGl-Learning-1/" rel="prev" title="OpenGL Learning(1)">
+                OpenGL Learning(1) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload_file/tmp.jpg"
+               alt="Binea" />
+          <p class="site-author-name" itemprop="name">Binea</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">26</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">13</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#配置OSX系统"><span class="nav-number">1.</span> <span class="nav-text">配置OSX系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#完成Xcode的配置"><span class="nav-number">1.1.</span> <span class="nav-text">完成Xcode的配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装MacPorts"><span class="nav-number">1.2.</span> <span class="nav-text">安装MacPorts</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装java开发包-JDK1-7"><span class="nav-number">1.3.</span> <span class="nav-text">安装java开发包(JDK1.7)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#安装Repo"><span class="nav-number">1.4.</span> <span class="nav-text">安装Repo</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设置文件描述符"><span class="nav-number">1.5.</span> <span class="nav-text">设置文件描述符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#创建字符大小写敏感的虚拟驱动"><span class="nav-number">1.6.</span> <span class="nav-text">创建字符大小写敏感的虚拟驱动</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#下载源文件"><span class="nav-number">2.</span> <span class="nav-text">下载源文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译源码"><span class="nav-number">3.</span> <span class="nav-text">编译源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#碰到的一些问题"><span class="nav-number">4.</span> <span class="nav-text">碰到的一些问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid="></script>
+      <!-- UY END -->
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
