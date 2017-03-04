@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="算法," />
+  <meta name="keywords" content="Ionic, CI, Python," />
 
 
 
@@ -84,16 +84,43 @@
 
 
 
-<meta name="description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
+<meta name="description" content="前言本文主要讲述Ionic在公司最新产品中的应用
+技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。
+实践之路实践过程:
+
+安装ionic, cordova框架。运行如下命令
+
+12npm install -y .npm install -y ionic cordova
+
+
+创建i">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SubSet">
-<meta property="og:url" content="http://xu6148152.github.io/2015/01/05/SubSet/index.html">
+<meta property="og:title" content="Ionic自动化构建之路">
+<meta property="og:url" content="http://xu6148152.github.io/2017/03/04/Ionic自动化构建之路/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
-<meta property="og:updated_time" content="2016-12-14T07:15:46.000Z">
+<meta property="og:description" content="前言本文主要讲述Ionic在公司最新产品中的应用
+技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。
+实践之路实践过程:
+
+安装ionic, cordova框架。运行如下命令
+
+12npm install -y .npm install -y ionic cordova
+
+
+创建i">
+<meta property="og:updated_time" content="2017-03-04T07:52:28.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SubSet">
-<meta name="twitter:description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
+<meta name="twitter:title" content="Ionic自动化构建之路">
+<meta name="twitter:description" content="前言本文主要讲述Ionic在公司最新产品中的应用
+技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。
+实践之路实践过程:
+
+安装ionic, cordova框架。运行如下命令
+
+12npm install -y .npm install -y ionic cordova
+
+
+创建i">
 
 
 
@@ -121,13 +148,13 @@
 
 
 
-  <link rel="canonical" href="http://xu6148152.github.io/2015/01/05/SubSet/"/>
+  <link rel="canonical" href="http://xu6148152.github.io/2017/03/04/Ionic自动化构建之路/"/>
 
 
 
 
 
-  <title> SubSet | Blog </title>
+  <title> Ionic自动化构建之路 | Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -240,7 +267,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2015/01/05/SubSet/">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/03/04/Ionic自动化构建之路/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Binea">
@@ -264,7 +291,7 @@
             
             
               
-                SubSet
+                Ionic自动化构建之路
               
             
           </h1>
@@ -279,8 +306,8 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-01-05T15:16:24+08:00">
-                2015-01-05
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-03-04T15:51:33+08:00">
+                2017-03-04
               </time>
             
 
@@ -315,7 +342,41 @@
       
 
       
-        <h3 id="Subset"><a href="#Subset" class="headerlink" title="Subset"></a>Subset</h3><p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public List&lt;List&lt;Integer&gt;&gt; subsets(int[] set) &#123;</div><div class="line">        Arrays.sort(set);</div><div class="line">        int totalNumber = 1 &lt;&lt; set.length;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; collection = new ArrayList&lt;List&lt;Integer&gt;&gt;(totalNumber);</div><div class="line">        for (int i=0; i&lt;totalNumber; i++) &#123;</div><div class="line">            List&lt;Integer&gt; subSet = new LinkedList&lt;Integer&gt;();</div><div class="line">            for (int j=0; j&lt;set.length; j++) &#123;</div><div class="line">                if ((i &amp; (1&lt;&lt;j)) != 0) &#123;</div><div class="line">                    subSet.add(set[j]);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            collection.add(subSet);</div><div class="line">        &#125;</div><div class="line">        return collection;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文主要讲述<code>Ionic</code>在公司最新产品中的应用</p>
+<h3 id="技术背景"><a href="#技术背景" class="headerlink" title="技术背景"></a>技术背景</h3><p>公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用<code>ionic</code>作为基础框架。<code>ionic</code>是一款H5移动开发框架，打包插件基于<code>apache cordova</code>。</p>
+<h3 id="实践之路"><a href="#实践之路" class="headerlink" title="实践之路"></a>实践之路</h3><p>实践过程:</p>
+<ul>
+<li>安装<code>ionic</code>, <code>cordova</code>框架。运行如下命令</li>
+</ul>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">npm install -y .</div><div class="line">npm install -y ionic cordova</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>创建<code>ionic</code>项目。使用如下命令，可以指定包名</li>
+</ul>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ionic start xxx(项目名称) --id xxx(包名)</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>下载需要的<code>cordova</code>插件</li>
+<li>获取资源文件</li>
+<li>更新配置文件</li>
+<li>添加支持平台</li>
+</ul>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ionic platform add android</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>构建项目</li>
+</ul>
+<p><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ionic build xxx(平台)</div></pre></td></tr></table></figure>
+</p>
+<h3 id="可持续集成"><a href="#可持续集成" class="headerlink" title="可持续集成"></a>可持续集成</h3><p>为了可持续集成，那么我这里将整个项目分为两部分，一部分固定不变的，即每次框架自动生成的文件。另一部分为我们一直需要修改的。因此这里的想法是，将改变的部分分离出去。每次运行脚本，自动生成文件。然后使用改变的部分覆盖自动生成的部分。这里改变的部分，主要包括配置文件，<code>Native</code>代码以及资源文件。替换完毕，打包签名出<code>apk</code>文件，并上传云服务。根据此思路，编写<code>python</code>脚本:</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># 覆盖配置文件</span></div><div class="line">copy_file(<span class="string">'config.xml'</span>, subfix)</div><div class="line"></div><div class="line"><span class="comment"># 覆盖build.gradle文件</span></div><div class="line">copy_file(<span class="string">'build.gradle'</span>, androidPath)</div><div class="line"></div><div class="line"><span class="comment"># 覆盖 AndroidManifest</span></div><div class="line">copy_file(<span class="string">'AndroidManifest.xml'</span>, androidPath)</div><div class="line"></div><div class="line"><span class="comment"># 覆盖资源文件</span></div><div class="line"><span class="comment"># 先删除资源文件</span></div><div class="line"><span class="keyword">try</span>:</div><div class="line">    remove_tree(toDirectory + <span class="string">'/resources'</span>)</div><div class="line"><span class="keyword">except</span> OSError:</div><div class="line">    <span class="keyword">pass</span></div><div class="line"></div><div class="line"><span class="comment"># 覆盖资源文件</span></div><div class="line">copy_tree(fromDirectory, toDirectory + <span class="string">'/resources'</span>)</div><div class="line"></div><div class="line"><span class="comment"># 覆盖native代码</span></div><div class="line">copy_tree(fromDirectory, toDirectory)</div></pre></td></tr></table></figure>
+</p>
+<p>之后签名打包，上传云服务</p>
+<h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><ol>
+<li>由于默认初始化项目，会自动生成一个包名。为了指定包名，因此需要使用<code>--id</code>来指定包名</li>
+<li>自动生成的<code>config.xml</code>文件中包含了自动生成的包名，一旦打包签名时，会根据这个包名自动生成代码，因此需要将此自动包名，修改为需要的包名</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>此项目目前能实现从项目初始化，构建到最后打包上传完全自动化。大大减少工作量。对于我个人也是一次从新框架，新CI(bitrise)到最终的自动化构建的一次完整系统的学习。</p>
 
       
     </div>
@@ -339,7 +400,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/算法/" rel="tag"># 算法</a>
+            <a href="/tags/Ionic-CI-Python/" rel="tag"># Ionic, CI, Python</a>
           
         </div>
       
@@ -348,15 +409,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/01/01/深入理解RxJava/" rel="next" title="深入理解RxJava">
+                <i class="fa fa-chevron-left"></i> 深入理解RxJava
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/02/05/Dagger VS Dagger2/" rel="prev" title="Dagger VS Dagger2">
-                Dagger VS Dagger2 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -472,7 +533,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Subset"><span class="nav-number">1.</span> <span class="nav-text">Subset</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#技术背景"><span class="nav-number">2.</span> <span class="nav-text">技术背景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实践之路"><span class="nav-number">3.</span> <span class="nav-text">实践之路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#可持续集成"><span class="nav-number">4.</span> <span class="nav-text">可持续集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#难点"><span class="nav-number">5.</span> <span class="nav-text">难点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
 
           </div>
