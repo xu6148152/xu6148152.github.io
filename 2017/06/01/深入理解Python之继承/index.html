@@ -1,0 +1,684 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Python," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="继承内置类型的技巧Python2.2之前，不能够继承内置类型
+123456789101112131415161718class DoppelDict(dict):    def __setitem__(self, key, value):        super().__setitem__(key, [value] * 2)dd = DoppelDict(one=1)print(dd)dd[&apos;t">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Python之继承">
+<meta property="og:url" content="http://xu6148152.github.io/2017/06/01/深入理解Python之继承/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="继承内置类型的技巧Python2.2之前，不能够继承内置类型
+123456789101112131415161718class DoppelDict(dict):    def __setitem__(self, key, value):        super().__setitem__(key, [value] * 2)dd = DoppelDict(one=1)print(dd)dd[&apos;t">
+<meta property="og:updated_time" content="2017-06-01T08:56:55.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Python之继承">
+<meta name="twitter:description" content="继承内置类型的技巧Python2.2之前，不能够继承内置类型
+123456789101112131415161718class DoppelDict(dict):    def __setitem__(self, key, value):        super().__setitem__(key, [value] * 2)dd = DoppelDict(one=1)print(dd)dd[&apos;t">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xu6148152.github.io/2017/06/01/深入理解Python之继承/"/>
+
+
+
+
+
+  <title> 深入理解Python之继承 | Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/06/01/深入理解Python之继承/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Binea">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/upload_file/tmp.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                深入理解Python之继承
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-01T16:56:55+08:00">
+                2017-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="继承内置类型的技巧"><a href="#继承内置类型的技巧" class="headerlink" title="继承内置类型的技巧"></a>继承内置类型的技巧</h3><p><code>Python2.2</code>之前，不能够继承内置类型</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoppelDict</span><span class="params">(dict)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__setitem__</span><span class="params">(self, key, value)</span>:</span></div><div class="line">        super().__setitem__(key, [value] * <span class="number">2</span>)</div><div class="line"></div><div class="line"></div><div class="line">dd = DoppelDict(one=<span class="number">1</span>)</div><div class="line">print(dd)</div><div class="line"></div><div class="line">dd[<span class="string">'two'</span>] = <span class="number">2</span></div><div class="line">print(dd)</div><div class="line">dd.update(three=<span class="number">3</span>)</div><div class="line">print(dd)</div><div class="line"></div><div class="line">result:</div><div class="line">&#123;<span class="string">'one'</span>: <span class="number">1</span>&#125;</div><div class="line">&#123;<span class="string">'one'</span>: <span class="number">1</span>, <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>]&#125;</div><div class="line">&#123;<span class="string">'one'</span>: <span class="number">1</span>, <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>], <span class="string">'three'</span>: <span class="number">3</span>&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><code>DoppelDict</code>当排序时，复制值.<code>__init__</code>忽略<code>__setitem__</code>被重写，因此<code>one</code>没有被复制。<code>[]</code>操作符调用<code>__setitem__</code>，因此<code>two</code>被复制。<code>update</code>方法没有使用重写的<code>__setitem__</code>方法。因此<code>three</code>没有复制</p>
+<p>方法的寻找总是从目标对象开始，然后向上寻找</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">AnswerDict</span><span class="params">(dict)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__getitem__</span><span class="params">(self, key)</span>:</span></div><div class="line">        <span class="keyword">return</span> <span class="number">42</span></div><div class="line"></div><div class="line">ad = AnswerDict(a=<span class="string">'foo'</span>)</div><div class="line">print(ad[<span class="string">'a'</span>])</div><div class="line"></div><div class="line">d = &#123;&#125;</div><div class="line">d.update(ad)</div><div class="line">print(d[<span class="string">'a'</span>])</div><div class="line">print(d)</div><div class="line"></div><div class="line">result:</div><div class="line"><span class="number">42</span></div><div class="line">foo</div><div class="line">&#123;<span class="string">'a'</span>: <span class="string">'foo'</span>&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><code>AnswerDict.__getitem__()</code>总是返回42.<code>d</code>是个<code>dict</code>，使用<code>ad</code>更新它，忽略了<code>AnswerDict.__getitem__()</code></p>
+<p>直接继承内置类型如<code>dict</code>或者<code>list</code>容易出错，因为内置的方法大多数会忽略用户自定的方法。因此从<code>collections</code>模块中使用<code>UserDict</code>,<code>UserLisat</code>,<code>UserString</code>来派生类</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">DoppelDict2</span><span class="params">(collections.UserDict)</span>:</span></div><div class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__setitem__</span><span class="params">(self, key, value)</span>:</span></div><div class="line">        super().__setitem__(key, [value] * <span class="number">2</span>)</div><div class="line"></div><div class="line"></div><div class="line">dd = DoppelDict2(one=<span class="number">1</span>)</div><div class="line">print(dd)</div><div class="line">dd[<span class="string">'two'</span>] = <span class="number">2</span></div><div class="line">print(dd)</div><div class="line">dd.update(three=<span class="number">3</span>)</div><div class="line">print(dd)</div><div class="line"></div><div class="line">result:</div><div class="line">&#123;<span class="string">'one'</span>: [<span class="number">1</span>, <span class="number">1</span>]&#125;</div><div class="line">&#123;<span class="string">'one'</span>: [<span class="number">1</span>, <span class="number">1</span>], <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>]&#125;</div><div class="line">&#123;<span class="string">'one'</span>: [<span class="number">1</span>, <span class="number">1</span>], <span class="string">'two'</span>: [<span class="number">2</span>, <span class="number">2</span>], <span class="string">'three'</span>: [<span class="number">3</span>, <span class="number">3</span>]&#125;</div></pre></td></tr></table></figure>
+</p>
+<h3 id="多继承"><a href="#多继承" class="headerlink" title="多继承"></a>多继承</h3><p><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">class A:</div><div class="line">    def ping(self):</div><div class="line">        print('ping:', self)</div><div class="line"></div><div class="line"></div><div class="line">class B(A):</div><div class="line">    def pong(self):</div><div class="line">        print('pong:', self)</div><div class="line"></div><div class="line"></div><div class="line">class C(A):</div><div class="line">    def pong(self):</div><div class="line">        print('PONG:', self)</div><div class="line"></div><div class="line"></div><div class="line">class D(B, C):</div><div class="line">    def ping(self):</div><div class="line">        super().ping()</div><div class="line">        print('post-ping:', self)</div><div class="line"></div><div class="line">    def pingpong(self):</div><div class="line">        self.ping()</div><div class="line">        super().ping()</div><div class="line">        self.pong()</div><div class="line">        super().pong()</div><div class="line">        C.pong()</div><div class="line"></div><div class="line">d = D()</div><div class="line">print(d.pong())</div><div class="line">print(C.pong(d))</div><div class="line"></div><div class="line">print(D.__mro__)</div><div class="line"></div><div class="line">result:</div><div class="line">pong: &lt;__main__.D object at 0x1024a66d8&gt;</div><div class="line">PONG: &lt;__main__.D object at 0x1024a66d8&gt;</div><div class="line">(&lt;class '__main__.D'&gt;, &lt;class '__main__.B'&gt;, &lt;class '__main__.C'&gt;, &lt;class '__main__.A'&gt;, &lt;class 'object'&gt;)</div></pre></td></tr></table></figure>
+</p>
+<p>当在一个类上直接调用方法时，需要显式传入<code>self</code>。调用方法的顺序依据<code>MRO(__mro__)</code>采用<code>C3</code>算法</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"></div><div class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_mro</span><span class="params">(cls)</span>:</span></div><div class="line">    print(<span class="string">', '</span>.join(c.__name__ <span class="keyword">for</span> c <span class="keyword">in</span> cls.__mro__))</div><div class="line"></div><div class="line">print_mro(tkinter.Text)</div><div class="line"></div><div class="line">result:</div><div class="line">Text, Widget, BaseWidget, Misc, Pack, Place, Grid, XView, YView, object</div></pre></td></tr></table></figure>
+</p>
+<p>其搜索路径就是按着<code>Text, Widget, BaseWidget, Misc, Pack, Place, Grid, XView, YView, object</code>从左往右搜索</p>
+<p>对于多重继承来说，继承顺序决定了搜索顺序</p>
+<h3 id="真实的多重继承案例"><a href="#真实的多重继承案例" class="headerlink" title="真实的多重继承案例"></a>真实的多重继承案例</h3><p>适配器模式就使用了多重继承.<code>Python</code>中最常见的多重继承是<code>collection.abc</code>包。标准库<code>Tkinter GUI</code>使用了大量的多重继承</p>
+<p><figure class="highlight python"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">print_mro(tkinter.Toplevel)</div><div class="line">print_mro(tkinter.Widget)</div><div class="line">print_mro(tkinter.Button)</div><div class="line">print_mro(tkinter.Entry)</div><div class="line">print_mro(tkinter.Text)</div><div class="line"></div><div class="line">result:</div><div class="line">Toplevel, BaseWidget, Misc, Wm, object</div><div class="line">Widget, BaseWidget, Misc, Pack, Place, Grid, object</div><div class="line">Button, Widget, BaseWidget, Misc, Pack, Place, Grid, object</div><div class="line">Entry, Widget, BaseWidget, Misc, Pack, Place, Grid, XView, object</div><div class="line">Text, Widget, BaseWidget, Misc, Pack, Place, Grid, XView, YView, object</div></pre></td></tr></table></figure>
+</p>
+<h3 id="应对多重继承"><a href="#应对多重继承" class="headerlink" title="应对多重继承"></a>应对多重继承</h3><ol>
+<li><p>区分接口继承和实现继承</p>
+<ul>
+<li>接口继承创建子类型，实现<code>is-a</code>关系</li>
+<li>实现继承利于代码复用</li>
+</ul>
+</li>
+<li><p>使用<code>ABCs</code>来创造接口<br></p>
+</li>
+<li><p>使用<code>Mixin</code>来使代码复用</p>
+<p>如果一个类被设计成为多个不相关的类提供复用，那么请继承<code>Mixin</code>, <code>Mixin</code>不会定义新类型，只是封装方法以便复用.<code>Mixin</code>不该被实例化，任何实体类都不该仅仅只继承<code>Mixin</code>. 每个<code>Mixin</code>应该只提供一种单一特定的行为，实现几个紧密相关的方法</p>
+</li>
+<li><p>显式命名<code>Mixin</code></p>
+<p>没有标准的方式来说明一个类是<code>Mixin</code>，因此建议使用<code>Mixin</code>作为后缀</p>
+</li>
+<li><p><code>ABC</code>可能是<code>Mixin</code>，反过来不一定成立</p>
+</li>
+<li><p>不要继承多个实体类</p>
+</li>
+<li><p>提供集合类给用户</p>
+</li>
+<li><p>组合胜过继承</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Python/" rel="tag"># Python</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/30/深入理解Python之接口/" rel="next" title="深入理解Python之接口">
+                <i class="fa fa-chevron-left"></i> 深入理解Python之接口
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload_file/tmp.jpg"
+               alt="Binea" />
+          <p class="site-author-name" itemprop="name">Binea</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#继承内置类型的技巧"><span class="nav-number">1.</span> <span class="nav-text">继承内置类型的技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#多继承"><span class="nav-number">2.</span> <span class="nav-text">多继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#真实的多重继承案例"><span class="nav-number">3.</span> <span class="nav-text">真实的多重继承案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#应对多重继承"><span class="nav-number">4.</span> <span class="nav-text">应对多重继承</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid="></script>
+      <!-- UY END -->
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
