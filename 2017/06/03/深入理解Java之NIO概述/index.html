@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="算法," />
+  <meta name="keywords" content="Java NIO," />
 
 
 
@@ -84,16 +84,55 @@
 
 
 
-<meta name="description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
+<meta name="description" content="概述Java NIO是从Java1.4后加入的新型IO API。主要包括了以下的核心组件
+
+通道
+缓冲
+选择器
+
+Java NIO: 通道和缓冲标准的IO API中，使用字节流和字符流。在NIO中使用通道和缓冲。数据总是从通道读取然后放入缓冲或者从缓冲读取写入通道
+
+有几种通道和缓冲类型，以下是主要通道类型
+
+FileChannel(文件通道)
+DatagramChannel(数据报通道)
+S">
 <meta property="og:type" content="article">
-<meta property="og:title" content="SubSet">
-<meta property="og:url" content="http://xu6148152.github.io/2015/01/05/SubSet/index.html">
+<meta property="og:title" content="深入理解Java之NIO概述">
+<meta property="og:url" content="http://xu6148152.github.io/2017/06/03/深入理解Java之NIO概述/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
-<meta property="og:updated_time" content="2016-12-14T07:15:46.000Z">
+<meta property="og:description" content="概述Java NIO是从Java1.4后加入的新型IO API。主要包括了以下的核心组件
+
+通道
+缓冲
+选择器
+
+Java NIO: 通道和缓冲标准的IO API中，使用字节流和字符流。在NIO中使用通道和缓冲。数据总是从通道读取然后放入缓冲或者从缓冲读取写入通道
+
+有几种通道和缓冲类型，以下是主要通道类型
+
+FileChannel(文件通道)
+DatagramChannel(数据报通道)
+S">
+<meta property="og:image" content="http://xu6148152.github.io/./channel.png">
+<meta property="og:image" content="http://xu6148152.github.io/./selector.png">
+<meta property="og:updated_time" content="2017-06-03T09:16:37.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="SubSet">
-<meta name="twitter:description" content="Subset123456789101112131415public List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;gt; subsets(int[] set) &amp;#123;        Arrays.sort(set);        int totalNumber = 1 &amp;lt;&amp;lt; set.length;        List&amp;lt;List&amp;lt;Integer&amp;gt;&amp;">
+<meta name="twitter:title" content="深入理解Java之NIO概述">
+<meta name="twitter:description" content="概述Java NIO是从Java1.4后加入的新型IO API。主要包括了以下的核心组件
+
+通道
+缓冲
+选择器
+
+Java NIO: 通道和缓冲标准的IO API中，使用字节流和字符流。在NIO中使用通道和缓冲。数据总是从通道读取然后放入缓冲或者从缓冲读取写入通道
+
+有几种通道和缓冲类型，以下是主要通道类型
+
+FileChannel(文件通道)
+DatagramChannel(数据报通道)
+S">
+<meta name="twitter:image" content="http://xu6148152.github.io/./channel.png">
 
 
 
@@ -121,13 +160,13 @@
 
 
 
-  <link rel="canonical" href="http://xu6148152.github.io/2015/01/05/SubSet/"/>
+  <link rel="canonical" href="http://xu6148152.github.io/2017/06/03/深入理解Java之NIO概述/"/>
 
 
 
 
 
-  <title> SubSet | Blog </title>
+  <title> 深入理解Java之NIO概述 | Blog </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="">
@@ -240,7 +279,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2015/01/05/SubSet/">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/06/03/深入理解Java之NIO概述/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Binea">
@@ -264,7 +303,7 @@
             
             
               
-                SubSet
+                深入理解Java之NIO概述
               
             
           </h1>
@@ -279,8 +318,8 @@
               
                 <span class="post-meta-item-text">Veröffentlicht am</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-01-05T15:16:24+08:00">
-                2015-01-05
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-06-03T17:16:37+08:00">
+                2017-06-03
               </time>
             
 
@@ -315,7 +354,38 @@
       
 
       
-        <h3 id="Subset"><a href="#Subset" class="headerlink" title="Subset"></a>Subset</h3><p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public List&lt;List&lt;Integer&gt;&gt; subsets(int[] set) &#123;</div><div class="line">        Arrays.sort(set);</div><div class="line">        int totalNumber = 1 &lt;&lt; set.length;</div><div class="line">        List&lt;List&lt;Integer&gt;&gt; collection = new ArrayList&lt;List&lt;Integer&gt;&gt;(totalNumber);</div><div class="line">        for (int i=0; i&lt;totalNumber; i++) &#123;</div><div class="line">            List&lt;Integer&gt; subSet = new LinkedList&lt;Integer&gt;();</div><div class="line">            for (int j=0; j&lt;set.length; j++) &#123;</div><div class="line">                if ((i &amp; (1&lt;&lt;j)) != 0) &#123;</div><div class="line">                    subSet.add(set[j]);</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">            collection.add(subSet);</div><div class="line">        &#125;</div><div class="line">        return collection;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+        <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><code>Java</code> NIO是从<code>Java1.4</code>后加入的新型<code>IO API</code>。主要包括了以下的核心组件</p>
+<ul>
+<li>通道</li>
+<li>缓冲</li>
+<li>选择器</li>
+</ul>
+<h4 id="Java-NIO-通道和缓冲"><a href="#Java-NIO-通道和缓冲" class="headerlink" title="Java NIO: 通道和缓冲"></a>Java NIO: 通道和缓冲</h4><p>标准的<code>IO API</code>中，使用字节流和字符流。在<code>NIO</code>中使用通道和缓冲。数据总是从通道读取然后放入缓冲或者从缓冲读取写入通道</p>
+<p><img src="./channel.png" alt="channel"></p>
+<p>有几种通道和缓冲类型，以下是主要通道类型</p>
+<ul>
+<li><code>FileChannel</code>(文件通道)</li>
+<li><code>DatagramChannel</code>(数据报通道)</li>
+<li><code>SocketChannel</code>(套接字通道)</li>
+<li><code>ServerSocketChannel</code>(服务器套接字通道)</li>
+</ul>
+<p>这些通道覆盖了 <code>UDP+TCP</code>的网络<code>IO</code>以及文件<code>IO</code></p>
+<p>以下是和兴的缓冲实现</p>
+<ul>
+<li><code>ByteBuffer</code></li>
+<li><code>CharBuffer</code></li>
+<li><code>DoubleBuffer</code></li>
+<li><code>IntBuffer</code></li>
+<li><code>LongBuffer</code></li>
+<li><code>LongBuffer</code></li>
+<li><code>ShortBuffer</code></li>
+</ul>
+<p>这些缓冲结构覆盖了基本数据类型</p>
+<h4 id="Java-NIO-非阻塞IO"><a href="#Java-NIO-非阻塞IO" class="headerlink" title="Java NIO: 非阻塞IO"></a>Java NIO: 非阻塞<code>IO</code></h4><p><code>Java NIO</code>能够做到非阻塞<code>IO</code>。例如，一个线程能够从通道读取数据到缓冲。当通道读取数据到缓冲时，线程可以做其他事情。一旦数据读取完，线程能够继续执行它</p>
+<h4 id="Java-NIO-选择器"><a href="#Java-NIO-选择器" class="headerlink" title="Java NIO: 选择器"></a>Java NIO: 选择器</h4><p><code>Java NIO</code>包含了选择器的概念。选择器是一种对象，其能够监视多个通道的事件，因此单线程能够监控多通道的数据</p>
+<p>下图是一个线程使用选择器处理三个通道</p>
+<p><img src="./selector.png" alt="selector"></p>
+<p>为了使用选择器，首先需要将选择器注册到通道，然后调用<code>select()</code>方法。这个方法会阻塞直到这些通道产生了任意一个准备好的事件。一旦方法返回了，线程可以处理这些事件</p>
 
       
     </div>
@@ -339,7 +409,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/算法/" rel="tag"># 算法</a>
+            <a href="/tags/Java-NIO/" rel="tag"># Java NIO</a>
           
         </div>
       
@@ -348,15 +418,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2017/06/01/深入理解Python之继承/" rel="next" title="深入理解Python之继承">
+                <i class="fa fa-chevron-left"></i> 深入理解Python之继承
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2015/02/05/Dagger VS Dagger2/" rel="prev" title="Dagger VS Dagger2">
-                Dagger VS Dagger2 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -472,7 +542,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Subset"><span class="nav-number">1.</span> <span class="nav-text">Subset</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-NIO-通道和缓冲"><span class="nav-number">1.1.</span> <span class="nav-text">Java NIO: 通道和缓冲</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-NIO-非阻塞IO"><span class="nav-number">1.2.</span> <span class="nav-text">Java NIO: 非阻塞IO</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-NIO-选择器"><span class="nav-number">1.3.</span> <span class="nav-text">Java NIO: 选择器</span></a></li></ol></li></ol></div>
             
 
           </div>
