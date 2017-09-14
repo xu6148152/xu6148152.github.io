@@ -92,7 +92,7 @@
 <meta property="og:site_name" content="Blog">
 <meta property="og:description" content="Android开发者都知道启动Activity是使用startActivity()，那么它是怎样一个过程呢？
 启动流程startActivity123456789public void startActivity(Intent intent, @Nullable Bundle options) &amp;#123;        if (options != null) &amp;#123;">
-<meta property="og:updated_time" content="2017-09-06T16:11:26.000Z">
+<meta property="og:updated_time" content="2017-09-14T15:25:55.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="源码角度分析Activity启动">
 <meta name="twitter:description" content="Android开发者都知道启动Activity是使用startActivity()，那么它是怎样一个过程呢？
@@ -190,7 +190,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Home
+            Startseite
           </a>
         </li>
       
@@ -200,7 +200,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archives
+            Archiv
           </a>
         </li>
       
@@ -280,7 +280,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">Veröffentlicht am</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-07T00:11:26+08:00">
                 2017-09-07
@@ -405,6 +405,15 @@
 <li>之后通过<code>Instrumentation</code>开始执行生命周期的方法</li>
 <li>至此Acitivity的启动起来了。整个过程相当复杂。为了方便理解，中间省略了很多细节</li>
 </ul>
+<h3 id="对于onNewIntent的处理"><a href="#对于onNewIntent的处理" class="headerlink" title="对于onNewIntent的处理"></a>对于onNewIntent的处理</h3><p><code>onNewIntent</code>是<code>Activity</code>的一个回调方法，那么在什么情况下会调用呢？在<code>ActivityStack</code>中的<code>navigateUpToLocked</code>中的源码是这样的</p>
+<p><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (parent != <span class="keyword">null</span> &amp;&amp; foundParentInTask) &#123;</div><div class="line">            <span class="keyword">final</span> <span class="keyword">int</span> parentLaunchMode = parent.info.launchMode;</div><div class="line">            <span class="keyword">final</span> <span class="keyword">int</span> destIntentFlags = destIntent.getFlags();</div><div class="line">            <span class="keyword">if</span> (parentLaunchMode == ActivityInfo.LAUNCH_SINGLE_INSTANCE ||</div><div class="line">                    parentLaunchMode == ActivityInfo.LAUNCH_SINGLE_TASK ||</div><div class="line">                    parentLaunchMode == ActivityInfo.LAUNCH_SINGLE_TOP ||</div><div class="line">                    (destIntentFlags &amp; Intent.FLAG_ACTIVITY_CLEAR_TOP) != <span class="number">0</span>) &#123;</div><div class="line">                parent.deliverNewIntentLocked(srec.info.applicationInfo.uid, destIntent,</div><div class="line">                        srec.packageName);</div><div class="line">            &#125;</div><div class="line">            ...</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<ul>
+<li>可以看出条件是<ul>
+<li>当需要启动的<code>Activity</code>已存在，并且<code>launchMode</code>是 <code>SINGLE_TOP</code>(栈顶是相同的<code>Activity</code>)或者<code>SINGLE_INSTANCE</code>或者<code>SINGLE_TASK</code></li>
+</ul>
+</li>
+</ul>
 
       
     </div>
@@ -498,10 +507,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Table of Contents
+            Inhaltsverzeichnis
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
+            Übersicht
           </li>
         </ul>
       
@@ -519,8 +528,8 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">45</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-count">46</span>
+                <span class="site-state-item-name">Artikel</span>
               </a>
             </div>
           
@@ -530,8 +539,8 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">19</span>
-                <span class="site-state-item-name">tags</span>
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">Tags</span>
               </a>
             </div>
           
@@ -565,7 +574,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动流程"><span class="nav-number">1.</span> <span class="nav-text">启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivity"><span class="nav-number">1.1.</span> <span class="nav-text">startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivityForResult"><span class="nav-number">1.2.</span> <span class="nav-text">startActivityForResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Instrumentation-execStartActivity"><span class="nav-number">1.3.</span> <span class="nav-text">Instrumentation.execStartActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-startActivity"><span class="nav-number">1.4.</span> <span class="nav-text">ActivityManagerNative.startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-onTransact"><span class="nav-number">1.5.</span> <span class="nav-text">ActivityManagerNative.onTransact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerService"><span class="nav-number">1.6.</span> <span class="nav-text">ActivityManagerService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityMayWait"><span class="nav-number">1.7.</span> <span class="nav-text">ActivityStarter.startActivityMayWait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-startActivityLocked"><span class="nav-number">1.8.</span> <span class="nav-text">Activity.startActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityUnchecked"><span class="nav-number">1.9.</span> <span class="nav-text">ActivityStarter.startActivityUnchecked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-ensureActivitiesVisibleLocked"><span class="nav-number">1.10.</span> <span class="nav-text">ActivityStack.ensureActivitiesVisibleLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-makeVisibleAndRestartIfNeeded"><span class="nav-number">1.11.</span> <span class="nav-text">ActivityStack.makeVisibleAndRestartIfNeeded</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-startSpecificActivityLocked"><span class="nav-number">1.12.</span> <span class="nav-text">ActivityStackSupervisor.startSpecificActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-realStartActivityLocked"><span class="nav-number">1.13.</span> <span class="nav-text">ActivityStackSupervisor.realStartActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadProxy-scheduleLaunchActivity"><span class="nav-number">1.14.</span> <span class="nav-text">ApplicationThreadProxy.scheduleLaunchActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadNative"><span class="nav-number">1.15.</span> <span class="nav-text">ApplicationThreadNative</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityThread-performLaunchActivity"><span class="nav-number">1.16.</span> <span class="nav-text">ActivityThread.performLaunchActivity</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动流程"><span class="nav-number">1.</span> <span class="nav-text">启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivity"><span class="nav-number">1.1.</span> <span class="nav-text">startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivityForResult"><span class="nav-number">1.2.</span> <span class="nav-text">startActivityForResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Instrumentation-execStartActivity"><span class="nav-number">1.3.</span> <span class="nav-text">Instrumentation.execStartActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-startActivity"><span class="nav-number">1.4.</span> <span class="nav-text">ActivityManagerNative.startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-onTransact"><span class="nav-number">1.5.</span> <span class="nav-text">ActivityManagerNative.onTransact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerService"><span class="nav-number">1.6.</span> <span class="nav-text">ActivityManagerService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityMayWait"><span class="nav-number">1.7.</span> <span class="nav-text">ActivityStarter.startActivityMayWait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-startActivityLocked"><span class="nav-number">1.8.</span> <span class="nav-text">Activity.startActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityUnchecked"><span class="nav-number">1.9.</span> <span class="nav-text">ActivityStarter.startActivityUnchecked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-ensureActivitiesVisibleLocked"><span class="nav-number">1.10.</span> <span class="nav-text">ActivityStack.ensureActivitiesVisibleLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-makeVisibleAndRestartIfNeeded"><span class="nav-number">1.11.</span> <span class="nav-text">ActivityStack.makeVisibleAndRestartIfNeeded</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-startSpecificActivityLocked"><span class="nav-number">1.12.</span> <span class="nav-text">ActivityStackSupervisor.startSpecificActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-realStartActivityLocked"><span class="nav-number">1.13.</span> <span class="nav-text">ActivityStackSupervisor.realStartActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadProxy-scheduleLaunchActivity"><span class="nav-number">1.14.</span> <span class="nav-text">ApplicationThreadProxy.scheduleLaunchActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadNative"><span class="nav-number">1.15.</span> <span class="nav-text">ApplicationThreadNative</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityThread-performLaunchActivity"><span class="nav-number">1.16.</span> <span class="nav-text">ActivityThread.performLaunchActivity</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对于onNewIntent的处理"><span class="nav-number">2.</span> <span class="nav-text">对于onNewIntent的处理</span></a></li></ol></div>
             
 
           </div>
@@ -595,7 +604,7 @@
 
 
 <div class="powered-by">
-  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
