@@ -85,18 +85,23 @@
 
 
 <meta name="description" content="Android开发者都知道启动Activity是使用startActivity()，那么它是怎样一个过程呢？
-启动流程startActivity123456789public void startActivity(Intent intent, @Nullable Bundle options) &amp;#123;        if (options != null) &amp;#123;">
+启动流程startActivity两种方式，一种Activity自身方法,一种ContextImpl的方法
+ContextImpl.startActivity123456789101112131415161718@Overridepublic void startActivity(Inte">
 <meta property="og:type" content="article">
 <meta property="og:title" content="源码角度分析Activity启动">
 <meta property="og:url" content="http://xu6148152.github.io/2017/09/07/源码角度分析Activity启动/index.html">
 <meta property="og:site_name" content="Blog">
 <meta property="og:description" content="Android开发者都知道启动Activity是使用startActivity()，那么它是怎样一个过程呢？
-启动流程startActivity123456789public void startActivity(Intent intent, @Nullable Bundle options) &amp;#123;        if (options != null) &amp;#123;">
-<meta property="og:updated_time" content="2017-09-14T15:25:55.000Z">
+启动流程startActivity两种方式，一种Activity自身方法,一种ContextImpl的方法
+ContextImpl.startActivity123456789101112131415161718@Overridepublic void startActivity(Inte">
+<meta property="og:image" content="http://xu6148152.github.io/./activity_flow.png">
+<meta property="og:updated_time" content="2017-09-23T09:39:09.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="源码角度分析Activity启动">
 <meta name="twitter:description" content="Android开发者都知道启动Activity是使用startActivity()，那么它是怎样一个过程呢？
-启动流程startActivity123456789public void startActivity(Intent intent, @Nullable Bundle options) &amp;#123;        if (options != null) &amp;#123;">
+启动流程startActivity两种方式，一种Activity自身方法,一种ContextImpl的方法
+ContextImpl.startActivity123456789101112131415161718@Overridepublic void startActivity(Inte">
+<meta name="twitter:image" content="http://xu6148152.github.io/./activity_flow.png">
 
 
 
@@ -190,7 +195,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
             
-            Startseite
+            Home
           </a>
         </li>
       
@@ -200,7 +205,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
-            Archiv
+            Archives
           </a>
         </li>
       
@@ -280,7 +285,7 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Veröffentlicht am</span>
+                <span class="post-meta-item-text">Posted on</span>
               
               <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-09-07T00:11:26+08:00">
                 2017-09-07
@@ -319,7 +324,11 @@
 
       
         <p><code>Android</code>开发者都知道启动<code>Activity</code>是使用<code>startActivity()</code>，那么它是怎样一个过程呢？</p>
-<h3 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h3><h4 id="startActivity"><a href="#startActivity" class="headerlink" title="startActivity"></a>startActivity</h4><p><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startActivity</span><span class="params">(Intent intent, @Nullable Bundle options)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (options != <span class="keyword">null</span>) &#123;</div><div class="line">            startActivityForResult(intent, -<span class="number">1</span>, options);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// Note we want to go through this call for compatibility with</span></div><div class="line">            <span class="comment">// applications that may have overridden the method.</span></div><div class="line">            startActivityForResult(intent, -<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<h3 id="启动流程"><a href="#启动流程" class="headerlink" title="启动流程"></a>启动流程</h3><h4 id="startActivity"><a href="#startActivity" class="headerlink" title="startActivity"></a>startActivity</h4><p>两种方式，一种<code>Activity</code>自身方法,一种<code>ContextImpl</code>的方法</p>
+<h5 id="ContextImpl-startActivity"><a href="#ContextImpl-startActivity" class="headerlink" title="ContextImpl.startActivity"></a>ContextImpl.startActivity</h5><p><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startActivity</span><span class="params">(Intent intent, Bundle options)</span> </span>&#123;</div><div class="line">    warnIfCallingFromSystemProcess();</div><div class="line"></div><div class="line">    <span class="comment">// Calling start activity from outside an activity without FLAG_ACTIVITY_NEW_TASK is</span></div><div class="line">    <span class="comment">// generally not allowed, except if the caller specifies the task id the activity should</span></div><div class="line">    <span class="comment">// be launched in.</span></div><div class="line">    <span class="keyword">if</span> ((intent.getFlags()&amp;Intent.FLAG_ACTIVITY_NEW_TASK) == <span class="number">0</span></div><div class="line">            &amp;&amp; options != <span class="keyword">null</span> &amp;&amp; ActivityOptions.fromBundle(options).getLaunchTaskId() == -<span class="number">1</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> AndroidRuntimeException(</div><div class="line">                <span class="string">"Calling startActivity() from outside of an Activity "</span></div><div class="line">                + <span class="string">" context requires the FLAG_ACTIVITY_NEW_TASK flag."</span></div><div class="line">                + <span class="string">" Is this really what you want?"</span>);</div><div class="line">    &#125;</div><div class="line">    mMainThread.getInstrumentation().execStartActivity(</div><div class="line">            getOuterContext(), mMainThread.getApplicationThread(), <span class="keyword">null</span>,</div><div class="line">            (Activity) <span class="keyword">null</span>, intent, -<span class="number">1</span>, options);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>如果从<code>Activity</code>外部启动，并且没有设置<code>FLAG_ACTIVITY_NEW_TASK</code>，那么会发生<code>crash</code>。<br>最终调用<code>Instrumentation.execStartActivity</code></p>
+<h5 id="Activity-startActivity"><a href="#Activity-startActivity" class="headerlink" title="Activity.startActivity"></a>Activity.startActivity</h5><p><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startActivity</span><span class="params">(Intent intent, @Nullable Bundle options)</span> </span>&#123;</div><div class="line">        <span class="keyword">if</span> (options != <span class="keyword">null</span>) &#123;</div><div class="line">            startActivityForResult(intent, -<span class="number">1</span>, options);</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="comment">// Note we want to go through this call for compatibility with</span></div><div class="line">            <span class="comment">// applications that may have overridden the method.</span></div><div class="line">            startActivityForResult(intent, -<span class="number">1</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
 </p>
 <p>从代码中能看出，最终还是调用的<code>startActivityForResult</code></p>
 <h4 id="startActivityForResult"><a href="#startActivityForResult" class="headerlink" title="startActivityForResult"></a>startActivityForResult</h4><p><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startActivityForResult</span><span class="params">(@RequiresPermission Intent intent, <span class="keyword">int</span> requestCode,</span></span></div><div class="line">            @Nullable Bundle options) &#123;</div><div class="line">        <span class="keyword">if</span> (mParent == <span class="keyword">null</span>) &#123;</div><div class="line">            options = transferSpringboardActivityOptions(options);</div><div class="line">            Instrumentation.ActivityResult ar =</div><div class="line">                mInstrumentation.execStartActivity(</div><div class="line">                    <span class="keyword">this</span>, mMainThread.getApplicationThread(), mToken, <span class="keyword">this</span>,</div><div class="line">                    intent, requestCode, options);</div><div class="line">            <span class="keyword">if</span> (ar != <span class="keyword">null</span>) &#123;</div><div class="line">                mMainThread.sendActivityResult(</div><div class="line">                    mToken, mEmbeddedID, requestCode, ar.getResultCode(),</div><div class="line">                    ar.getResultData());</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">if</span> (requestCode &gt;= <span class="number">0</span>) &#123;</div><div class="line">                <span class="comment">// If this start is requesting a result, we can avoid making</span></div><div class="line">                <span class="comment">// the activity visible until the result is received.  Setting</span></div><div class="line">                <span class="comment">// this code during onCreate(Bundle savedInstanceState) or onResume() will keep the</span></div><div class="line">                <span class="comment">// activity hidden during this time, to avoid flickering.</span></div><div class="line">                <span class="comment">// This can only be done when a result is requested because</span></div><div class="line">                <span class="comment">// that guarantees we will get information back when the</span></div><div class="line">                <span class="comment">// activity is finished, no matter what happens to it.</span></div><div class="line">                mStartedActivity = <span class="keyword">true</span>;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            cancelInputsAndStartExitTransition(options);</div><div class="line">            <span class="comment">// TODO Consider clearing/flushing other event sources and events for child windows.</span></div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            <span class="keyword">if</span> (options != <span class="keyword">null</span>) &#123;</div><div class="line">                mParent.startActivityFromChild(<span class="keyword">this</span>, intent, requestCode, options);</div><div class="line">            &#125; <span class="keyword">else</span> &#123;</div><div class="line">                <span class="comment">// Note we want to go through this method for compatibility with</span></div><div class="line">                <span class="comment">// existing applications that may have overridden it.</span></div><div class="line">                mParent.startActivityFromChild(<span class="keyword">this</span>, intent, requestCode);</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
@@ -414,6 +423,7 @@
 </ul>
 </li>
 </ul>
+<h3 id="Activity启动时序图"><a href="#Activity启动时序图" class="headerlink" title="Activity启动时序图"></a>Activity启动时序图</h3><p><img src="./activity_flow.png" alt="activity_flow"></p>
 
       
     </div>
@@ -507,10 +517,10 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
-            Inhaltsverzeichnis
+            Table of Contents
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Übersicht
+            Overview
           </li>
         </ul>
       
@@ -529,7 +539,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/archives">
                 <span class="site-state-item-count">47</span>
-                <span class="site-state-item-name">Artikel</span>
+                <span class="site-state-item-name">posts</span>
               </a>
             </div>
           
@@ -540,7 +550,7 @@
             <div class="site-state-item site-state-tags">
               <a href="/tags">
                 <span class="site-state-item-count">20</span>
-                <span class="site-state-item-name">Tags</span>
+                <span class="site-state-item-name">tags</span>
               </a>
             </div>
           
@@ -574,7 +584,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动流程"><span class="nav-number">1.</span> <span class="nav-text">启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivity"><span class="nav-number">1.1.</span> <span class="nav-text">startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivityForResult"><span class="nav-number">1.2.</span> <span class="nav-text">startActivityForResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Instrumentation-execStartActivity"><span class="nav-number">1.3.</span> <span class="nav-text">Instrumentation.execStartActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-startActivity"><span class="nav-number">1.4.</span> <span class="nav-text">ActivityManagerNative.startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-onTransact"><span class="nav-number">1.5.</span> <span class="nav-text">ActivityManagerNative.onTransact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerService"><span class="nav-number">1.6.</span> <span class="nav-text">ActivityManagerService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityMayWait"><span class="nav-number">1.7.</span> <span class="nav-text">ActivityStarter.startActivityMayWait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-startActivityLocked"><span class="nav-number">1.8.</span> <span class="nav-text">Activity.startActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityUnchecked"><span class="nav-number">1.9.</span> <span class="nav-text">ActivityStarter.startActivityUnchecked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-ensureActivitiesVisibleLocked"><span class="nav-number">1.10.</span> <span class="nav-text">ActivityStack.ensureActivitiesVisibleLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-makeVisibleAndRestartIfNeeded"><span class="nav-number">1.11.</span> <span class="nav-text">ActivityStack.makeVisibleAndRestartIfNeeded</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-startSpecificActivityLocked"><span class="nav-number">1.12.</span> <span class="nav-text">ActivityStackSupervisor.startSpecificActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-realStartActivityLocked"><span class="nav-number">1.13.</span> <span class="nav-text">ActivityStackSupervisor.realStartActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadProxy-scheduleLaunchActivity"><span class="nav-number">1.14.</span> <span class="nav-text">ApplicationThreadProxy.scheduleLaunchActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadNative"><span class="nav-number">1.15.</span> <span class="nav-text">ApplicationThreadNative</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityThread-performLaunchActivity"><span class="nav-number">1.16.</span> <span class="nav-text">ActivityThread.performLaunchActivity</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对于onNewIntent的处理"><span class="nav-number">2.</span> <span class="nav-text">对于onNewIntent的处理</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#启动流程"><span class="nav-number">1.</span> <span class="nav-text">启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivity"><span class="nav-number">1.1.</span> <span class="nav-text">startActivity</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ContextImpl-startActivity"><span class="nav-number">1.1.1.</span> <span class="nav-text">ContextImpl.startActivity</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Activity-startActivity"><span class="nav-number">1.1.2.</span> <span class="nav-text">Activity.startActivity</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#startActivityForResult"><span class="nav-number">1.2.</span> <span class="nav-text">startActivityForResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Instrumentation-execStartActivity"><span class="nav-number">1.3.</span> <span class="nav-text">Instrumentation.execStartActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-startActivity"><span class="nav-number">1.4.</span> <span class="nav-text">ActivityManagerNative.startActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerNative-onTransact"><span class="nav-number">1.5.</span> <span class="nav-text">ActivityManagerNative.onTransact</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManagerService"><span class="nav-number">1.6.</span> <span class="nav-text">ActivityManagerService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityMayWait"><span class="nav-number">1.7.</span> <span class="nav-text">ActivityStarter.startActivityMayWait</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Activity-startActivityLocked"><span class="nav-number">1.8.</span> <span class="nav-text">Activity.startActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStarter-startActivityUnchecked"><span class="nav-number">1.9.</span> <span class="nav-text">ActivityStarter.startActivityUnchecked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-ensureActivitiesVisibleLocked"><span class="nav-number">1.10.</span> <span class="nav-text">ActivityStack.ensureActivitiesVisibleLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStack-makeVisibleAndRestartIfNeeded"><span class="nav-number">1.11.</span> <span class="nav-text">ActivityStack.makeVisibleAndRestartIfNeeded</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-startSpecificActivityLocked"><span class="nav-number">1.12.</span> <span class="nav-text">ActivityStackSupervisor.startSpecificActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityStackSupervisor-realStartActivityLocked"><span class="nav-number">1.13.</span> <span class="nav-text">ActivityStackSupervisor.realStartActivityLocked</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadProxy-scheduleLaunchActivity"><span class="nav-number">1.14.</span> <span class="nav-text">ApplicationThreadProxy.scheduleLaunchActivity</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ApplicationThreadNative"><span class="nav-number">1.15.</span> <span class="nav-text">ApplicationThreadNative</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityThread-performLaunchActivity"><span class="nav-number">1.16.</span> <span class="nav-text">ActivityThread.performLaunchActivity</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对于onNewIntent的处理"><span class="nav-number">2.</span> <span class="nav-text">对于onNewIntent的处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Activity启动时序图"><span class="nav-number">3.</span> <span class="nav-text">Activity启动时序图</span></a></li></ol></div>
             
 
           </div>
@@ -604,7 +614,7 @@
 
 
 <div class="powered-by">
-  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
 </div>
 
 <div class="theme-info">
