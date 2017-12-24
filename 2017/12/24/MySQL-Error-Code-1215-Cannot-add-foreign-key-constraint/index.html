@@ -96,7 +96,7 @@
 我们在设计多表关联时，经常会需要用到外键，也就是当前表引用其他表的主键。但有时候哪里写的不对，MySQL会提示1215错误。但我们并不知道是什么原因导致的错误。
 我们来分析常见的情况:
 表或者约束引用的索引不存在(通常出现在载入存储文件)如何诊断: 运行SHOW TABLE或者SH">
-<meta property="og:updated_time" content="2017-12-24T09:39:00.000Z">
+<meta property="og:updated_time" content="2017-12-24T10:49:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MySQL Error Code 1215: 'Cannot add foreign key constraint'">
 <meta name="twitter:description" content="本文主要研究一下MySql 1215的错误: “Cannot add foreign key constraint”
@@ -380,6 +380,7 @@
 <p><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"># wrong; the constraint action uses SET DEFAULT</div><div class="line">CREATE TABLE child (</div><div class="line">  id INT(10) NOT NULL PRIMARY KEY,</div><div class="line">  parent_id INT(10) NOT NULL,</div><div class="line">  FOREIGN KEY (parent_id) REFERENCES parent(id) ON UPDATE SET DEFAULT</div><div class="line">) ENGINE INNODB;        </div><div class="line"> </div><div class="line"># correct; there&apos;s no alternative to SET DEFAULT, removing or picking other is the corrective measure</div><div class="line">CREATE TABLE child (</div><div class="line">  id INT(10) NOT NULL PRIMARY KEY,</div><div class="line">  parent_id INT(10) NOT NULL,</div><div class="line">  FOREIGN KEY (parent_id) REFERENCES parent(id) </div><div class="line">) ENGINE INNODB;</div></pre></td></tr></table></figure>
 </p>
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>通过以上的这些诊断基本上能够解决1215这个错误。关于外键的更多信息可以参考<a href="https://dev.mysql.com/doc/refman/5.7/en/innodb-foreign-key-constraints.html" target="_blank" rel="external">Mysql外键约束</a></p>
+<p>参考: <a href="https://www.percona.com/blog/2017/04/06/dealing-mysql-error-code-1215-cannot-add-foreign-key-constraint/" target="_blank" rel="external">Dealing with MySQL Error Code 1215: “Cannot add foreign key constraint”</a></p>
 
       
     </div>
