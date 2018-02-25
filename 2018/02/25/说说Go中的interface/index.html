@@ -1,0 +1,670 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Golang," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前言面向对象语言都会有接口这个概念。go中的接口就是interface。它跟很多别的面向对象的接口很不一样。如java的接口需要使用implement来实现接口
+interface定义12345678910111213141516type I interface&amp;#123;    Get() string    Set(string)&amp;#125;type S struct&amp;#123;    va">
+<meta property="og:type" content="article">
+<meta property="og:title" content="说说Go中的interface">
+<meta property="og:url" content="http://xu6148152.github.io/2018/02/25/说说Go中的interface/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="前言面向对象语言都会有接口这个概念。go中的接口就是interface。它跟很多别的面向对象的接口很不一样。如java的接口需要使用implement来实现接口
+interface定义12345678910111213141516type I interface&amp;#123;    Get() string    Set(string)&amp;#125;type S struct&amp;#123;    va">
+<meta property="og:updated_time" content="2018-02-25T09:01:30.543Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="说说Go中的interface">
+<meta name="twitter:description" content="前言面向对象语言都会有接口这个概念。go中的接口就是interface。它跟很多别的面向对象的接口很不一样。如java的接口需要使用implement来实现接口
+interface定义12345678910111213141516type I interface&amp;#123;    Get() string    Set(string)&amp;#125;type S struct&amp;#123;    va">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://xu6148152.github.io/2018/02/25/说说Go中的interface/"/>
+
+
+
+
+
+  <title> 说说Go中的interface | Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle"></p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Startseite
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archiv
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2018/02/25/说说Go中的interface/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Binea">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/upload_file/tmp.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                说说Go中的interface
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Veröffentlicht am</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-02-25T17:01:30+08:00">
+                2018-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h4 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h4><p>面向对象语言都会有接口这个概念。<code>go</code>中的接口就是<code>interface</code>。它跟很多别的面向对象的接口很不一样。如<code>java</code>的接口需要使用<code>implement</code>来实现接口</p>
+<h3 id="interface定义"><a href="#interface定义" class="headerlink" title="interface定义"></a>interface定义</h3><p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> I <span class="keyword">interface</span>&#123;</div><div class="line">    Get() <span class="keyword">string</span></div><div class="line">    Set(<span class="keyword">string</span>)</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> S <span class="keyword">struct</span>&#123;</div><div class="line">    val <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s S)</span> <span class="title">Get</span><span class="params">()</span> <span class="title">string</span></span>&#123;</div><div class="line">    <span class="keyword">return</span> s.val</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *S)</span> <span class="title">Set</span><span class="params">(val <span class="keyword">string</span>)</span></span> &#123;</div><div class="line">    s.val = val</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>上述代码就定义了一个<code>go</code>的接口，包含了一个方法。当然也可以不包含方法。<code>go</code>的<code>interface</code>是一种具有一组方法的类型。如果一个类型实现了一个<code>interface</code>的所有方法，我们就说该类型实现了该接口。其实<code>go</code>中所有的类型都实现了<code>empty interface</code>。<code>go</code>不需要使用关键字来实现<code>interface</code>,只需要实现<code>interface</code>包含的方法即可。上述代码<code>struct S</code>实现了<code>interface I</code></p>
+<h3 id="interface多态"><a href="#interface多态" class="headerlink" title="interface多态"></a>interface多态</h3><p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">f</span><span class="params">(i I)</span></span> &#123;</div><div class="line">    i.Set(<span class="number">10</span>)</div><div class="line">    fmt.Println(i.Get())</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</div><div class="line">    s := S&#123;&#125;</div><div class="line">    f(&amp;s)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p><code>interface</code>的一个重要用途就是体现在函数的参数上。函数的参数如果是<code>interface</code>，那么可以传入任意实现了该<code>interface</code>的类型。这就是多态</p>
+<h3 id="判断interface类型"><a href="#判断interface类型" class="headerlink" title="判断interface类型"></a>判断<code>interface</code>类型</h3><p><code>go</code>可以使用<code>value, ok := em.(T)</code>来检查类型</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> t, ok := i.(*S); ok &#123;</div><div class="line">    fmt.Println(<span class="string">"s implements I"</span>, t)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>上述代码用来检查<code>i</code>是否是<code>*S</code>类型，如果是，那么<code>ok</code>是<code>true</code>。如果需要区分多种类型那么可以使用<code>switch</code></p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">switch</span> t := i.(<span class="keyword">type</span>) &#123;</div><div class="line">	<span class="keyword">case</span> *T:</div><div class="line">		fmt.Println(<span class="string">"i store *T"</span>, t)</div><div class="line">	<span class="keyword">case</span> *S:</div><div class="line">		fmt.Println(<span class="string">"i store *S"</span>, t)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<h3 id="empty-interface"><a href="#empty-interface" class="headerlink" title="empty interface"></a>empty interface</h3><p>如果定义一个函数，其参数是<code>empty interface</code>。那么这个函数可以接受任何类型作为它的参数</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">doSomething</span><span class="params">(v <span class="keyword">interface</span>&#123;&#125;)</span></span>&#123;&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>运行时<code>v</code>并不是任意类型，<code>v</code>只是一个<code>interface</code>。之所以可以接受任何类型是<code>go</code>执行时传递到函数的任何类型都被自动转换成<code>interface{}</code>。至于运行中是如何转换的，可以<a href="https://research.swtch.com/interfaces" target="_blank" rel="external">参考</a>。<code>interface{}</code>类型的<code>slice</code>是无法接受任何类型的</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">printAll</span><span class="params">(vals []<span class="keyword">interface</span>&#123;&#125;)</span></span> &#123;</div><div class="line">    <span class="keyword">for</span> _, val := <span class="keyword">range</span> vals &#123;</div><div class="line">        fmt.Println(val)</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">testInterfaceSlice</span><span class="params">()</span></span> &#123;</div><div class="line">	vals := []<span class="keyword">string</span>&#123;<span class="string">"stanley"</span>, <span class="string">"david"</span>, <span class="string">"oscar"</span>&#125;</div><div class="line">	printAll(vals)</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>上述代码执行会出错，因为<code>go</code>不会为<code>interface{}</code>的slice做自动转换。至于为什么，可以<a href="https://github.com/golang/go/wiki/InterfaceSlice" target="_blank" rel="external">参考</a></p>
+<blockquote>
+<p><code>interface{}</code> 会占用两个字长的存储空间，一个是自身的<code>methods</code>数据，一个是指向其存储值的指针，也就是<code>interface</code>变量存储的值，因而<code>slice[]interface{}</code>其长度是固定的N<em>2, 但是[]T的长度是N</em>sizeof(T)，两种 slice 实际存储值的大小是有区别的。</p>
+</blockquote>
+<p>虽然<code>go</code>不能帮我们自动转换，但我们可以手动转换</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> dataSlice []<span class="keyword">int</span> = foo()</div><div class="line"><span class="keyword">var</span> interfaceSlice []<span class="keyword">interface</span>&#123;&#125; = <span class="built_in">make</span>([]<span class="keyword">interface</span>&#123;&#125;, <span class="built_in">len</span>(dataSlice))</div><div class="line"><span class="keyword">for</span> i, d := <span class="keyword">range</span> dataSlice &#123;</div><div class="line">	interfaceSlice[i] = d</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<h3 id="interface-receiver"><a href="#interface-receiver" class="headerlink" title="interface receiver"></a>interface receiver</h3><p><code>interface</code>定义时并没有严格规定实现者的方法<code>receiver</code>是个<code>value receiver</code>或者<code>pointer receiver</code>。上述代码<code>S</code>的<code>Set Receiver</code>是<code>pointer</code>，也就是实现<code>I</code>的两个方法的<code>receiver</code>一个是<code>value</code>一个是<code>pointer</code>。如果使用<code>f(s)</code>，那么传递给<code>f</code>是<code>s</code>的一个拷贝。<code>go</code>中的函数都是按值传递</p>
+<p>如果是按<code>pointer</code>调用,<code>go</code>会自动进行转换，因为有了指针，那么总是能够得到指针指向的值，如果是值调用，那么无法得知原始值是什么</p>
+<p><figure class="highlight go"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">type</span> Animal <span class="keyword">interface</span> &#123;</div><div class="line">	Speak() <span class="keyword">string</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Dog <span class="keyword">struct</span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(d Dog)</span> <span class="title">Speak</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">"wangwang!"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Cat <span class="keyword">struct</span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c Cat)</span> <span class="title">Speak</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">"miao"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Pig <span class="keyword">struct</span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pig)</span> <span class="title">Speak</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">"keng"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">type</span> Programmer <span class="keyword">struct</span>&#123;&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Programmer)</span> <span class="title">Speak</span><span class="params">()</span> <span class="title">string</span></span> &#123;</div><div class="line">	<span class="keyword">return</span> <span class="string">"Hello, world"</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">func</span> <span class="title">testAnimal</span><span class="params">()</span></span> &#123;</div><div class="line">	animals := []Animal&#123;Dog&#123;&#125;, Cat&#123;&#125;, &amp;Pig&#123;&#125;, Programmer&#123;&#125;&#125;</div><div class="line">	<span class="keyword">for</span> _, animal := <span class="keyword">range</span> animals &#123;</div><div class="line">		fmt.Println(animal.Speak())</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+</p>
+<p>上述代码<code>Pig</code>使用的是指针，如果使用值会无法运行。按值传递，函数内部对于值的任何改变都不会影响到原始值</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Golang/" rel="tag"># Golang</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/01/SpringBoot启动流程/" rel="next" title="SpringBoot启动流程">
+                <i class="fa fa-chevron-left"></i> SpringBoot启动流程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+          
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Inhaltsverzeichnis
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Übersicht
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/upload_file/tmp.jpg"
+               alt="Binea" />
+          <p class="site-author-name" itemprop="name">Binea</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">57</span>
+                <span class="site-state-item-name">Artikel</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-name">Tags</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface定义"><span class="nav-number"></span> <span class="nav-text">interface定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface多态"><span class="nav-number"></span> <span class="nav-text">interface多态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#判断interface类型"><span class="nav-number"></span> <span class="nav-text">判断interface类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#empty-interface"><span class="nav-number"></span> <span class="nav-text">empty interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface-receiver"><span class="nav-number"></span> <span class="nav-text">interface receiver</span></a></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+
+
+<div class="powered-by">
+  Erstellt mit  <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+      <!-- UY BEGIN -->
+      <script type="text/javascript" src="http://v2.uyan.cc/code/uyan.js?uid="></script>
+      <!-- UY END -->
+  
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
