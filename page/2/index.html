@@ -168,6 +168,146 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/12/17/springcloud%E4%B9%8Beureka%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/12/17/springcloud%E4%B9%8Beureka%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">springcloud之eureka源码分析</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-12-17 17:06:56" itemprop="dateCreated datePublished" datetime="2017-12-17T17:06:56+08:00">2017-12-17</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="Eureka是什么？"><a href="#Eureka是什么？" class="headerlink" title="Eureka是什么？"></a>Eureka是什么？</h3><blockquote>
+<p>Eureka is a REST (Representational State Transfer) based service that is primarily used in the AWS cloud for locating services for the purpose of load balancing and failover of middle-tier servers. We call this service, the Eureka Server. Eureka also comes with a Java-based client component,the Eureka Client, which makes interactions with the service much easier. The client also has a built-in load balancer that does basic round-robin load balancing. At Netflix, a much more sophisticated load balancer wraps Eureka to provide weighted load balancing based on several factors like traffic, resource usage, error conditions etc to provide superior resiliency.</p>
+</blockquote>
+<p>Eureka是服务注册和发现的开源框架</p>
+<h3 id="Eureka的优势"><a href="#Eureka的优势" class="headerlink" title="Eureka的优势"></a>Eureka的优势</h3><ul>
+<li>提供了完整的服务注册和服务查找功能</li>
+<li>SpringBoot的紧密结合</li>
+</ul>
+<h3 id="Eureka架构"><a href="#Eureka架构" class="headerlink" title="Eureka架构"></a>Eureka架构</h3><p><img data-src="/./eureka_architecture.png" alt="eureka_architecture"></p>
+<p>eureka的基本架构由三个角色组成:</p>
+<ol>
+<li><p>Eureka Server</p>
+<ul>
+<li>提供服务注册和发现</li>
+</ul>
+</li>
+<li><p>Service Provider</p>
+<ul>
+<li>服务提供方</li>
+<li>将自身服务注册到Eureka,从而使服务消费方能够找到</li>
+</ul>
+</li>
+<li><p>Service Consumer</p>
+<ul>
+<li>服务消费方</li>
+<li>从Eureka获取注册服务列表, 从而能够消费服务</li>
+</ul>
+</li>
+</ol>
+<p><img data-src="/./architecture-detail.png" alt="architecture-detail"></p>
+<ul>
+<li>ServiceProvider会向Eureka Server做Register(服务注册)、Renewal(服务续约)、Cancellation(服务下线)等操作</li>
+<li>Eureka Server之间会做注册服务的同步，从而保证状态的同一</li>
+<li>Service Consumer会向Eureka Server获取服务列表，并消费服务</li>
+</ul>
+<h4 id="服务注册"><a href="#服务注册" class="headerlink" title="服务注册"></a>服务注册</h4><p>我们Application使用@EnableDiscoveryClient来进行注册，并且在application.properties中指定服务注册中心的位置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Documented</span></span><br><span class="line"><span class="meta">@Inherited</span></span><br><span class="line"><span class="meta">@Import(EnableDiscoveryClientImportSelector.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> EnableDiscoveryClient &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * If true, the ServiceRegistry will automatically register the local server.</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="type">boolean</span> <span class="title function_">autoRegister</span><span class="params">()</span> <span class="keyword">default</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>该注解用来开启DiscoveryClient实例</p>
+<p><img data-src="/./eureka_uml_01.png" alt="eureka_uml_01"></p>
+<p>从上图中可以看出服务发现的结构图，左侧是netflix的框架实现部分。</p>
+<h5 id="服务列表"><a href="#服务列表" class="headerlink" title="服务列表"></a>服务列表</h5><p>我们先找到eureka server url列表配置</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Get the list of all eureka service urls from properties file for the eureka client to talk to.</span></span><br><span class="line"><span class="comment">    *</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> clientConfig the clientConfig to use</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> instanceZone The zone in which the client resides</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@param</span> preferSameZone true if we have to prefer the same zone as the client, false otherwise</span></span><br><span class="line"><span class="comment">    * <span class="doctag">@return</span> an (ordered) map of zone -&gt; list of urls mappings, with the preferred zone first in iteration order</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> Map&lt;String, List&lt;String&gt;&gt; <span class="title function_">getServiceUrlsMapFromConfig</span><span class="params">(EurekaClientConfig clientConfig, String instanceZone, <span class="type">boolean</span> preferSameZone)</span> &#123;</span><br><span class="line">    Map&lt;String, List&lt;String&gt;&gt; orderedUrls = <span class="keyword">new</span> <span class="title class_">LinkedHashMap</span>&lt;&gt;();</span><br><span class="line">    <span class="type">String</span> <span class="variable">region</span> <span class="operator">=</span> getRegion(clientConfig);</span><br><span class="line">    String[] availZones = clientConfig.getAvailabilityZones(clientConfig.getRegion());</span><br><span class="line">    <span class="keyword">if</span> (availZones == <span class="literal">null</span> || availZones.length == <span class="number">0</span>) &#123;</span><br><span class="line">        availZones = <span class="keyword">new</span> <span class="title class_">String</span>[<span class="number">1</span>];</span><br><span class="line">        availZones[<span class="number">0</span>] = DEFAULT_ZONE;</span><br><span class="line">    &#125;</span><br><span class="line">    logger.debug(<span class="string">&quot;The availability zone for the given region &#123;&#125; are &#123;&#125;&quot;</span>, region, availZones);</span><br><span class="line">    <span class="type">int</span> <span class="variable">myZoneOffset</span> <span class="operator">=</span> getZoneOffset(instanceZone, preferSameZone, availZones);</span><br><span class="line"></span><br><span class="line">    <span class="type">String</span> <span class="variable">zone</span> <span class="operator">=</span> availZones[myZoneOffset];</span><br><span class="line">    List&lt;String&gt; serviceUrls = clientConfig.getEurekaServerServiceUrls(zone);</span><br><span class="line">    <span class="keyword">if</span> (serviceUrls != <span class="literal">null</span>) &#123;</span><br><span class="line">        orderedUrls.put(zone, serviceUrls);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">int</span> <span class="variable">currentOffset</span> <span class="operator">=</span> myZoneOffset == (availZones.length - <span class="number">1</span>) ? <span class="number">0</span> : (myZoneOffset + <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">while</span> (currentOffset != myZoneOffset) &#123;</span><br><span class="line">        zone = availZones[currentOffset];</span><br><span class="line">        serviceUrls = clientConfig.getEurekaServerServiceUrls(zone);</span><br><span class="line">        <span class="keyword">if</span> (serviceUrls != <span class="literal">null</span>) &#123;</span><br><span class="line">            orderedUrls.put(zone, serviceUrls);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (currentOffset == (availZones.length - <span class="number">1</span>)) &#123;</span><br><span class="line">            currentOffset = <span class="number">0</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            currentOffset++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (orderedUrls.size() &lt; <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">IllegalArgumentException</span>(<span class="string">&quot;DiscoveryClient: invalid serviceUrl specified!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> orderedUrls;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过region获取zone，默认为default zone。根据zone获取service列表。</p>
+<p>默认使用defaultZone。也可以使用eureka.client.region来配置zone</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> List&lt;String&gt; <span class="title function_">getEurekaServerServiceUrls</span><span class="params">(String myZone)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">serviceUrls</span> <span class="operator">=</span> configInstance.getStringProperty(</span><br><span class="line">            namespace + CONFIG_EUREKA_SERVER_SERVICE_URL_PREFIX + <span class="string">&quot;.&quot;</span> + myZone, <span class="literal">null</span>).get();</span><br><span class="line">    <span class="keyword">if</span> (serviceUrls == <span class="literal">null</span> || serviceUrls.isEmpty()) &#123;</span><br><span class="line">        serviceUrls = configInstance.getStringProperty(</span><br><span class="line">                namespace + CONFIG_EUREKA_SERVER_SERVICE_URL_PREFIX + <span class="string">&quot;.default&quot;</span>, <span class="literal">null</span>).get();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (serviceUrls != <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> Arrays.asList(serviceUrls.split(<span class="string">&quot;,&quot;</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;String&gt;();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先从指定的zone获取服务列表，如果为空，获取默认服务列表</p>
+<h5 id="服务注册-1"><a href="#服务注册-1" class="headerlink" title="服务注册"></a>服务注册</h5><p>在DiscoveryClient的构造方法中可以找到各种初始化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">initScheduledTasks</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (clientConfig.shouldFetchRegistry()) &#123;</span><br><span class="line">        <span class="comment">// registry cache refresh timer</span></span><br><span class="line">        <span class="type">int</span> <span class="variable">registryFetchIntervalSeconds</span> <span class="operator">=</span> clientConfig.getRegistryFetchIntervalSeconds();</span><br><span class="line">        <span class="type">int</span> <span class="variable">expBackOffBound</span> <span class="operator">=</span> clientConfig.getCacheRefreshExecutorExponentialBackOffBound();</span><br><span class="line">        scheduler.schedule(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">TimedSupervisorTask</span>(</span><br><span class="line">                        <span class="string">&quot;cacheRefresh&quot;</span>,</span><br><span class="line">                        scheduler,</span><br><span class="line">                        cacheRefreshExecutor,</span><br><span class="line">                        registryFetchIntervalSeconds,</span><br><span class="line">                        TimeUnit.SECONDS,</span><br><span class="line">                        expBackOffBound,</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">CacheRefreshThread</span>()</span><br><span class="line">                ),</span><br><span class="line">                registryFetchIntervalSeconds, TimeUnit.SECONDS);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (clientConfig.shouldRegisterWithEureka()) &#123;</span><br><span class="line">        <span class="type">int</span> <span class="variable">renewalIntervalInSecs</span> <span class="operator">=</span> instanceInfo.getLeaseInfo().getRenewalIntervalInSecs();</span><br><span class="line">        <span class="type">int</span> <span class="variable">expBackOffBound</span> <span class="operator">=</span> clientConfig.getHeartbeatExecutorExponentialBackOffBound();</span><br><span class="line">        logger.info(<span class="string">&quot;Starting heartbeat executor: &quot;</span> + <span class="string">&quot;renew interval is: &#123;&#125;&quot;</span>, renewalIntervalInSecs);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Heartbeat timer</span></span><br><span class="line">        scheduler.schedule(</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">TimedSupervisorTask</span>(</span><br><span class="line">                        <span class="string">&quot;heartbeat&quot;</span>,</span><br><span class="line">                        scheduler,</span><br><span class="line">                        heartbeatExecutor,</span><br><span class="line">                        renewalIntervalInSecs,</span><br><span class="line">                        TimeUnit.SECONDS,</span><br><span class="line">                        expBackOffBound,</span><br><span class="line">                        <span class="keyword">new</span> <span class="title class_">HeartbeatThread</span>()</span><br><span class="line">                ),</span><br><span class="line">                renewalIntervalInSecs, TimeUnit.SECONDS);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// InstanceInfo replicator</span></span><br><span class="line">        instanceInfoReplicator = <span class="keyword">new</span> <span class="title class_">InstanceInfoReplicator</span>(</span><br><span class="line">                <span class="built_in">this</span>,</span><br><span class="line">                instanceInfo,</span><br><span class="line">                clientConfig.getInstanceInfoReplicationIntervalSeconds(),</span><br><span class="line">                <span class="number">2</span>); <span class="comment">// burstSize</span></span><br><span class="line"></span><br><span class="line">        statusChangeListener = <span class="keyword">new</span> <span class="title class_">ApplicationInfoManager</span>.StatusChangeListener() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> String <span class="title function_">getId</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="string">&quot;statusChangeListener&quot;</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">notify</span><span class="params">(StatusChangeEvent statusChangeEvent)</span> &#123;</span><br><span class="line">                <span class="keyword">if</span> (InstanceStatus.DOWN == statusChangeEvent.getStatus() ||</span><br><span class="line">                        InstanceStatus.DOWN == statusChangeEvent.getPreviousStatus()) &#123;</span><br><span class="line">                    <span class="comment">// log at warn level if DOWN was involved</span></span><br><span class="line">                    logger.warn(<span class="string">&quot;Saw local status change event &#123;&#125;&quot;</span>, statusChangeEvent);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    logger.info(<span class="string">&quot;Saw local status change event &#123;&#125;&quot;</span>, statusChangeEvent);</span><br><span class="line">                &#125;</span><br><span class="line">                instanceInfoReplicator.onDemandUpdate();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (clientConfig.shouldOnDemandUpdateStatusChange()) &#123;</span><br><span class="line">            applicationInfoManager.registerStatusChangeListener(statusChangeListener);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        instanceInfoReplicator.start(clientConfig.getInitialInstanceInfoReplicationIntervalSeconds());</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        logger.info(<span class="string">&quot;Not registering with Eureka server per configuration&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果需要获取注册信息,使用定时器刷新注册缓存。如果要注册服务，定时器定时发送心跳来续约。创建服务信息实例，其会执行定时任务</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">InstanceInfoReplicator</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        discoveryClient.refreshInstanceInfo();</span><br><span class="line"></span><br><span class="line">        <span class="type">Long</span> <span class="variable">dirtyTimestamp</span> <span class="operator">=</span> instanceInfo.isDirtyWithTime();</span><br><span class="line">        <span class="keyword">if</span> (dirtyTimestamp != <span class="literal">null</span>) &#123;</span><br><span class="line">            discoveryClient.register();</span><br><span class="line">            instanceInfo.unsetIsDirty(dirtyTimestamp);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable t) &#123;</span><br><span class="line">        logger.warn(<span class="string">&quot;There was a problem with the instance info replicator&quot;</span>, t);</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="type">Future</span> <span class="variable">next</span> <span class="operator">=</span> scheduler.schedule(<span class="built_in">this</span>, replicationIntervalSeconds, TimeUnit.SECONDS);</span><br><span class="line">        scheduledPeriodicRef.set(next);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>刷新实例信息。更新服务注册，如果注册时间过期，重新注册</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Register with the eureka service by making the appropriate REST call.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">register</span><span class="params">()</span> <span class="keyword">throws</span> Throwable &#123;</span><br><span class="line">    logger.info(PREFIX + <span class="string">&quot;&#123;&#125;: registering service...&quot;</span>, appPathIdentifier);</span><br><span class="line">    EurekaHttpResponse&lt;Void&gt; httpResponse;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        httpResponse = eurekaTransport.registrationClient.register(instanceInfo);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">        logger.warn(PREFIX + <span class="string">&quot;&#123;&#125; - registration failed &#123;&#125;&quot;</span>, appPathIdentifier, e.getMessage(), e);</span><br><span class="line">        <span class="keyword">throw</span> e;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> (logger.isInfoEnabled()) &#123;</span><br><span class="line">        logger.info(PREFIX + <span class="string">&quot;&#123;&#125; - registration status: &#123;&#125;&quot;</span>, appPathIdentifier, httpResponse.getStatusCode());</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> httpResponse.getStatusCode() == <span class="number">204</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用EurekaHttpClient注册</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> EurekaHttpResponse&lt;Void&gt; <span class="title function_">register</span><span class="params">(InstanceInfo info)</span> &#123;</span><br><span class="line">    <span class="type">String</span> <span class="variable">urlPath</span> <span class="operator">=</span> <span class="string">&quot;apps/&quot;</span> + info.getAppName();</span><br><span class="line">    <span class="type">ClientResponse</span> <span class="variable">response</span> <span class="operator">=</span> <span class="literal">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="type">Builder</span> <span class="variable">resourceBuilder</span> <span class="operator">=</span> jerseyClient.resource(serviceUrl).path(urlPath).getRequestBuilder();</span><br><span class="line">        addExtraHeaders(resourceBuilder);</span><br><span class="line">        response = resourceBuilder</span><br><span class="line">                .header(<span class="string">&quot;Accept-Encoding&quot;</span>, <span class="string">&quot;gzip&quot;</span>)</span><br><span class="line">                .type(MediaType.APPLICATION_JSON_TYPE)</span><br><span class="line">                .accept(MediaType.APPLICATION_JSON)</span><br><span class="line">                .post(ClientResponse.class, info);</span><br><span class="line">        <span class="keyword">return</span> anEurekaHttpResponse(response.getStatus()).headers(headersOf(response)).build();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (logger.isDebugEnabled()) &#123;</span><br><span class="line">            logger.debug(<span class="string">&quot;Jersey HTTP POST &#123;&#125;/&#123;&#125; with instance &#123;&#125;; statusCode=&#123;&#125;&quot;</span>, serviceUrl, urlPath, info.getId(),</span><br><span class="line">                    response == <span class="literal">null</span> ? <span class="string">&quot;N/A&quot;</span> : response.getStatus());</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (response != <span class="literal">null</span>) &#123;</span><br><span class="line">            response.close();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用post请求完成服务注册</p>
+<h5 id="服务获取"><a href="#服务获取" class="headerlink" title="服务获取"></a>服务获取</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">CacheRefreshThread</span> <span class="keyword">implements</span> <span class="title class_">Runnable</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">run</span><span class="params">()</span> &#123;</span><br><span class="line">        refreshRegistry();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">void</span> <span class="title function_">refreshRegistry</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="type">boolean</span> <span class="variable">isFetchingRemoteRegionRegistries</span> <span class="operator">=</span> isFetchingRemoteRegionRegistries();</span><br><span class="line"></span><br><span class="line">            <span class="type">boolean</span> <span class="variable">remoteRegionsModified</span> <span class="operator">=</span> <span class="literal">false</span>;</span><br><span class="line">            <span class="comment">// This makes sure that a dynamic change to remote regions to fetch is honored.</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">latestRemoteRegions</span> <span class="operator">=</span> clientConfig.fetchRegistryForRemoteRegions();</span><br><span class="line">            <span class="keyword">if</span> (<span class="literal">null</span> != latestRemoteRegions) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">currentRemoteRegions</span> <span class="operator">=</span> remoteRegionsToFetch.get();</span><br><span class="line">                <span class="keyword">if</span> (!latestRemoteRegions.equals(currentRemoteRegions)) &#123;</span><br><span class="line">                    <span class="comment">// Both remoteRegionsToFetch and AzToRegionMapper.regionsToFetch need to be in sync</span></span><br><span class="line">                    <span class="keyword">synchronized</span> (instanceRegionChecker.getAzToRegionMapper()) &#123;</span><br><span class="line">                        <span class="keyword">if</span> (remoteRegionsToFetch.compareAndSet(currentRemoteRegions, latestRemoteRegions)) &#123;</span><br><span class="line">                            String[] remoteRegions = latestRemoteRegions.split(<span class="string">&quot;,&quot;</span>);</span><br><span class="line">                            remoteRegionsRef.set(remoteRegions);</span><br><span class="line">                            instanceRegionChecker.getAzToRegionMapper().setRegionsToFetch(remoteRegions);</span><br><span class="line">                            remoteRegionsModified = <span class="literal">true</span>;</span><br><span class="line">                        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                            logger.info(<span class="string">&quot;Remote regions to fetch modified concurrently,&quot;</span> +</span><br><span class="line">                                    <span class="string">&quot; ignoring change from &#123;&#125; to &#123;&#125;&quot;</span>, currentRemoteRegions, latestRemoteRegions);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="comment">// Just refresh mapping to reflect any DNS/Property change</span></span><br><span class="line">                    instanceRegionChecker.getAzToRegionMapper().refreshMapping();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="type">boolean</span> <span class="variable">success</span> <span class="operator">=</span> fetchRegistry(remoteRegionsModified);</span><br><span class="line">            <span class="keyword">if</span> (success) &#123;</span><br><span class="line">                registrySize = localRegionApps.get().size();</span><br><span class="line">                lastSuccessfulRegistryFetchTimestamp = System.currentTimeMillis();</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">获取最新的region，然后根据最新的region获取最新的注册列表</span><br></pre></td></tr></table></figure>
+<h5 id="服务续约"><a href="#服务续约" class="headerlink" title="服务续约"></a>服务续约</h5><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">    * Renew with the eureka service by making the appropriate REST call</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line"><span class="type">boolean</span> <span class="title function_">renew</span><span class="params">()</span> &#123;</span><br><span class="line">    EurekaHttpResponse&lt;InstanceInfo&gt; httpResponse;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        httpResponse = eurekaTransport.registrationClient.sendHeartBeat(instanceInfo.getAppName(), instanceInfo.getId(), instanceInfo, <span class="literal">null</span>);</span><br><span class="line">        logger.debug(PREFIX + <span class="string">&quot;&#123;&#125; - Heartbeat status: &#123;&#125;&quot;</span>, appPathIdentifier, httpResponse.getStatusCode());</span><br><span class="line">        <span class="keyword">if</span> (httpResponse.getStatusCode() == <span class="number">404</span>) &#123;</span><br><span class="line">            REREGISTER_COUNTER.increment();</span><br><span class="line">            logger.info(PREFIX + <span class="string">&quot;&#123;&#125; - Re-registering apps/&#123;&#125;&quot;</span>, appPathIdentifier, instanceInfo.getAppName());</span><br><span class="line">            <span class="type">long</span> <span class="variable">timestamp</span> <span class="operator">=</span> instanceInfo.setIsDirtyWithTime();</span><br><span class="line">            <span class="type">boolean</span> <span class="variable">success</span> <span class="operator">=</span> register();</span><br><span class="line">            <span class="keyword">if</span> (success) &#123;</span><br><span class="line">                instanceInfo.unsetIsDirty(timestamp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">return</span> success;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> httpResponse.getStatusCode() == <span class="number">200</span>;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (Throwable e) &#123;</span><br><span class="line">        logger.error(PREFIX + <span class="string">&quot;&#123;&#125; - was unable to send heartbeat!&quot;</span>, appPathIdentifier, e);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发送POST心跳来续约</p>
+<h4 id="服务注册中心"><a href="#服务注册中心" class="headerlink" title="服务注册中心"></a>服务注册中心</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@POST</span></span><br><span class="line"><span class="meta">@Consumes(&#123;&quot;application/json&quot;, &quot;application/xml&quot;&#125;)</span></span><br><span class="line"><span class="keyword">public</span> Response <span class="title function_">addInstance</span><span class="params">(InstanceInfo info,</span></span><br><span class="line"><span class="params">                            <span class="meta">@HeaderParam(PeerEurekaNode.HEADER_REPLICATION)</span> String isReplication)</span> &#123;</span><br><span class="line">    logger.debug(<span class="string">&quot;Registering instance &#123;&#125; (replication=&#123;&#125;)&quot;</span>, info.getId(), isReplication);</span><br><span class="line">    <span class="comment">// validate that the instanceinfo contains all the necessary required fields</span></span><br><span class="line">    <span class="keyword">if</span> (isBlank(info.getId())) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing instanceId&quot;</span>).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isBlank(info.getHostName())) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing hostname&quot;</span>).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isBlank(info.getIPAddr())) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing ip address&quot;</span>).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isBlank(info.getAppName())) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing appName&quot;</span>).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!appName.equals(info.getAppName())) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Mismatched appName, expecting &quot;</span> + appName + <span class="string">&quot; but was &quot;</span> + info.getAppName()).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (info.getDataCenterInfo() == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing dataCenterInfo&quot;</span>).build();</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (info.getDataCenterInfo().getName() == <span class="literal">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(<span class="string">&quot;Missing dataCenterInfo Name&quot;</span>).build();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// handle cases where clients may be registering with bad DataCenterInfo with missing data</span></span><br><span class="line">    <span class="type">DataCenterInfo</span> <span class="variable">dataCenterInfo</span> <span class="operator">=</span> info.getDataCenterInfo();</span><br><span class="line">    <span class="keyword">if</span> (dataCenterInfo <span class="keyword">instanceof</span> UniqueIdentifier) &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">dataCenterInfoId</span> <span class="operator">=</span> ((UniqueIdentifier) dataCenterInfo).getId();</span><br><span class="line">        <span class="keyword">if</span> (isBlank(dataCenterInfoId)) &#123;</span><br><span class="line">            <span class="type">boolean</span> <span class="variable">experimental</span> <span class="operator">=</span> <span class="string">&quot;true&quot;</span>.equalsIgnoreCase(serverConfig.getExperimental(<span class="string">&quot;registration.validation.dataCenterInfoId&quot;</span>));</span><br><span class="line">            <span class="keyword">if</span> (experimental) &#123;</span><br><span class="line">                <span class="type">String</span> <span class="variable">entity</span> <span class="operator">=</span> <span class="string">&quot;DataCenterInfo of type &quot;</span> + dataCenterInfo.getClass() + <span class="string">&quot; must contain a valid id&quot;</span>;</span><br><span class="line">                <span class="keyword">return</span> Response.status(<span class="number">400</span>).entity(entity).build();</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (dataCenterInfo <span class="keyword">instanceof</span> AmazonInfo) &#123;</span><br><span class="line">                <span class="type">AmazonInfo</span> <span class="variable">amazonInfo</span> <span class="operator">=</span> (AmazonInfo) dataCenterInfo;</span><br><span class="line">                <span class="type">String</span> <span class="variable">effectiveId</span> <span class="operator">=</span> amazonInfo.get(AmazonInfo.MetaDataKey.instanceId);</span><br><span class="line">                <span class="keyword">if</span> (effectiveId == <span class="literal">null</span>) &#123;</span><br><span class="line">                    amazonInfo.getMetadata().put(AmazonInfo.MetaDataKey.instanceId.getName(), info.getId());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                logger.warn(<span class="string">&quot;Registering DataCenterInfo of type &#123;&#125; without an appropriate id&quot;</span>, dataCenterInfo.getClass());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    registry.register(info, <span class="string">&quot;true&quot;</span>.equals(isReplication));</span><br><span class="line">    <span class="keyword">return</span> Response.status(<span class="number">204</span>).build();  <span class="comment">// 204 to be backwards compatible</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对注册信息进行校验,然后使用PeerAwareInstanceRegistry来进行注册</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">register</span><span class="params">(<span class="keyword">final</span> InstanceInfo info, <span class="keyword">final</span> <span class="type">boolean</span> isReplication)</span> &#123;</span><br><span class="line">    <span class="type">int</span> <span class="variable">leaseDuration</span> <span class="operator">=</span> Lease.DEFAULT_DURATION_IN_SECS;</span><br><span class="line">    <span class="keyword">if</span> (info.getLeaseInfo() != <span class="literal">null</span> &amp;&amp; info.getLeaseInfo().getDurationInSecs() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">        leaseDuration = info.getLeaseInfo().getDurationInSecs();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">super</span>.register(info, leaseDuration, isReplication);</span><br><span class="line">    replicateToPeers(Action.Register, info.getAppName(), info.getId(), info, <span class="literal">null</span>, isReplication);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>检查租赁时间，注册指定时长的服务。同步信息到各个服务节点</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>整个eureka的服务注册和发现内部都是用REST方式来进行通讯以达到信息同步的目的</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/11/14/SpringCloud%E7%AE%80%E4%BB%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -913,193 +1053,6 @@
 <h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>客户端发起启动服务请求,通过<code>IPC</code>的方式通知<code>SystemServer</code>进程中的<code>ActivityManagerService</code>，然后通知<code>ApplicationThread</code>创建服务  </p>
 <h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><h4 id="StartService-1"><a href="#StartService-1" class="headerlink" title="StartService"></a>StartService</h4><p><img data-src="/./startService.png" alt="startService"></p>
 <h4 id="BindService-1"><a href="#BindService-1" class="headerlink" title="BindService"></a>BindService</h4><p><img data-src="/./bindService.png" alt="bindService"></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/09/09/Build-AOSP-in-mac-osx-10-11-3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Binea">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2017/09/09/Build-AOSP-in-mac-osx-10-11-3/" class="post-title-link" itemprop="url">Build AOSP(8.0) in mac osx 10.12.6</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2017-09-09 16:01:03 / Modified: 11:19:21" itemprop="dateCreated datePublished" datetime="2017-09-09T16:01:03+08:00">2017-09-09</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h3 id="更新"><a href="#更新" class="headerlink" title="更新:"></a>更新:</h3><p>2017-09-09更新AOSP8.0的编译<br>2016-05-01更新AOSP6.0编译</p>
-<h3 id="配置OSX系统"><a href="#配置OSX系统" class="headerlink" title="配置OSX系统"></a>配置OSX系统</h3><ol>
-<li>安装<code>Xcode</code></li>
-<li>找到<code>Xcode</code>安装目录，右键打开<code>show package content</code></li>
-<li>创建<code>/Developer/SDK</code>目录</li>
-<li>将<code>MacOSX10.11.sdk</code>从<code>Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/</code>复制到<code>/Developer/SDK</code></li>
-<li>将<code>Xcode.app</code>复制到到&#x2F;Developer目录下</li>
-</ol>
-<h4 id="完成Xcode的配置"><a href="#完成Xcode的配置" class="headerlink" title="完成Xcode的配置"></a>完成<code>Xcode</code>的配置</h4><ol>
-<li>打开<code>Xcode</code></li>
-<li>从<code>Xcode</code>的菜单打开<code>Preferences</code></li>
-<li>选择<code>Location</code>标签</li>
-<li>在<code>Command Line Tools</code>中选择<code>Xcodd 7.2</code>(具体版本依个人电脑上的Xcode版本而定)</li>
-</ol>
-<h4 id="安装MacPorts"><a href="#安装MacPorts" class="headerlink" title="安装MacPorts"></a>安装<code>MacPorts</code></h4><ol>
-<li>获取最新版的<a target="_blank" rel="noopener" href="https://www.macports.org/install.php">MacPorts</a>!</li>
-<li>打开控制台，编辑<code>bash</code>配置文件</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim ~/.bash_profile</span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>在配置文件中插入</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export PATH=/opt/local/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>重新载入配置信息</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ . ~/.bash_profile</span><br></pre></td></tr></table></figure>
-
-<ol start="5">
-<li>运行<code>port</code>命令检测是否成功安装</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ port</span><br></pre></td></tr></table></figure>
-
-<ol start="6">
-<li>安装需要的依赖包</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ POSIXLY_CORRECT=1 sudo port install gmake libsdl git gnupg</span><br></pre></td></tr></table></figure>
-
-<h4 id="安装java开发包-JDK1-7"><a href="#安装java开发包-JDK1-7" class="headerlink" title="安装java开发包(JDK1.7)"></a>安装<code>java</code>开发包(JDK1.7)</h4><h4 id="安装Repo"><a href="#安装Repo" class="headerlink" title="安装Repo"></a>安装<code>Repo</code></h4><p><code>Repo</code>是基于<code>git</code>的一种工具，能很方便的用来管理<code>Android</code>源码。更多信息请<a target="_blank" rel="noopener" href="http://source.android.com/source/developing.html">查看</a></p>
-<ol>
-<li>确保根目录下有<code>/bin</code>目录</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir ~/bin</span><br><span class="line">$ PATH=~/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>下载<code>Repo</code>工具，确保它可以运行</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/bin/repo</span><br><span class="line">$ chmod a+x ~/bin/repo</span><br></pre></td></tr></table></figure>
-
-<h4 id="设置文件描述符"><a href="#设置文件描述符" class="headerlink" title="设置文件描述符"></a>设置文件描述符</h4><p><code>OSX</code>系统的默认文件描述符的数量太小，高并行构建可能会超出这个限制。为了突破这个限制，添加以下命令到<code>.bash_profile</code>中</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vim ~/.bash_profile</span><br><span class="line">~~~~~</span><br><span class="line"># set the number of open files to be 1024</span><br><span class="line">ulimit -S -n 1024</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="创建字符大小写敏感的虚拟驱动"><a href="#创建字符大小写敏感的虚拟驱动" class="headerlink" title="创建字符大小写敏感的虚拟驱动"></a>创建字符大小写敏感的虚拟驱动</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hdiutil create -type SPARSE -fs &#x27;Case-sensitive Journaled HFS+&#x27; -size 100g ~/android.dmg</span><br></pre></td></tr></table></figure>
-<p>源码很大，因此建议要创建大一点的虚拟光驱</p>
-<p>挂载这个驱动:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdiutil attach ~/android.dmg -mountpoint /Volumes/android</span><br></pre></td></tr></table></figure>
-
-<p>你也可以用另一种方式，在配置文件中加入如下方法：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function mountAndroid &#123; hdiutil attach ~/android.dmg.sparseimage -mountpoint /Volumes/android; &#125;</span><br></pre></td></tr></table></figure>
-
-<p>然后运行如下命令:</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mountAndroid</span><br></pre></td></tr></table></figure>
-
-<h3 id="下载源文件"><a href="#下载源文件" class="headerlink" title="下载源文件"></a>下载源文件</h3><p>首先我们确定我们要下载的是哪个版本的源码，本文以<code>android-6.0.1_r30</code>为例</p>
-<p>首先在<code>/Volumes/android</code>创建一个工作目录</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cd /Volumes/android</span><br><span class="line">$ mkdir WORKING_DIRECTORY</span><br><span class="line">$ cd WORKING_DIRECTORY</span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ repo init -u https://android.googlesource.com/platform/manifest -b android-5.0.0_r7.0.1</span><br></pre></td></tr></table></figure>
-
-<p>最后运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo sync</span><br></pre></td></tr></table></figure>
-<p>来下载源码</p>
-<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>在源码根目录运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source build/envsetup.sh</span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lunch</span><br></pre></td></tr></table></figure>
-
-<p>按回车选择<code>aosp_arm-eng</code>。</p>
-<p>安装openssl curl</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install curl --with-openssl</span><br><span class="line">export PATH=$(brew --prefix curl)/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<p>运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">caffeinate make -j4</span><br></pre></td></tr></table></figure>
-<p><code>caffeinate</code>阻止休眠</p>
-<p>开始漫长的编译过程</p>
-<p>运行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make idegen &amp;&amp; development/tools/idegen/idegen.sh</span><br></pre></td></tr></table></figure>
-<p>生成可被<code>IDE</code>识别的工程。</p>
-<h3 id="碰到的一些问题"><a href="#碰到的一些问题" class="headerlink" title="碰到的一些问题"></a>碰到的一些问题</h3><ul>
-<li>下载源码时，需要比较长的时间，还好支持断点续传。(被盾的地方，必须使用VPN)</li>
-<li>源码下载完之后，编译会碰到找不到MacOSsdk。按照文中开头的步骤即可解决</li>
-<li>编译过程中会出现<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal error: linux/netfilter/xt_DSCP.h: No such file or directory</span><br></pre></td></tr></table></figure></li>
-</ul>
-<p>这是由于我的源码没有直接在<code>/Volumns/android</code>下下载，是从别的地方下载完之后拷贝过来的。而编译源码会严格区分大小写的。相应目录下有小写的头文件。</p>
-<p>解决方案是：</p>
-<ol>
-<li>严格按照官方文档描述，在相应目录下下载源码</li>
-<li>在<code>./external/iptables/include/linux/netfilter</code>中创建头文件<code>xt_DSCP.h</code>。在该头文件中加入如下代码:</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">* based on ipt_FTOS.c (C) 2000 by Matthew G. Marsh &lt;mgm@paktronix.com&gt;</span><br><span class="line">* This software is distributed under GNU GPL v2, 1991</span><br><span class="line">*</span><br><span class="line">* See RFC2474 for a description of the DSCP field within the IP Header.</span><br><span class="line">*</span><br><span class="line">* xt_DSCP.h,v 1.7 2002/03/14 12:03:13 laforge Exp</span><br><span class="line">*/</span><br><span class="line">#ifndef _XT_DSCP_TARGET_H</span><br><span class="line">#define _XT_DSCP_TARGET_H</span><br><span class="line">#include &lt;linux/netfilter/xt_dscp.h&gt;</span><br><span class="line">#include &lt;linux/types.h&gt;</span><br><span class="line"></span><br><span class="line">/* target info */</span><br><span class="line">struct xt_DSCP_info &#123;</span><br><span class="line">    __u8 dscp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct xt_tos_target_info &#123;</span><br><span class="line">    __u8 tos_value;</span><br><span class="line">    __u8 tos_mask;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">#endif /* _XT_DSCP_TARGET_H */</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>Java文件找不到</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">external/doclava/src/com/google/doclava/ClassInfo.java:20: error: package com.sun.javadoc does not exist import com.sun.javadoc.ClassDoc</span><br></pre></td></tr></table></figure>
-
-<p>解决方案是在配置文件中加入</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/bin:$PATH</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>编译最新版的aosp可能会遇到<code>Unsupported curl, please use a curl not based on SecureTransport</code>。解决方案是运行一下命令</li>
-</ul>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew install curl --with-openssl</span><br><span class="line">export PATH=$(brew --prefix curl)/bin:$PATH</span><br><span class="line">caffeinate make -j4</span><br></pre></td></tr></table></figure>
-
 
       
     </div>
