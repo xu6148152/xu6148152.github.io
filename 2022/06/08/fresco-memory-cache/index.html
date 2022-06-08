@@ -33,7 +33,7 @@
 <meta property="og:image" content="http://xu6148152.github.io/fresco_memory_cache_flow.jpg">
 <meta property="og:image" content="http://xu6148152.github.io/fresco_memory_cache_sequence.jpg">
 <meta property="article:published_time" content="2022-06-08T03:52:42.000Z">
-<meta property="article:modified_time" content="2022-06-08T09:14:15.658Z">
+<meta property="article:modified_time" content="2022-06-08T09:42:38.522Z">
 <meta property="article:author" content="Binea">
 <meta property="article:tag" content="性能优化">
 <meta name="twitter:card" content="summary">
@@ -209,7 +209,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-06-08 11:52:42 / Modified: 17:14:15" itemprop="dateCreated datePublished" datetime="2022-06-08T11:52:42+08:00">2022-06-08</time>
+      <time title="Created: 2022-06-08 11:52:42 / Modified: 17:42:38" itemprop="dateCreated datePublished" datetime="2022-06-08T11:52:42+08:00">2022-06-08</time>
     </span>
 
   
@@ -230,12 +230,12 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>最近因为项目优化需要，重温<code>Fresco</code>的内存缓存机制。做了一些简单分析。</p>
-<h3 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h3><p><img data-src="/./fresco_memory_cache_class.jpg"></p>
-<h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img data-src="/./fresco_memory_cache_flow.jpg"></p>
+<h3 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h3><p><img data-src="/fresco_memory_cache_class.jpg"></p>
+<h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img data-src="/fresco_memory_cache_flow.jpg"></p>
 <span id="more"></span>
 
 <p>虚线框出来的部分对应缓存资源和获取资源，两个流程里面都会触发移除无用资源，移除的条件是无用资源的数目大于设定(总共-已使用(cacheEntriesCount - exclusiveCacheEntriesCount))，或者是无用资源的体积大小超过了设定(总共-已使用(cacheEntries-exclusiveCache))，每次触发资源释放(releaseClientReference)的时候都会将没有被引用的资源放到无用缓存中。上述流程中，cache触发了缓存，但是要先检查是否满足条件，否则就跳过了，尝试移除无用资源，因此这里的内存缓存可能失效。Fresco能够在View detach的时候自动触发资源回收</p>
-<h3 id="内存释放时序图"><a href="#内存释放时序图" class="headerlink" title="内存释放时序图"></a>内存释放时序图</h3><p><img data-src="/./fresco_memory_cache_sequence.jpg"></p>
+<h3 id="内存释放时序图"><a href="#内存释放时序图" class="headerlink" title="内存释放时序图"></a>内存释放时序图</h3><p><img data-src="/fresco_memory_cache_sequence.jpg"></p>
 
     </div>
 
