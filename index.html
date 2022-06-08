@@ -560,7 +560,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2022-06-08 18:19:41" itemprop="dateModified" datetime="2022-06-08T18:19:41+08:00">2022-06-08</time>
+      <time title="Modified: 2022-06-08 18:29:01" itemprop="dateModified" datetime="2022-06-08T18:29:01+08:00">2022-06-08</time>
     </span>
 
   
@@ -579,115 +579,14 @@
 <img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/znode.jpeg" class="" title="znode">
 
 <h4 id="创建组"><a href="#创建组" class="headerlink" title="创建组"></a>创建组</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnectionWatcher</span> : <span class="type">Watcher &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> zk: ZooKeeper? = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">var</span> connectedSignal: CountDownLatch = CountDownLatch(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(IOException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">connect</span><span class="params">(hosts: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">        zk = ZooKeeper(hosts, CreateGroup.SESSION_TIMEOUT, <span class="keyword">this</span>)</span><br><span class="line">        connectedSignal.await()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">process</span><span class="params">(event: <span class="type">WatchedEvent</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (event!!.state == Watcher.Event.KeeperState.SyncConnected) &#123;</span><br><span class="line">            connectedSignal.countDown()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">close</span><span class="params">()</span></span> &#123;</span><br><span class="line">        zk!!.close()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateGroup</span> : <span class="type">ConnectionWatcher</span></span>() &#123;</span><br><span class="line">    <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> SESSION_TIMEOUT: <span class="built_in">Int</span> = <span class="number">5000</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(KeeperException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">create</span><span class="params">(groupName: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> path = <span class="string">&quot;/&quot;</span> + groupName</span><br><span class="line">        <span class="keyword">val</span> createPath = zk!!.create(path, <span class="literal">null</span>, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT)</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Created &quot;</span> + createPath)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<!--moreve-->
-
-<p>创建一个<code>CreateGroup</code>对象，然后调用<code>connect</code>方法,通过<code>ZooKeeper</code>的<code>api</code>与<code>ZooKeeper</code>服务器连接。指定三个参数，服务端主机名以及端口，连接超时时间，<code>Watcher</code>接口的实例，<code>Watcher</code>主要是负责接收<code>ZooKeeper</code>数据变化时产生的事件回调。</p>
-<p>创建之后使用<code>CountDownLatch</code>，让当前线程等待，直到<code>ZooKeeper</code>准备就绪。当<code>ZooKeeper</code>准备就绪时，<code>Watcher</code>接口的方法<code>process</code>会回调连接成功事件，然后<code>CountDownLatch</code>释放。</p>
-<p>连接成功之后创建<code>znode</code>组，可以指定<code>path</code>,<code>内容</code>和<code>ACL</code>。<code>znode</code>的分为<code>ephemeral</code>和<code>persistent</code>两种，使用<code>ephemeral</code>时，创建<code>znode</code>的客户端的会话结束或者客户端与服务端断开时，该<code>znode</code>会被自动删除。而<code>persistent</code>的<code>znode</code>，除非是客户端主动删除，否则永远存在</p>
-<h4 id="加入组"><a href="#加入组" class="headerlink" title="加入组"></a>加入组</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">JoinGroup</span> : <span class="type">ConnectionWatcher</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(KeeperException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">join</span><span class="params">(groupName: <span class="type">String</span>, memberName: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> path = <span class="string">&quot;/<span class="variable">$groupName</span>/<span class="variable">$memberName</span>&quot;</span></span><br><span class="line">        <span class="keyword">val</span> createdPath = zk!!.create(path, <span class="literal">null</span>, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT)</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Created <span class="variable">$createdPath</span>&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> joinGroup = JoinGroup()</span><br><span class="line">    joinGroup.connect(args[<span class="number">1</span>])</span><br><span class="line">    joinGroup.join(args[<span class="number">1</span>], args[<span class="number">2</span>])</span><br><span class="line">    Thread.sleep(<span class="built_in">Long</span>.MAX_VALUE)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>加入组与创建组类似，都需要先连接<code>Zookeeper</code>服务器，然后创建<code>EPHEMERAL</code>类型的<code>znode</code>。这样当客户端断开时会自动删除该<code>znode</code></p>
-<h4 id="成员列表"><a href="#成员列表" class="headerlink" title="成员列表"></a>成员列表</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ListGroup</span> : <span class="type">ConnectionWatcher</span></span>() &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(KeeperException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">list</span><span class="params">(groupName: <span class="type">String</span>)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> path = <span class="string">&quot;/<span class="variable">$groupName</span>&quot;</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">val</span> children = zk?.getChildren(path, <span class="literal">false</span>)</span><br><span class="line">            <span class="keyword">if</span> (children?.isEmpty()!!) &#123;</span><br><span class="line">                System.<span class="keyword">out</span>.println(<span class="string">&quot;No members in group <span class="variable">$groupName</span>&quot;</span>)</span><br><span class="line">                System.exit(<span class="number">1</span>)</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            children.map &#123; item -&gt; System.<span class="keyword">out</span>.println(item) &#125;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (e: KeeperException.NoNodeException) &#123;</span><br><span class="line">            System.<span class="keyword">out</span>.printf(<span class="string">&quot;Group %s does not exist\n&quot;</span>, groupName)</span><br><span class="line">            System.exit(<span class="number">1</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Throws(Exception::class)</span></span><br><span class="line"><span class="function"><span class="keyword">fun</span> <span class="title">main</span><span class="params">(args: <span class="type">Array</span>&lt;<span class="type">String</span>&gt;)</span></span> &#123;</span><br><span class="line">    <span class="keyword">val</span> listGroup = ListGroup()</span><br><span class="line">    listGroup.connect(args[<span class="number">0</span>])</span><br><span class="line">    listGroup.list(args[<span class="number">1</span>])</span><br><span class="line">    listGroup.close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>调用<code>Zookeeper</code>的<code>getChildren</code>方法来获取某个<code>path</code>下的节点，如果不存在节点，那么会抛出<code>NoNodeException</code></p>
-<h3 id="Zookeeper服务模型"><a href="#Zookeeper服务模型" class="headerlink" title="Zookeeper服务模型"></a>Zookeeper服务模型</h3><h4 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h4><p><code>Zookeeper</code>包含了一个树形的数据模型，那就是<code>znode</code>。一个<code>znode</code>中包含了存储的数据和<code>ACL</code>。<code>Zookeeper</code>的数据模型适合存储少量的数据，单个<code>znode</code>不能存储超过<code>1M</code>的数据</p>
-<p>数据的访问具有原子性。意味着从<code>znode</code>中获取的数据永远都是完整的。不可能出现部分数据的情况。<code>znode</code>的路径必须是全路径，是简单的字符串，默认有个叫<code>zookeeper</code>的根节点，用来存储一些管理数据</p>
-<h5 id="ephemeral-临时-znodes"><a href="#ephemeral-临时-znodes" class="headerlink" title="ephemeral(临时)znodes"></a>ephemeral(临时)znodes</h5><p><code>ephemeral</code>节点，当客户端的<code>session</code>结束了，该节点会被自动删除。而<code>persistent</code>节点创建之后就跟客户端没有关系了，需要客户端主动删除。<code>ephemeral</code>节点不会有子节点，其对所有客户端可见，但只绑定创建者客户端</p>
-<h5 id="序号"><a href="#序号" class="headerlink" title="序号"></a>序号</h5><p>创建<code>znode</code>时，会在名字后面增加一个数字。这就是每个节点的序号。例如</p>
-<p>创建一个<code>znode</code>指定命名为<code>/a/b-</code>，那么最后创建完的名字是<code>/a/b-3</code>，再创建一个<code>/a/b-</code>的节点，那么最后的名字是<code>/a/b-5</code>。调用<code>create</code>方法的返回值是<code>znode</code>的真实名字。这些序号主要是用来排序的</p>
-<h5 id="观察模式-Watches"><a href="#观察模式-Watches" class="headerlink" title="观察模式 Watches"></a>观察模式 Watches</h5><p>观察模式可以使客户端在某个节点发生变化时得到通知。例如，客户端对某个<code>znode</code>进行了<code>exist</code>操作，同时在<code>znode</code>上开启了观察模式，如果<code>znode</code>不存在，这个<code>exist</code>操作将返回<code>false</code>。之后如果客户端创建了这个<code>znode</code>，观察者模式将触发，并通知开启了观察者模式的客户端。观察者模式只能被触发一次，如果要持续对某个节点进行观察，那么需要持续对该节点开启观察者模式</p>
-<h4 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h4><table>
-<thead>
-<tr>
-<th>操作</th>
-<th align="center">说明</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>create</td>
-<td align="center">创建znode</td>
-</tr>
-<tr>
-<td>delete</td>
-<td align="center">删除znode</td>
-</tr>
-<tr>
-<td>exists</td>
-<td align="center">判断znode是否存在</td>
-</tr>
-<tr>
-<td>getACL, setACL</td>
-<td align="center">获取znode访问控制列表</td>
-</tr>
-<tr>
-<td>getChildren</td>
-<td align="center">获取znode的子节点</td>
-</tr>
-<tr>
-<td>getData, setData</td>
-<td align="center">设置或获取znode关联节点的数据</td>
-</tr>
-<tr>
-<td>sync</td>
-<td align="center">同步客户端和服务端znode的状态</td>
-</tr>
-</tbody></table>
-<p>在调用<code>delete</code>和<code>setData</code>时，必须指定<code>znode</code>数据的版本号。<code>Zookeeper</code>支持将多个操作组合成一个操作单元</p>
-<p><code>Zookeeper</code>支持同步和异步操作。</p>
-<p>读操作会在<code>znode</code>上开启观察模式，并且写操作会触发观察模式。而写操作不会启动观察者模式</p>
-<ul>
-<li><code>exists</code>启动的观察模式，由<code>create</code>, <code>setData</code>, <code>delete</code>来触发</li>
-<li><code>getData</code>启动的观察模式， 由<code>delete</code>, <code>setData</code>来触发，<code>create</code>不会触发</li>
-<li><code>getChildren</code>启动的观察者模式，由子节点创建和删除，或者本节点被删除才会触发</li>
-</ul>
-<p><code>znode</code>被创建时，赋予了<code>ACL</code>。通过如下几种方式来鉴权</p>
-<ul>
-<li>digest: 用户名和密码</li>
-<li>sast: 使用<code>Kerberos</code>鉴权</li>
-<li>ip: 使用客户端<code>ip</code>鉴权</li>
-</ul>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ACL(Perms.READ, Id(<span class="string">&quot;ip&quot;</span>, <span class="string">&quot;10.0.0.1&quot;</span>))</span><br></pre></td></tr></table></figure>
-
-<p><code>exist</code>不受<code>ACL</code>控制，所有的客户端均可操作</p>
-<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p><code>Zookeeper</code>服务可以在两种模式下运行。<code>standalone</code>模式下，可以运行一个单独的<code>Zookeeper</code>服务器。在生产环境中，会采用<code>replicated</code>模式安装在多台服务器上，组建<code>ensemble</code>集群。<code>Zookeeper</code>和它的副本组成高可用的集群，只要<code>ensemble</code>能够选举出主服务器，那么<code>Zookeeper</code>就不会中断。例如在一个5节点的<code>ensemble</code>中，能够容忍两个节点脱离集群，服务还是可用的。因为剩下的三个节点投票，可以产生超过集群半数的投票，来推选一台服务器。而6个节点的服务器，最多也只能容忍2个节点脱离集群，因为剩下的三个节点无法产生超过集群半数的投票。所以一般<code>ensemble</code>中节点的数量都是奇数。</p>
-<p><code>Zookeeper</code>做的是保证每一次对<code>znode</code>树的修改，能够复制到<code>ensemble</code>集群中的大多数节点中。如果非主服务器脱离集群，那么剩下的服务器也能很快更新到最新的状态</p>
-<p><code>Zookeeper</code>使用<code>Zab</code>协议。这个协议包括两个阶段</p>
-<ul>
-<li>领导选举:<br> <code>ensumble</code>集群选举出一个<code>leader</code>节点。其他节点为<code>follower</code>。当大多数<code>follower</code>与<code>leader</code>状态完成同步，那么这个阶段完成</li>
-<li>原子广播:<br> 所有的写入请求都会发送给<code>leader</code>,<code>leader</code>在广播给<code>follower</code>。当大多数<code>follower</code>完成了数据同步，<code>leader</code>才会更新提交。</li>
-</ul>
-<p> 如果之前的<code>leader</code>回到集群，那么会被当做是一个<code>follower</code>。<code>leader</code>选举很快，大概200ms就能够产生结果，所以不会影响效率</p>
-<p> <code>ensemble</code>的所有节点都会在更新内存中的<code>znode</code>树的副本之前，先将更新数据写入到硬盘上</p>
-<h4 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a>数据一致性</h4><p><code>ensemble</code>集群中<code>follower</code>的<code>update</code>操作会滞后于<code>leader</code>操作。<code>Zookeeper</code>客户端的最佳实践是全部链接到<code>follower</code>上。然而客户端是有可能链接到<code>leader</code>上的，并且客户端控制不了这个选择，客户端也不知道连接到<code>follower</code>还是<code>leader</code>。一般的操作都是读直接从<code>follower</code>读取，写需要写入到<code>leader</code>。这跟数据库的读写分离类似</p>
-<img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/consistency.jpeg" class="">
-
-<p>每一个对<code>znode</code>树的更新操作，都会被赋予一个全局的唯一<code>ID</code>，我们称为<code>zxid</code>。更新操作的<code>ID</code>按照发生的时间顺序升序排序</p>
-<p><code>Zookeeper</code>在数据一致性上实现了以下几方面:</p>
-<ul>
-<li>顺序一致性:<br> 从客户端提交的更新操作都是按照先后循环排序的</li>
-<li>原子性<br> 更新操作只有成功和失败</li>
-<li>系统视图唯一性<br> 无论客户端连接到哪个服务器，都将看见唯一的系统视图。客户端连接的服务器状态永远都是最新的</li>
-<li>持久性<br> 一旦操作成功，数据将被持久化到服务器上,并且不能撤销，所以服务器宕机重启，也不会影响数据</li>
-<li>时效性<br> 系统视图的状态更新的延迟时间是有一个上限的，最多不过几十秒。如果服务器的状态落后于其他服务器太多，<code>ZooKeeper</code>宁可关闭这个服务器上的服务，强制客户端去连接一个状态更新的服务器</li>
-</ul>
-<p> 为了保证数据的一致性，那么客户端在读取数据的时候，需要先调用<code>sync</code>来同步状态</p>
-<h4 id="会话Session"><a href="#会话Session" class="headerlink" title="会话Session"></a>会话Session</h4><p> <code>Zookeeper</code>客户端中，配置了一个<code>ensemble</code>服务器列表。当启动时，首先尝试连接其中一个服务器，如果连接失败，那么会尝试连接下一个，直到成功或者全部失败</p>
-<p> 一旦连接成功，服务器就会为客户端创建一个会话（session）。session的过期时间由创建会话的客户端应用来设定，如果在这个时间期间，服务器没有收到客户端的任何请求，那么session将被视为过期，并且这个session不能被重新创建，而创建的ephemeral znode将随着session过期被删除掉。在会话长期存在的情况下，session的过期事件是比较少见的，但是应用程序如何处理好这个事件是很重要的。</p>
-<p> 在长时间的空闲情况下，客户端会不断的发送ping请求来保持session。ping请求的间隔被设置成足够短，以便能够及时发现服务器失败（由读操作的超时时长来设置），并且能够及时的在session过期前连接到其他服务器上。</p>
-<p>容错连接到其他服务器上，是由ZooKeeper客户端自动完成的。重要的是在连接到其他服务器上后，之前的session以及epemeral节点还保持可用状态。<br>在容错的过程中，应用将收到与服务断开连接和连接的通知。Watch模式的通知在断开链接时，是不会发送断开连接事件给客户端的，断开连接事件是在重新连接成功后发送给客户端的。如果在重新连接到其他节点时，应用尝试一个操作，这个操作是一定会失败的。对于这一点的处理，是一个ZooKeeper应用的重点。</p>
-<h5 id="time"><a href="#time" class="headerlink" title="time"></a>time</h5><p>在ZooKeeper中有一些时间的参数。tick是ZooKeeper的基础时间单位，用来定义ensemble中服务器上运行的程序的时间表。其他时间相关的配置都是以tick为单位的，或者以tick的值为最大值或者最小值。例如，session的过期时间在2 ticks到20 ticks之间，那么你再设置时选择的session过期时间必须在2和20之间的一个数。</p>
-<p>通常情况1 tick等于2秒。那么就是说session的过期时间的设置范围在4秒到40秒之间。在session过期时间的设置上有一些考虑。过期时间太短会造成加快物理失败的监测频率。在组成员关系的例子中，session的过期时间与从组中移除失败的成员花费的时间相等。如果设置过低的session过期时间，那么网络延迟就有可能造成非预期的session过期。这种情况下，就会出现在短时间内一台机器不断的离开组，然后又从新加入组中。</p>
-<p>如果应用需要创建比较复杂的临时状态，那么就需要较长的session过期时间，因为重构花费的时间比较长。有一些情况下，需要在session的生命周期内重启，而且要保证重启完后session不过期（例如，应用维护和升级的情况）。服务器会给每一个session一个ID和密码，如果在连接创建时，ZooKeeper验证通过，那么session将被恢复使用（只要session没过期就行）。所以应用程序可以实现一个优雅的关机动作，在重启之前，将session的ID和密码存储在一个稳定的地方。重启之后，通过ID和密码恢复session。</p>
-<p>在一些特殊的情况下，我们需要使用这个特性来使用比较长的session过期时间。大多数情况下，我们还是要考虑当出现非预期的异常失败时，如何处理session过期，或者仅需要优雅的关闭应用，在session过期前不用重启应用。</p>
-<p>通常情况也越大规模的ensemble，就需要越长的session过期时间。Connetction Timeout、Read Timeout和Ping Periods都由一个以服务器数量为参数的函数计算得到，当ensemble的规模扩大，这些值需要逐渐减小。</p>
-<h4 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h4><p><code>ZooKeeper</code>对象在他的生命周期内会有不同的状态，我们通过<code>getState()</code>来获取当前的状态</p>
-<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getState(): States</span><br></pre></td></tr></table></figure>
-
-<p>新构建的<code>ZooKeeper</code>对象在尝试连接<code>ZooKeeper</code>服务时的状态是<code>CONNECTING</code>,一旦建立成功，那么状态变成<code>CONNECTED</code>  </p>
-<img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/state.jpeg" class="">
-
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
