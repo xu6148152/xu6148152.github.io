@@ -1,28 +1,11 @@
 <!DOCTYPE html>
-<html lang="default">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
-
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
-
-    <meta name="description" content="Python文化中的接口和协议Python在ABCs引入之前已经很成功了.接口在动态语言中是如何工作的。其没有interface关键字。对于ABCs，每个类有个接口。协议是接口。接口的定义是对象公共方法的子集，能够实现特定的功能。Python中最基础的接口之一是序列协议 运行中实现协议&lt;!–code￼0–&gt;  对于普通自定义对象，如果想使用shuffle那么需要实现__setitem">
+  <meta charset="utf-8">
+  
+  <title>深入理解Python之接口 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Python文化中的接口和协议Python在ABCs引入之前已经很成功了.接口在动态语言中是如何工作的。其没有interface关键字。对于ABCs，每个类有个接口。协议是接口。接口的定义是对象公共方法的子集，能够实现特定的功能。Python中最基础的接口之一是序列协议 运行中实现协议&lt;!–code￼0–&gt;  对于普通自定义对象，如果想使用shuffle那么需要实现__setitem">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解Python之接口">
 <meta property="og:url" content="http://xu6148152.github.io/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/index.html">
@@ -36,197 +19,78 @@
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://xu6148152.github.io/tombola.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
 
-
-<link rel="canonical" href="http://xu6148152.github.io/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/">
-
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/","path":"2017/05/30/深入理解Python之接口/","title":"深入理解Python之接口"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>深入理解Python之接口 | Blog</title>
   
 
+<meta name="generator" content="Hexo 6.2.0"></head>
 
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://xu6148152.github.io"></form>
+      </div>
     </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Blog</p>
-      <i class="logo-line"></i>
-    </a>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-深入理解Python之接口" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/" class="article-date">
+  <time datetime="2017-05-30T08:38:58.000Z" itemprop="datePublished">2017-05-30</time>
+</a>
+    
   </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
-  </ul>
-</nav>
-
-
-
-
-</div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
         
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Python%E6%96%87%E5%8C%96%E4%B8%AD%E7%9A%84%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%8D%8F%E8%AE%AE"><span class="nav-number">1.</span> <span class="nav-text">Python文化中的接口和协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E4%B8%AD%E5%AE%9E%E7%8E%B0%E5%8D%8F%E8%AE%AE"><span class="nav-number">2.</span> <span class="nav-text">运行中实现协议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ABC%E5%AD%90%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">ABC子类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%BA%93%E4%B8%AD%E7%9A%84ABCs"><span class="nav-number">4.</span> <span class="nav-text">标准库中的ABCs</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collections-abc"><span class="nav-number">4.1.</span> <span class="nav-text">collections.abc</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#numbers"><span class="nav-number">4.2.</span> <span class="nav-text">numbers</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E5%92%8C%E4%BD%BF%E7%94%A8ABC"><span class="nav-number">5.</span> <span class="nav-text">定义和使用ABC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ABC%E8%AF%A6%E7%BB%86%E8%AF%AD%E6%B3%95"><span class="nav-number">5.1.</span> <span class="nav-text">ABC详细语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tombola%E7%9A%84%E5%AD%90%E7%B1%BB"><span class="nav-number">5.2.</span> <span class="nav-text">Tombola的子类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Tombola%E7%9A%84%E8%99%9A%E5%AD%90%E7%B1%BB"><span class="nav-number">5.3.</span> <span class="nav-text">Tombola的虚子类</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tombola%E5%AD%90%E7%B1%BB%E6%B5%8B%E8%AF%95"><span class="nav-number">6.</span> <span class="nav-text">Tombola子类测试</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">Binea</p>
-  <div class="site-description" itemprop="description"></div>
-</div>
-<div class="site-state-wrap site-overview-item animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">62</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">31</span>
-        <span class="site-state-item-name">tags</span>
-      </div>
-  </nav>
-</div>
-
-
-
-        </div>
-      </div>
-    </div>
-  </aside>
-  <div class="sidebar-dimmer"></div>
-
-
-    </header>
-
-    
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-
-    <div class="main-inner post posts-expand">
-
-
+    <h1 class="article-title" itemprop="name">
+      深入理解Python之接口
+    </h1>
   
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
-    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Binea">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="深入理解Python之接口 | Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          深入理解Python之接口
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2017-05-30 16:38:58 / Modified: 16:42:42" itemprop="dateCreated datePublished" datetime="2017-05-30T16:38:58+08:00">2017-05-30</time>
-    </span>
-
-  
-    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
-      <span class="post-meta-item-icon">
-        <i class="far fa-eye"></i>
-      </span>
-      <span class="post-meta-item-text">Views: </span>
-      <span id="busuanzi_value_page_pv"></span>
-    </span>
-</div>
-
-        </div>
       </header>
-
     
-    
-    
-    <div class="post-body" itemprop="articleBody">
+    <div class="article-entry" itemprop="articleBody">
+      
         <h3 id="Python文化中的接口和协议"><a href="#Python文化中的接口和协议" class="headerlink" title="Python文化中的接口和协议"></a>Python文化中的接口和协议</h3><p><code>Python</code>在<code>ABCs</code>引入之前已经很成功了.接口在动态语言中是如何工作的。其没有<code>interface</code>关键字。对于<code>ABCs</code>，每个类有个接口。协议是接口。接口的定义是对象公共方法的子集，能够实现特定的功能。<code>Python</code>中最基础的接口之一是序列协议</p>
 <h3 id="运行中实现协议"><a href="#运行中实现协议" class="headerlink" title="运行中实现协议"></a>运行中实现协议</h3><p>&lt;!–code￼0–&gt;
 </p>
@@ -285,100 +149,144 @@
 <h3 id="Tombola子类测试"><a href="#Tombola子类测试" class="headerlink" title="Tombola子类测试"></a>Tombola子类测试</h3><p>&lt;!–code￼9–&gt;
 </p>
 
+      
     </div>
+    <footer class="article-footer">
+      <a data-url="http://xu6148152.github.io/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/" data-id="cl45dkwg9003d69kc02rn7dfn" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li></ul>
 
-    
-    
-    
-
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Python/" rel="tag"># Python</a>
-          </div>
-
-        
-
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2017/05/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E5%BA%8F%E5%88%97%E5%88%87%E7%89%87/" rel="prev" title="深入理解Python之序列切片">
-                  <i class="fa fa-chevron-left"></i> 深入理解Python之序列切片
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/" rel="next" title="深入理解Python之继承">
-                  深入理解Python之继承 <i class="fa fa-chevron-right"></i>
-                </a>
-            </div>
-          </div>
     </footer>
-  </article>
-</div>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          深入理解Python之继承
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2017/05/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E5%BA%8F%E5%88%97%E5%88%87%E7%89%87/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入理解Python之序列切片</div>
+    </a>
+  
+</nav>
 
+  
+</article>
 
+</section>
+        
+          <aside id="sidebar">
+  
+    
 
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-
-<div class="copyright">
-  &copy; 
-  <span itemprop="copyrightYear">2022</span>
-  <span class="with-love">
-    <i class="fa fa-heart"></i>
-  </span>
-  <span class="author" itemprop="copyrightHolder">Binea</span>
-</div>
-<div class="busuanzi-count">
-    <span class="post-meta-item" id="busuanzi_container_site_uv">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-user"></i>
-      </span>
-      <span class="site-uv" title="Total Visitors">
-        <span id="busuanzi_value_site_uv"></span>
-      </span>
-    </span>
-    <span class="post-meta-item" id="busuanzi_container_site_pv">
-      <span class="post-meta-item-icon">
-        <i class="fa fa-eye"></i>
-      </span>
-      <span class="site-pv" title="Total Views">
-        <span id="busuanzi_value_site_pv"></span>
-      </span>
-    </span>
-</div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android/" rel="tag">Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-AOSP/" rel="tag">Android AOSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android-source-analysis/" rel="tag">Android source analysis</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Android%E6%BA%90%E7%A0%81/" rel="tag">Android源码</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Binder-Hook-Android-Framework/" rel="tag">Binder Hook Android Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/FFMpeg4-1-ndkr18b/" rel="tag">FFMpeg4.1 ndkr18b</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework/" rel="tag">Framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Framework-Hook/" rel="tag">Framework, Hook</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Golang/" rel="tag">Golang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hook-Framework-Android/" rel="tag">Hook, Framework, Android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Ionic-CI-Python/" rel="tag">Ionic, CI, Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java-NIO/" rel="tag">Java NIO</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/JavaScript/" rel="tag">JavaScript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MySQL/" rel="tag">MySQL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/OpenGL/" rel="tag">OpenGL</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Python-%E5%B9%B6%E5%8F%91/" rel="tag">Python, 并发</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud/" rel="tag">SpringCloud</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SpringCloud%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" rel="tag">SpringCloud源码解析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ZooKeeper/" rel="tag">ZooKeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Zookeeper/" rel="tag">Zookeeper</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/framework/" rel="tag">framework</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/" rel="tag">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/golang-Channel/" rel="tag">golang Channel</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%BC%80%E6%BA%90%E5%BA%93%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag">开源库源码分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag">性能优化</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%80%BB%E7%BB%93/" rel="tag">总结</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" rel="tag">源码分析</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E7%A8%8B/" rel="tag">编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag">设计模式</a></li></ul>
+    </div>
   </div>
 
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Android/" style="font-size: 16.67px;">Android</a> <a href="/tags/Android-AOSP/" style="font-size: 10px;">Android AOSP</a> <a href="/tags/Android-source-analysis/" style="font-size: 10px;">Android source analysis</a> <a href="/tags/Android%E6%BA%90%E7%A0%81/" style="font-size: 10px;">Android源码</a> <a href="/tags/Binder-Hook-Android-Framework/" style="font-size: 10px;">Binder Hook Android Framework</a> <a href="/tags/FFMpeg4-1-ndkr18b/" style="font-size: 10px;">FFMpeg4.1 ndkr18b</a> <a href="/tags/Framework/" style="font-size: 10px;">Framework</a> <a href="/tags/Framework-Hook/" style="font-size: 10px;">Framework, Hook</a> <a href="/tags/Golang/" style="font-size: 10px;">Golang</a> <a href="/tags/Hook-Framework-Android/" style="font-size: 10px;">Hook, Framework, Android</a> <a href="/tags/Ionic-CI-Python/" style="font-size: 10px;">Ionic, CI, Python</a> <a href="/tags/Java-NIO/" style="font-size: 10px;">Java NIO</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/MySQL/" style="font-size: 10px;">MySQL</a> <a href="/tags/OpenGL/" style="font-size: 10px;">OpenGL</a> <a href="/tags/Python/" style="font-size: 20px;">Python</a> <a href="/tags/Python-%E5%B9%B6%E5%8F%91/" style="font-size: 10px;">Python, 并发</a> <a href="/tags/SpringCloud/" style="font-size: 10px;">SpringCloud</a> <a href="/tags/SpringCloud%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90/" style="font-size: 10px;">SpringCloud源码解析</a> <a href="/tags/ZooKeeper/" style="font-size: 10px;">ZooKeeper</a> <a href="/tags/Zookeeper/" style="font-size: 10px;">Zookeeper</a> <a href="/tags/framework/" style="font-size: 10px;">framework</a> <a href="/tags/git/" style="font-size: 10px;">git</a> <a href="/tags/golang-Channel/" style="font-size: 10px;">golang Channel</a> <a href="/tags/%E5%BC%80%E6%BA%90%E5%BA%93%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" style="font-size: 10px;">开源库源码分析</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 10px;">性能优化</a> <a href="/tags/%E6%80%BB%E7%BB%93/" style="font-size: 10px;">总结</a> <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" style="font-size: 13.33px;">源码分析</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 10px;">算法</a> <a href="/tags/%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">编程</a> <a href="/tags/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">设计模式</a>
     </div>
-  </footer>
+  </div>
 
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
-
-  
-
-
-
-  <script src="/js/third-party/fancybox.js"></script>
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2022/06/">June 2022</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/01/">January 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/04/">April 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">February 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/10/">October 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/09/">September 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">August 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/05/">May 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/03/">March 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/02/">February 2015</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/01/">January 2015</a></li></ul>
+    </div>
+  </div>
 
 
   
-  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2022/06/08/fresco-memory-cache/">fresco之内存bitmap缓存</a>
+          </li>
+        
+          <li>
+            <a href="/2019/01/20/%E4%BD%BF%E7%94%A8NDK%E7%BC%96%E8%AF%91FFmpeg4-1/">使用NDK编译FFmpeg4.1</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/05/Zookeeper%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90%E4%B9%8B%E9%80%89%E4%B8%BE%E6%9C%BA%E5%88%B6/">Zookeeper源码分析之选举机制</a>
+          </li>
+        
+          <li>
+            <a href="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/">深入浅出ZooKeeper</a>
+          </li>
+        
+          <li>
+            <a href="/2018/03/03/%E8%81%8A%E8%81%8AGo-Channel/">聊聊Go Channel</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2022 Binea<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
 
 
 
 
+<script src="/js/script.js"></script>
 
+
+  </div>
 </body>
 </html>
