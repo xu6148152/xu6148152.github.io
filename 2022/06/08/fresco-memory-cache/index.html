@@ -22,12 +22,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="最近因为项目优化需要，重温Fresco的内存缓存机制。做了一些简单分析。 类图 流程图 &lt;!–more–&gt;  虚线框出来的部分对应缓存资源和获取资源，两个流程里面都会触发移除无用资源，移除的条件是无用资源的数目大于设定(总共-已使用(cacheEntriesCount - exclusiveCacheEntriesCount))，或者是无用资源的体积大小超过了设定(总共-已使用(cac">
+    <meta name="description" content="最近因为项目优化需要，重温Fresco的内存缓存机制。做了一些简单分析。 类图 流程图">
 <meta property="og:type" content="article">
 <meta property="og:title" content="fresco之内存bitmap缓存">
 <meta property="og:url" content="http://xu6148152.github.io/2022/06/08/fresco-memory-cache/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="最近因为项目优化需要，重温Fresco的内存缓存机制。做了一些简单分析。 类图 流程图 &lt;!–more–&gt;  虚线框出来的部分对应缓存资源和获取资源，两个流程里面都会触发移除无用资源，移除的条件是无用资源的数目大于设定(总共-已使用(cacheEntriesCount - exclusiveCacheEntriesCount))，或者是无用资源的体积大小超过了设定(总共-已使用(cac">
+<meta property="og:description" content="最近因为项目优化需要，重温Fresco的内存缓存机制。做了一些简单分析。 类图 流程图">
 <meta property="og:locale">
 <meta property="og:image" content="http://xu6148152.github.io/fresco_memory_cache_class.jpg">
 <meta property="og:image" content="http://xu6148152.github.io/fresco_memory_cache_flow.jpg">
@@ -232,8 +232,8 @@
         <p>最近因为项目优化需要，重温<code>Fresco</code>的内存缓存机制。做了一些简单分析。</p>
 <h3 id="类图"><a href="#类图" class="headerlink" title="类图"></a>类图</h3><p><img data-src="/./fresco_memory_cache_class.jpg"></p>
 <h3 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h3><p><img data-src="/./fresco_memory_cache_flow.jpg"></p>
-<p>&lt;!–more–&gt;
-</p>
+<span id="more"></span>
+
 <p>虚线框出来的部分对应缓存资源和获取资源，两个流程里面都会触发移除无用资源，移除的条件是无用资源的数目大于设定(总共-已使用(cacheEntriesCount - exclusiveCacheEntriesCount))，或者是无用资源的体积大小超过了设定(总共-已使用(cacheEntries-exclusiveCache))，每次触发资源释放(releaseClientReference)的时候都会将没有被引用的资源放到无用缓存中。上述流程中，cache触发了缓存，但是要先检查是否满足条件，否则就跳过了，尝试移除无用资源，因此这里的内存缓存可能失效。Fresco能够在View detach的时候自动触发资源回收</p>
 <h3 id="内存释放时序图"><a href="#内存释放时序图" class="headerlink" title="内存释放时序图"></a>内存释放时序图</h3><p><img data-src="/./fresco_memory_cache_sequence.jpg"></p>
 

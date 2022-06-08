@@ -218,46 +218,45 @@
 <p>告诉GPU如何绘制数据的东西被称为着色器。着色器分为顶点着色器(vertex shader)和片段着色器(fragment shader)  </p>
 </blockquote>
 <p><img data-src="/./opengl2-6.png"></p>
-<h4 id="创建第一个顶点着色器"><a href="#创建第一个顶点着色器" class="headerlink" title="创建第一个顶点着色器"></a>创建第一个顶点着色器</h4><p>&lt;!–code￼0–&gt;
-</p>
+<h4 id="创建第一个顶点着色器"><a href="#创建第一个顶点着色器" class="headerlink" title="创建第一个顶点着色器"></a>创建第一个顶点着色器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">attribute vec4 a_Position;</span><br><span class="line"></span><br><span class="line">void main() &#123;</span><br><span class="line">	gl_Position = a_Position;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>OpenGL</code>会把<code>gl_Position</code>中的值当作当前定点的最终位置。</p>
-<h4 id="创建第一个片段着色器"><a href="#创建第一个片段着色器" class="headerlink" title="创建第一个片段着色器"></a>创建第一个片段着色器</h4><p>&lt;!–code￼1–&gt;
-</p>
+<h4 id="创建第一个片段着色器"><a href="#创建第一个片段着色器" class="headerlink" title="创建第一个片段着色器"></a>创建第一个片段着色器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">precision mediump float;</span><br><span class="line"></span><br><span class="line">uniform vec4 u_Color;</span><br><span class="line"></span><br><span class="line">void main() &#123;</span><br><span class="line">	gl_FragColor = u_Color;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><code>OpenGl</code>会把<code>gl_FragColor</code>的值作为当前片段的最终颜色</p>
-<h4 id="加载着色器"><a href="#加载着色器" class="headerlink" title="加载着色器"></a>加载着色器</h4><p>&lt;!–code￼2–&gt;
-</p>
-<h3 id="读入着色器代码"><a href="#读入着色器代码" class="headerlink" title="读入着色器代码"></a>读入着色器代码</h3><p>&lt;!–code￼3–&gt;
-</p>
-<h3 id="编译着色器"><a href="#编译着色器" class="headerlink" title="编译着色器"></a>编译着色器</h3><p>&lt;!–code￼4–&gt;
-</p>
+<h4 id="加载着色器"><a href="#加载着色器" class="headerlink" title="加载着色器"></a>加载着色器</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public class TextureResourceReader &#123;</span><br><span class="line">    public static String readTextFileFromResource(Context context, int resId) &#123;</span><br><span class="line">        StringBuilder sb = new StringBuilder();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            InputStream is = context.getResources().openRawResource(resId);</span><br><span class="line">            InputStreamReader isr = new InputStreamReader(is);</span><br><span class="line">            BufferedReader br = new BufferedReader(isr);</span><br><span class="line">            String nextLine;</span><br><span class="line"></span><br><span class="line">            while ((nextLine = br.readLine()) != null) &#123;</span><br><span class="line">                sb.append(nextLine);</span><br><span class="line">                sb.append(&#x27;\n&#x27;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (IOException e) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;Could not open resource: &quot; + resId, e);</span><br><span class="line">        &#125; catch (Resources.NotFoundException e) &#123;</span><br><span class="line">            throw new RuntimeException(&quot;Resource not found: &quot; + resId, e);</span><br><span class="line">        &#125;</span><br><span class="line">        return sb.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="读入着色器代码"><a href="#读入着色器代码" class="headerlink" title="读入着色器代码"></a>读入着色器代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Override protected String readVertexShader() &#123;</span><br><span class="line">        return TextureResourceReader.readTextFileFromResource(mContext, R.raw.simple_vertex_shader);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override protected String readFragmentShader() &#123;</span><br><span class="line">        return TextureResourceReader.readTextFileFromResource(mContext,</span><br><span class="line">                                                              R.raw.simple_fragment_shader);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="编译着色器"><a href="#编译着色器" class="headerlink" title="编译着色器"></a>编译着色器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public static int compileVertexShader(String shaderCode) &#123;</span><br><span class="line">       return compileShader(GL_VERTEX_SHADER, shaderCode);</span><br><span class="line">   &#125;</span><br><span class="line"></span><br><span class="line">   public static int compileFragmentShader(String shaderCode) &#123;</span><br><span class="line">       return compileShader(GL_FRAGMENT_SHADER, shaderCode);</span><br><span class="line">   &#125;</span><br><span class="line">   </span><br><span class="line">private static int compileShader(int type, String shaderCode) &#123;</span><br><span class="line">       final int shaderObjectId = glCreateShader(type);</span><br><span class="line"></span><br><span class="line">       if (shaderObjectId == 0) &#123;</span><br><span class="line">           LogHelper.w(TAG, &quot;Could not create new shader.&quot;);</span><br><span class="line">           return 0;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       glShaderSource(shaderObjectId, shaderCode);</span><br><span class="line">       glCompileShader(shaderObjectId);</span><br><span class="line"></span><br><span class="line">       final int[] compileStatus = new int[1];</span><br><span class="line">       glGetShaderiv(shaderObjectId, GL_COMPILE_STATUS, compileStatus, 0);</span><br><span class="line"></span><br><span class="line">       LogHelper.v(TAG,</span><br><span class="line">                   &quot;Results of compiling source:&quot; + &quot;\n&quot; + shaderCode + &quot;\n&quot; + glGetShaderInfoLog(</span><br><span class="line">                           shaderObjectId));</span><br><span class="line"></span><br><span class="line">       if (compileStatus[0] == 0) &#123;</span><br><span class="line">           glDeleteShader(shaderObjectId);</span><br><span class="line"></span><br><span class="line">           LogHelper.w(TAG, &quot;Compilation of shader failed&quot;);</span><br><span class="line">           return 0;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       return shaderObjectId;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="链接着色器"><a href="#链接着色器" class="headerlink" title="链接着色器"></a>链接着色器</h3><p>一个OpenGL程序就是把一个顶点着色器和一个片段着色器链接在一起变成单个对象，顶点着色器和片段着色器总是在一起工作的。片段着色器负责绘制那些组成每个点、直线和三角形的片段；顶点着色器确定在哪里绘制。</p>
-<p>&lt;!–code￼5–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public static int linkProgram(int vertextShaderId, int fragmentShaderId) &#123;</span><br><span class="line">       final int programObjectId = glCreateProgram();</span><br><span class="line"></span><br><span class="line">       if (programObjectId == 0) &#123;</span><br><span class="line">           LogHelper.w(TAG, &quot;Could not create new program&quot;);</span><br><span class="line">           return 0;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       glAttachShader(programObjectId, vertextShaderId);</span><br><span class="line">       glAttachShader(programObjectId, fragmentShaderId);</span><br><span class="line"></span><br><span class="line">       glLinkProgram(programObjectId);</span><br><span class="line"></span><br><span class="line">       final int[] status = new int[1];</span><br><span class="line">       glGetProgramiv(programObjectId, GL_LINK_STATUS, status, 0);</span><br><span class="line"></span><br><span class="line">       LogHelper.v(TAG, &quot;Result of linking program: \n&quot; + glGetProgramInfoLog(programObjectId));</span><br><span class="line"></span><br><span class="line">       if (status[0] == 0) &#123;</span><br><span class="line">           glDeleteProgram(programObjectId);</span><br><span class="line">           LogHelper.w(TAG, &quot;Linking of program failed.&quot;);</span><br><span class="line">           return 0;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       return programObjectId;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
 <h3 id="最后的拼接"><a href="#最后的拼接" class="headerlink" title="最后的拼接"></a>最后的拼接</h3><ul>
 <li>获取一个<code>uniform</code>的位置</li>
 </ul>
-<p>&lt;!–code￼6–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">glGetUniformLocation(program, U_COLOR);</span><br><span class="line">	</span><br></pre></td></tr></table></figure>
 <ul>
 <li>获取属性的位置</li>
 </ul>
-<p>&lt;!–code￼7–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glGetAttribLocation(program, A_COLOR);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>关联属性和定点数据的数组</li>
 </ul>
-<p>&lt;!–code￼8–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">vertexData.position(0);</span><br><span class="line">//****** very import method *******//</span><br><span class="line">glVertexAttribPointer(aPositionLocation, POSITION_COMPONENT_COUNT, GL_FLOAT, false, STRIDE,</span><br><span class="line">                      vertexData);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>使能顶点数组</li>
 </ul>
-<p>&lt;!–code￼9–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">glEnableVertexAttribArray(aPositionLocation);</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>绘制</li>
 </ul>
-<p>&lt;!–code￼10–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">glClear(GL_COLOR_BUFFER_BIT);</span><br><span class="line"></span><br><span class="line">//set triangle color</span><br><span class="line">//glUniform4f(uColorLocation, 1.0f, 1.0f, 1.0f, 1.0f);</span><br><span class="line">//draw two triangles</span><br><span class="line">glDrawArrays(GL_TRIANGLE_FAN, 0, 6);</span><br><span class="line"></span><br><span class="line">//set line color</span><br><span class="line">//glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);</span><br><span class="line">glDrawArrays(GL_LINES, 6, 2);</span><br><span class="line"></span><br><span class="line">//draw the first blue mallets</span><br><span class="line">//glUniform4f(uColorLocation, 0.0f, 0.0f, 1.0f, 1.0f);</span><br><span class="line">glDrawArrays(GL_POINTS, 8, 1);</span><br><span class="line"></span><br><span class="line">//draw the second red mallets</span><br><span class="line">//glUniform4f(uColorLocation, 1.0f, 0.0f, 0.0f, 1.0f);</span><br><span class="line">glDrawArrays(GL_POINTS, 9, 1);</span><br></pre></td></tr></table></figure>
+
 <h3 id="OpenGl如何把坐标映射到屏幕"><a href="#OpenGl如何把坐标映射到屏幕" class="headerlink" title="OpenGl如何把坐标映射到屏幕"></a>OpenGl如何把坐标映射到屏幕</h3><p>OpenGl会把屏幕映射到x,y轴的[-1, 1]范围内，可以给<code>gl_PointSize</code>赋值来改变点的大小</p>
 
       
@@ -356,68 +355,68 @@
 <li>发布分支</li>
 <li>紧急修复分支</li>
 </ul>
-<h4 id="功能分支"><a href="#功能分支" class="headerlink" title="功能分支"></a>功能分支</h4><p>&lt;img align=&quot;right&quot; width = &quot;100&quot; height = &quot;300&quot; src=&quot;./fb.png&quot; &gt;</p>
+<h4 id="功能分支"><a href="#功能分支" class="headerlink" title="功能分支"></a>功能分支</h4><img align="right" width = "100" height = "300" data-src="./fb.png" >
+
 <p>这个分支必须从<code>develop</code>分出，最后必须合并到<code>develop</code>，命名规则：除了<code>master,develop,release-*, 或者hotfix-*</code>之外</p>
 <p>功能分支被是用来开发新功能。当开始开发新功能时，这个功能的最终发布节点可能是不知道的。功能分支的重要性在于它与开发功能的周期一样，但最终会合并到<code>develop</code>或者会被抛弃。功能分支只存在于开发仓库，不在<code>origin</code>。</p>
-<p>&lt;p style&#x3D;&quot;text-align: center;&quot;&gt;创建功能分支&lt;&#x2F;p&gt;
+<p style="text-align: center;">创建功能分支</p>
 
-</p>
-<p>&lt;!–code￼0–&gt;
-</p>
-<p>&lt;p style&#x3D;&quot;text-align: center;&quot;&gt;合并一个完成的功能&lt;&#x2F;p&gt;
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b myfeature develop</span><br><span class="line">Switched to a new branch &quot;myfeature&quot;</span><br></pre></td></tr></table></figure>
 
-</p>
-<p>&lt;!–code￼1–&gt;
-</p>
+<p style="text-align: center;">合并一个完成的功能</p>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
+
 <p><code>--no-ff</code>标记合并的时候回创建新的提交，虽然合并能够使用<code>fast-forward</code>。这样做能够清晰的看到这个分支的所有提交。比较如下</p>
 <p><img data-src="/./merge-without-ff.png"></p>
 <p>通过左图可以看出，当你想把这个功能去掉时会很方便找到功能的开始节点。</p>
 <h4 id="发布分支"><a href="#发布分支" class="headerlink" title="发布分支"></a>发布分支</h4><p>从<code>develop</code>分出，合并回<code>develop</code>和<code>master</code>，命名规则:<code>release-*</code></p>
 <p>新产品要发布的话可以使用发布分支。它允许修复一下小的<code>bug</code>以及准备元数据(版本号，构建日期等)。</p>
 <p>关键点在于必须合并完所有需要的功能分支后才能开出发布分支。</p>
-<p>&lt;p style&#x3D;&quot;text-align: center;&quot;&gt;创建发布分支&lt;&#x2F;p&gt;
+<p style="text-align: center;">创建发布分支</p>
 
-</p>
-<p>&lt;!–code￼2–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b release-1.2 develop</span><br><span class="line">Switched to a new branch &quot;release-1.2&quot;</span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">Files modified successfully, version bumped to 1.2.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2&quot;</span><br><span class="line">[release-1.2 74d9424] Bumped version number to 1.2</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
+
 <p>创建分支后，写入版本号。在这,<code>bump-version.sh</code>是一个能修改版本号的脚本，然后提交写入的版本号。</p>
 <p>可以在发布分支上修改<code>bug</code>。但绝对禁止在这个分支上加大的功能。它们必须合并到<code>develop</code>，因此只能等到下一次大的发布。</p>
-<p>&lt;p style&#x3D;&quot;text-align: center;&quot;&gt;结束发布分支&lt;&#x2F;p&gt;
+<p style="text-align: center;">结束发布分支</p>
 
-</p>
 <p>当发布分支已经准备好，需要做一些操作。首先把发布分支合并回<code>master</code>。下一步，这些提交需要标记一下以便后续查找。最后发布分支需要合并到<code>develop</code>以便将来的发布版本也能包含当前发布版本的<code>bug</code>修复。</p>
-<p>&lt;!–code￼3–&gt;
-</p>
-<p>&lt;!–code￼4–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
+
 <p>这可能会导致冲突，没关系，解决它就好了。现在我们可以删除发布分支了</p>
-<p>&lt;!–code￼5–&gt;
-</p>
-<h4 id="紧急修复分支"><a href="#紧急修复分支" class="headerlink" title="紧急修复分支"></a>紧急修复分支</h4><p>&lt;img align=&quot;right&quot; width = &quot;200&quot; height = &quot;300&quot; src=&quot;./hotfix-branches.png&quot; &gt;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d release-1.2</span><br><span class="line">Deleted branch release-1.2 (was ff452fe).</span><br></pre></td></tr></table></figure>
+
+<h4 id="紧急修复分支"><a href="#紧急修复分支" class="headerlink" title="紧急修复分支"></a>紧急修复分支</h4><img align="right" width = "200" height = "300" data-src="./hotfix-branches.png" >
+
 <p>可能从<code>master</code>开出，必须合并回<code>develop</code>和<code>master</code>，命名规则：<code>hotfix-*</code></p>
 <p>紧急修复分支很像发布分支，因为它是另一个即将发布的产品。它主要解决一下比较严重的<code>bug</code>。紧急分支必须从<code>master</code>相应产品的标记分出。它的作用在于其他人可以继续别的工作而不受修改<code>bug</code>人的影响。</p>
-<p>&lt;/br&gt;
-&lt;/br&gt;
-&lt;/br&gt;
-&lt;/br&gt;</p>
-<p>&lt;/br&gt;</p>
-<p>&lt;p style&#x3D;&quot;text-align: center;&quot;&gt;创建紧急修复分支&lt;&#x2F;p&gt;
+</br>
+</br>
+</br>
+</br>
 
-</p>
-<p>&lt;!–code￼6–&gt;
-</p>
+</br>
+
+
+<p style="text-align: center;">创建紧急修复分支</p>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">Switched to a new branch &quot;hotfix-1.2.1&quot;</span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">Files modified successfully, version bumped to 1.2.1.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2.1&quot;</span><br><span class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
+
 <p>别忘了写入版本号！</p>
 <h4 id="结束紧急修复分支"><a href="#结束紧急修复分支" class="headerlink" title="结束紧急修复分支"></a>结束紧急修复分支</h4><p>当分支结束时，需要合并到<code>master</code>和<code>develop</code>以便之后的版本能够包含这些修复。这跟发布分支的做法一致。</p>
 <p>首先，更新<code>master</code>并标记<code>release</code></p>
-<p>&lt;!–code￼7–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2.1</span><br></pre></td></tr></table></figure>
+
 <p>然后，合并分支进入<code>develop</code></p>
-<p>&lt;!–code￼8–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
+
 <p>有种情况需要知道，当发布分支当前已经存在的话，紧急修复分支需要合并到当前发布分支中，而不是<code>develop</code>。最终发布分支中的紧急修复代码能够合并到<code>develop</code>。</p>
 <p>最后，删除临时分支：</p>
-<p>&lt;!–code￼9–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d hotfix-1.2.1</span><br><span class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</span><br></pre></td></tr></table></figure>
+
 <h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这个分支模型没有什么新的东西，本文中的大图在我们的项目中非常有用。它是一种优雅的开发模型，能非常简单的进行团队协作。</p>
 <p><a target="_blank" rel="noopener" href="http://nvie.com/posts/a-successful-git-branching-model/#decentralized-but-centralized">原文</a></p>
 
@@ -493,58 +492,58 @@
 <p><code>By Google</code>是<code>Google</code>一个从事<code>Google Play Movies</code>的小组。当然，这听起来更像<code>Google</code>.</p>
 <p>不管是谁发布的，我们要关注的是，它与现有的反应式编程库<code>RxJava</code>,<code>Reactor</code>以及<code>Akka-Streams</code>有什么区别</p>
 <h3 id="核心API"><a href="#核心API" class="headerlink" title="核心API"></a>核心API</h3><p><code>Agera</code>基于少值观察者模式:被观察者通过<code>update()</code>拿到更新和变化的信号.然后响应这些变化来算出什么改变了。以下是一个无参反应式数据流，它依赖一端<code>update</code></p>
-<p>&lt;!–code￼0–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">interface Updatable &#123;</span><br><span class="line">    void update();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">interface Observable &#123;</span><br><span class="line">   void addUpdatable(Updatable u);</span><br><span class="line">   void removeUpdatable(Updatable u);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>它们看起来挺合理的？不幸的事，它们也有<code>java.util.Observable</code>和其他基于<code>addListener/removeListener</code>的反应式API</p>
 <h3 id="Agera-Observable"><a href="#Agera-Observable" class="headerlink" title="Agera Observable"></a>Agera Observable</h3><p>这对方法的问题是每个添加了<code>Updatable</code>行为的<code>Observable</code>都不得不去记住原始的<code>Updatable</code>以便能移除同样的<code>Updatable</code>:</p>
-<p>&lt;!–code￼1–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">public final class DoOnUpdate implements Observable &#123;</span><br><span class="line">    final Observable source;</span><br><span class="line"> </span><br><span class="line">    final Runnable action;</span><br><span class="line"> </span><br><span class="line">    final ConcurrentHashMap&lt;Updatable, DoOnUpdatable&gt; map;</span><br><span class="line"> </span><br><span class="line">    public DoOnUpdate(Observable source, Runnable action) &#123;</span><br><span class="line">         this.source = source;</span><br><span class="line">         this.action = action;</span><br><span class="line">         this.map = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    @Override</span><br><span class="line">    public void addUpdatable(Updatable u) &#123;</span><br><span class="line">        DoOnUpdatable wrapper = new DoOnUpdatable(u, action);</span><br><span class="line">        if (map.putIfAbsent(u, wrapper) != null) &#123;</span><br><span class="line">            throw new IllegalStateException(&quot;Updatable already registered&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        source.addUpdatable(wrapper);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public void removeUpdatable(Updatable u) &#123;</span><br><span class="line">        DoOnUpdatable wrapper = map.remove(u);</span><br><span class="line">        if (wrapper == null) &#123;</span><br><span class="line">            throw new IllegalStateException(&quot;Updatable already removed&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        source.removeUpdatable(wrapper);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    static final class DoOnUpdatable &#123;</span><br><span class="line">        final Updatable actual;</span><br><span class="line"> </span><br><span class="line">        final Runnable run;</span><br><span class="line"> </span><br><span class="line">        public DoOnUpdatable(Updatable actual, Runnable run) &#123;</span><br><span class="line">            this.actual = actual;</span><br><span class="line">            this.run = run;</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        @Override</span><br><span class="line">        public void update() &#123;</span><br><span class="line">            run.run();</span><br><span class="line">            actual.update();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>这导致一个争论点，在管道的每个阶段独立的下游<code>Updatabels</code>。是的，<code>RxJava&#39;s Subjects</code>和<code>ConnectableObservables</code>也有类似的争议点，但它们之后的链式操作符不会有争议。不幸的是，反应式流规范，在当前版本，<code>Publishers</code>也有类似的问题。现在<code>RxJava2.x</code>,<code>Rsc</code>和<code>Reactor</code>完全忽略了这些东西,结果是操作起来变得更严格了。</p>
 <p>第二个微不足道的问题是你不能多次添加相同的<code>Updatable</code>。因为你无法在不同的<code>subscriptions</code>中通过<code>Map</code>区分它们，如果这么干，会出现异常。通常这是很少发生的，因为大多数的终端需求都很单一。</p>
 <p>第三个比较大的问题：当<code>Updatable</code>不再注册在<code>Observable</code>时抛出。这在终端用户触发移除操作时，而这个操作又引发别的操作，它们当中一个会抛出异常。这就是为何现在反应式变成不能够被取消的缘故。</p>
 <p>第四个理论问题,<code>addUpdatable</code>和<code>removeUpdatable</code>会相互竞争，一些下游的操作符想在某个上游操作符已经调用了<code>addUpdatable</code>之后断开。一个可能的问题是<code>removeUpdate</code>调用抛出异常而<code>addUpdatable</code>成功，这回导致信号流向任何地方和导致相关的对象不想要的持有。</p>
 <h3 id="Agera-Updatable"><a href="#Agera-Updatable" class="headerlink" title="Agera Updatable"></a>Agera Updatable</h3><p>我们来从消费者角度看看API。<code>Updatable</code>是一个单一函数接口的方法，这让它能简单的给<code>Observable</code>添加监听</p>
-<p>&lt;!–code￼2–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Observable source = ...</span><br><span class="line">source.addUpdatable(() -&gt; System.out.println(&quot;Something happened&quot;));</span><br></pre></td></tr></table></figure>
+
 <p>相当简单，现在我们移除我们的监听</p>
-<p>&lt;!–code￼3–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source.removeUpdatable(() -&gt; System.out.println(&quot;Something happened&quot;);</span><br></pre></td></tr></table></figure>
+
 <p>这会产生一个异常:两个<code>lambdas</code>不是相同的对象。这在基于<code>addListener/removeListener</code>的API当中是相当常见的问题。解决方案是存储<code>lambda</code>，当需要的时候去用它：</p>
-<p>&lt;!–code￼4–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Updatable u = () -&gt; System.out.println(&quot;Something happened&quot;);</span><br><span class="line"> </span><br><span class="line">source.addUpdatable(u);</span><br><span class="line"> </span><br><span class="line">// ...</span><br><span class="line"> </span><br><span class="line">source.removeUpdatable(u);</span><br></pre></td></tr></table></figure>
+
 <p>有点不方便，但不会更糟了。如果你有很多<code>Observables</code>和很多<code>Updatables</code>呢？你需要记住谁注册在谁上，在相同的字段保持引用它们。<code>Rx.NET</code>的原始设计有个好主意来减少这种必须的单引用：</p>
-<p>&lt;!–code￼5–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">interface Removable extends Closeable &#123;</span><br><span class="line">    @Override</span><br><span class="line">    void close(); // remove the necessity of try-catch around close()</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">public static Removable registerWith(Observable source, Updatable consumer) &#123;</span><br><span class="line">    source.addUpdatable(consumer);</span><br><span class="line">    return () -&gt; source.removeUpdatable(consumer);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>当然，我们在调用<code>close()</code>时同样需要考虑：</p>
-<p>&lt;!–code￼6–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static Removable registerWith(Observable source, Updatable consumer) &#123;</span><br><span class="line">    source.addUpdatable(consumer);</span><br><span class="line">    final AtomicBoolean once = new AtomicBoolean();</span><br><span class="line">    return () -&gt; &#123;</span><br><span class="line">        if (once.compareAndSet(false, true)) &#123;</span><br><span class="line">            source.removeUpdatable(consumer);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <h4 id="Agera-MutableRepository"><a href="#Agera-MutableRepository" class="headerlink" title="Agera MutableRepository"></a>Agera MutableRepository</h4><p>如果值发生变化，<code>Agera MutableRepository</code>会通过<code>update()</code>通知注册的<code>Updatables</code>。这和<code>BehaviorSubject</code>很像，区别是新值如果不调用<code>get()</code>不会流到消费者:</p>
-<p>&lt;!–code￼7–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">MutableRepository&lt;integer&gt; repo = Repositories.mutableRepository(0);</span><br><span class="line"> </span><br><span class="line">repo.addUpdatable(() -&gt; System.out.println(&quot;Value: &quot; + repo.get());</span><br><span class="line"> </span><br><span class="line">new Thread(() -&gt; &#123;</span><br><span class="line">    repo.accept(1);</span><br><span class="line">&#125;).start();</span><br></pre></td></tr></table></figure>
+
 <p>当通过工厂方法创建仓库时，<code>Looper</code>中会调用<code>update()</code>。</p>
-<p>&lt;!–code￼8–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</span><br><span class="line"> </span><br><span class="line">MutableRepository&lt;integer&gt; repo = Repositories.mutableRepository(0);</span><br><span class="line"> </span><br><span class="line">repo.addUpdatable(() -&gt; set.add(repo.get()));</span><br><span class="line"> </span><br><span class="line">new Thread(() -&gt; &#123;</span><br><span class="line">    for (int i = 0; i &lt; 100_000; i++) &#123;</span><br><span class="line">        repo.accept(i);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;).start();</span><br><span class="line"> </span><br><span class="line">Thread.sleep(20_000);</span><br><span class="line"> </span><br><span class="line">System.out.println(set.size());</span><br></pre></td></tr></table></figure>
+
 <p>20秒之后<code>Set</code>最终会有多大？有人可能会认为是100,000。事实上，值可能在1~100,000之间!原因是<code>accept()</code>和<code>get()</code>并发运行，如果消费者运行比较慢，<code>accept()</code>会覆盖当前仓库的值。</p>
 <h4 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h4><p>使用异步通常意味着会碰到异步相关的问题。<code>RxJava</code>和其他类似的东西都会有这种问题：出现某种错误了，这个流程自动清掉，而开发者希望的是能够重新开始。错误和清理在某些情况下很复杂，成熟的库都花费了大量的精力来解决这些问题，因此开发者不需要在这上面浪费很多时间。</p>
 <p><code>Agera</code>基础API不会自己处理错误，你需要自己对错误进行处理。如果你用<code>Agera</code>组成多个服务，你需要建立自己的错误处理框架.由于并发和中断状态使它处理起来很笨重和延迟。</p>
 <h4 id="终结"><a href="#终结" class="headerlink" title="终结"></a>终结</h4><p><code>Agera</code>对一个完成流不会发出通知，你需要自己知道它什么时候会完成。这在简单用户界面上不会有什么问题。然而，后台异步操作需要知道要发出多少信号，没有数据的话，你如何收到<code>update()</code>相关通知</p>
 <h3 id="如何设计现代化的无参反应式API"><a href="#如何设计现代化的无参反应式API" class="headerlink" title="如何设计现代化的无参反应式API"></a>如何设计现代化的无参反应式API</h3><p>看看以下例子：</p>
-<p>&lt;!–code￼9–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">rx.Observable&lt;Void&gt; signaller = ...</span><br><span class="line"> </span><br><span class="line">rx.Observer&lt;Void&gt; consumer = ...</span><br><span class="line"> </span><br><span class="line">Subscription s = signaller.subscribe(consumer);</span><br><span class="line"> </span><br><span class="line">// ...</span><br><span class="line"> </span><br><span class="line">s.unsubscribe();</span><br></pre></td></tr></table></figure>
+
 <p>你很简单的就能获得它该有的功能。你如果要处理别的类型信号，将<code>Void</code>替换成你想要的类型就可以了。</p>
 <p>如果一个库由于需要学习很多操作符而让人感到很笨重的话，你可以拷贝它，删除你不需要的东西。当然，你需要更新修复问题和性能优化后的代码。</p>
 <p>如果拷贝和修改听起来不够有吸引力，你能按照<code>Reactive-Streams</code>规定开发自己的库;<code>Publisher&lt;Void&gt;</code>,<code>&lt;Subscriber&lt;Void&gt;</code>和其他东西。你能很方便的与其他的<code>Reactive-Streams</code>库一起工作，你能通过它的兼容性测试来测试你的库。</p>
 <p>当然，编写反应式库很麻烦，按照<code>Reactive-Streams</code>编写更麻烦。所以，综合考虑，你可以拓展API</p>
 <p>如果你真的想要编写无参反应式流，这有几个你需要考虑的建议：</p>
 <p><strong>1)不要分开<code>addListener</code>和<code>removeListener</code>。</strong>单一的入口简化中间操作的开发。</p>
-<p>&lt;!–code￼10–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">interface Observable &#123;</span><br><span class="line">    Removable register(Updatable u);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">interface Removable &#123;</span><br><span class="line">    void remove();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>2)考虑支持取消和移除而不是返回一个可以取消的令牌或者可移除的动作：</strong></p>
-<p>&lt;!–code￼11–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">interface Observable &#123;</span><br><span class="line">    void register(Updatable u);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">interface Updatable &#123;</span><br><span class="line">    void onRegister(Removable remover);</span><br><span class="line">    void update();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">// or</span><br><span class="line"> </span><br><span class="line">interface Updatable &#123;</span><br><span class="line">    void update(Removable remover);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>3)考虑至少添加一个错误信号接收：</strong></p>
-<p>&lt;!–code￼12–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">interface Updatable &#123;</span><br><span class="line">    void onRegister(Removable remover);</span><br><span class="line">    void update();</span><br><span class="line">    void error(Throwable ex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p><strong>4)考虑提供队列的异步操作.</strong></p>
 <h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>其实作者就是来黑<code>Agera</code>的。</p>
 
@@ -627,68 +626,15 @@
 <li>当你的APP安装在用户的设备上时会占用多大的空间？</li>
 <li>用户需要花费多少的网络流量来下载和安装您的APP</li>
 <li>更新APP时，需要下载多少内容？</li>
-<li>你的APP运行时占用了多少内存？<p>&lt;!–more–&gt;
-</p>
-<h5 id="APK里面究竟有什么？"><a href="#APK里面究竟有什么？" class="headerlink" title="APK里面究竟有什么？"></a>APK里面究竟有什么？</h5></li>
-</ul>
-<p>&lt;!–code￼0–&gt;
-</p>
-<h5 id="使用Zopfli来重新压缩APK-5-0-1可能会有crash现象"><a href="#使用Zopfli来重新压缩APK-5-0-1可能会有crash现象" class="headerlink" title="使用Zopfli来重新压缩APK(5.0.1可能会有crash现象)"></a>使用Zopfli来重新压缩APK(5.0.1可能会有crash现象)</h5><p>使用<code>zipalign -z 4 input.apk output.apk</code>或者在gradle里加入  </p>
-<p>&lt;!–code￼1–&gt;
-</p>
-<h4 id="2-简化代码"><a href="#2-简化代码" class="headerlink" title="2.简化代码"></a>2.<a target="_blank" rel="noopener" href="https://medium.com/google-developers/smallerapk-part-2-minifying-code-554560d2ed40#.g0uo79o4u">简化代码</a></h4><h5 id="使用proguard简化dex代码"><a href="#使用proguard简化dex代码" class="headerlink" title="使用proguard简化dex代码"></a>使用proguard简化dex代码</h5><h5 id="上传ProGuard-mappings到play-store上"><a href="#上传ProGuard-mappings到play-store上" class="headerlink" title="上传ProGuard mappings到play store上"></a>上传ProGuard mappings到play store上</h5><h5 id="三方库的Proguard配置"><a href="#三方库的Proguard配置" class="headerlink" title="三方库的Proguard配置"></a>三方库的Proguard配置</h5><p>三方库  </p>
-<p>&lt;!–code￼2–&gt;
-</p>
-<h5 id="跟踪你需要的依赖"><a href="#跟踪你需要的依赖" class="headerlink" title="跟踪你需要的依赖"></a>跟踪你需要的依赖</h5><h5 id="过渡库的依赖"><a href="#过渡库的依赖" class="headerlink" title="过渡库的依赖"></a>过渡库的依赖</h5><p>&lt;!–code￼3–&gt;
-</p>
-<p>查看引入的依赖</p>
-<h5 id="使用ClassyShark来检查Dex文件"><a href="#使用ClassyShark来检查Dex文件" class="headerlink" title="使用ClassyShark来检查Dex文件"></a>使用<code>ClassyShark</code>来检查Dex文件</h5><h4 id="3-移除没用的资源文件"><a href="#3-移除没用的资源文件" class="headerlink" title="3.移除没用的资源文件"></a>3.<a target="_blank" rel="noopener" href="https://medium.com/google-developers/smallerapk-part-3-removing-unused-resources-1511f9e3f761#.itzxr72ra">移除没用的资源文件</a></h4><p><code>shrinkResources true</code>
-由于系统可能会出现某些错误，因此可以使用</p>
-<p>&lt;!–code￼4–&gt;
-</p>
-<h5 id="使用ResConfigs移除无用的配置"><a href="#使用ResConfigs移除无用的配置" class="headerlink" title="使用ResConfigs移除无用的配置"></a>使用<code>ResConfigs</code>移除无用的配置</h5><p>&lt;!–code￼5–&gt;
-</p>
-<h5 id="稀疏resources-arsc中的配置"><a href="#稀疏resources-arsc中的配置" class="headerlink" title="稀疏resources.arsc中的配置"></a>稀疏resources.arsc中的配置</h5><h4 id="4-通过ABI和分辨率区分多种APK"><a href="#4-通过ABI和分辨率区分多种APK" class="headerlink" title="4.通过ABI和分辨率区分多种APK"></a>4.<a target="_blank" rel="noopener" href="https://medium.com/@wkalicinski/smallerapk-part-4-multi-apk-through-abi-and-density-splits-477083989006#.vhvtofczw">通过ABI和分辨率区分多种APK</a></h4><p>&lt;!–code￼6–&gt;
-</p>
-<h5 id="ABI分割"><a href="#ABI分割" class="headerlink" title="ABI分割"></a>ABI分割</h5><p>&lt;!–code￼7–&gt;
-</p>
-<h5 id="设置版本号"><a href="#设置版本号" class="headerlink" title="设置版本号"></a>设置版本号</h5><p>&lt;!–code￼8–&gt;
-</p>
-<h4 id="5-通过product-flavors来区分多种APK"><a href="#5-通过product-flavors来区分多种APK" class="headerlink" title="5.通过product flavors来区分多种APK"></a>5.<a target="_blank" rel="noopener" href="https://medium.com/@wkalicinski/smallerapk-part-5-multi-apk-through-product-flavors-e069759f19cd#.niun1j7q1">通过product flavors来区分多种APK</a></h4><p>&lt;!–code￼9–&gt;
-</p>
-<h5 id="基于最小SDK版本的多种APK区分"><a href="#基于最小SDK版本的多种APK区分" class="headerlink" title="基于最小SDK版本的多种APK区分"></a>基于最小SDK版本的多种APK区分</h5><p>&lt;!–code￼10–&gt;
-</p>
-<h4 id="6-图片优化Zopfli-amp-WebP"><a href="#6-图片优化Zopfli-amp-WebP" class="headerlink" title="6.图片优化Zopfli&amp;WebP"></a>6.<a target="_blank" rel="noopener" href="https://medium.com/@wkalicinski/smallerapk-part-6-image-optimization-zopfli-webp-4c462955647d#.mi1u9osne">图片优化Zopfli&amp;WebP</a></h4><p>不能使用<code>WebP</code>作为启动画面的图片，因为它加载比较慢。</p>
-<p>&lt;!–code￼11–&gt;
-</p>
-<h4 id="7-图片优化Shape和VectorDrawables"><a href="#7-图片优化Shape和VectorDrawables" class="headerlink" title="7.图片优化Shape和VectorDrawables"></a>7.<a target="_blank" rel="noopener" href="https://medium.com/@wkalicinski/smallerapk-part-7-image-optimization-shape-and-vectordrawables-ed6be3dca3f#.wysrztkjj">图片优化Shape和VectorDrawables</a></h4><p><code>Shape Drawable</code>,<code>VectorDrawables</code>
-通过下列代码控制哪些哪些图片会由vectorDrawbles生成  </p>
-<p>&lt;!–code￼12–&gt;
-</p>
-<h4 id="8-从APK打开本地库"><a href="#8-从APK打开本地库" class="headerlink" title="8.从APK打开本地库"></a>8.<a target="_blank" rel="noopener" href="https://medium.com/@wkalicinski/smallerapk-part-8-native-libraries-open-from-apk-fc22713861ff#.h0f9i91tk">从APK打开本地库</a></h4><p>从6.0开始</p>
-<p>&lt;!–code￼13–&gt;
-</p>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><ul>
-<li>使用一套资源</li>
-<li>使用<code>minifyEnabled</code>混淆代码</li>
-<li>使用<code>shrinkResources</code>去除无用资源</li>
-<li>删除无用语言资源</li>
-<li>使用<code>tinypng</code>有损压缩</li>
-<li>使用<code>jpg</code>格式</li>
-<li>使用<code>webp</code></li>
-<li>优化<code>.so</code>文件，有些可以删除</li>
-<li>缩小图片</li>
-<li>使用微信资源压缩打包工具<a target="_blank" rel="noopener" href="https://github.com/shwenzhang/AndResGuard">AndResGuard</a></li>
-<li>使用<code>provided</code>编译</li>
-<li>使用<code>shape</code>背景</li>
-<li>使用<code>DrawableCompat</code></li>
-<li>考虑资源在线化</li>
-<li>避免重复库</li>
-<li>使用更小的库</li>
-<li>使用插件化</li>
-<li>精简功能业务</li>
-</ul>
-
+<li>你的APP运行时占用了多少内存？
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/04/04/smaller-apk/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -763,44 +709,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="Android开发30条经验"><a href="#Android开发30条经验" class="headerlink" title="Android开发30条经验"></a>Android开发30条经验</h2><p>有两种人，一种是自己摸索来学习，一种是通过别人的建议。这儿有些经验我想与你们分享：<br>&lt;!--more--&gt;
-1. 使用任何第三方库之前，请慎重考虑，一会是一个很<strong>严重</strong>的提交。
-2. 如果用户看不到它，<strong>别绘制它</strong>。
-3. 除非你真的需要使用数据库，否则别用。
-4. 方法数很容易超过65K，**<code>multidexing</code><strong>可以帮助你。
-5. <code>RxJava</code>是比<code>AsyncTasks</code>更好的选择。
-6. <code>Retrofit</code>是最好的网络库。
-7. 使用<code>Retrolambda</code>来简化代码。
-8. 混合使用<code>RxJava, Retrofit, Retrolambda</code>很棒！
-9. <code>EventBus</code>很棒，但不要使用太多，它会让代码很难调试。
-10. <a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/package-by-features-not-layers-2d076df1964d">按功能分包，而不是按层分包</a>。
-11. 把任何东西都从主线程移除掉。
-12. 使用<code>lint</code>来帮助你优化布局。
-13. 如果你使用<code>gradle</code>，尽一切<a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/speeding-up-gradle-builds-619c442113cb">可能</a>来加速。<a target="_blank" rel="noopener" href="https://medium.com/@shelajev/6-tips-to-speed-up-your-gradle-build-3d98791d3df9#.60bijkglh">方式</a>
-14. <a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/speeding-up-gradle-builds-619c442113cb">提取编译报告</a>，看看什么比较耗时。
-15. 使用<a target="_blank" rel="noopener" href="http://fernandocejas.com/2015/07/18/architecting-android-the-evolution/">知名</a>的架构
-16. 测试很花时间，但它使代码更健壮。
-17. 使用依赖注入使项目更具模块化和更方便测试。
-18. 听听<a target="_blank" rel="noopener" href="http://fragmentedpodcast.com/">fragmentedpodcast</a>将会对你很有帮助。
-19. 不要使用你自己的邮箱作为android市场的发布账号。
-20. 总是使用合理的输入类型(EditText)
-21. 使用</strong>analytics**来查找使用的模式和隔离代码。
-22. 总是更新到最新的库(使用<code>dryrun</code>来测试它们)
-23. 你的服务应该做它们需要做的事情，尽可能快的销毁。
-24. 使用<code>Account Manager</code>来建议登录用户名和邮箱地址。
-25. 使用可持续集成平台来构建和发布你的产品。
-26. 不要运行自己的<code>CI</code>服务器，维护这个服务器是很耗时的。使用<code>circleci, travis或者shippable</code>，它们很便宜，并且需要关注的东西很少。
-27. <a target="_blank" rel="noopener" href="https://github.com/Triple-T/gradle-play-publisher">自动部署到市场</a>。
-28. 如果一个库很巨大，你仅仅只是需要当中的一小部分功能，简化它（使用proguard)。
-29. 别使用太多的模块。如果模块不是经常修改，应该考虑将其打包成<code>.jar/.aar</code>，这样构建速度会大大提高。
-30. 使用SVG
-31. 使库抽象化，这样能很方便的切换到别的库。
-32. 监控连接和连接类型。
-33. 监控电量和电池
-34. 用户界面就像小丑，如果你需要解释它，那还不如不要。
-35. 性能测试很重要。</p>
-<p><a target="_blank" rel="noopener" href="https://medium.com/@cesarmcferreira/building-android-apps-30-things-that-experience-made-me-learn-the-hard-way-313680430bf9#.1mrpcgfuo">原文</a></p>
-
+          <h2 id="Android开发30条经验"><a href="#Android开发30条经验" class="headerlink" title="Android开发30条经验"></a>Android开发30条经验</h2><p>有两种人，一种是自己摸索来学习，一种是通过别人的建议。这儿有些经验我想与你们分享：  </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/03/14/Building-Android-Apps-30things/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -876,17 +793,18 @@
     
     <div class="post-body" itemprop="articleBody">
           <h3 id="习惯JavaScript-7"><a href="#习惯JavaScript-7" class="headerlink" title="习惯JavaScript(7)"></a>习惯JavaScript(7)</h3><ol>
-<li><p>了解使用的<code>JavaScript</code>版本</p>
-</li>
-<li><p>理解<code>JavaScript</code>浮点数</p>
+<li>了解使用的<code>JavaScript</code>版本</li>
+<li>理解<code>JavaScript</code>浮点数</li>
+</ol>
 <ul>
 <li>JavaScript的数字都是双精度浮点数</li>
 <li>JavaSCript的整型是浮点数的一个子集，不是单独的类型</li>
 <li>位运算符将数字视为32位有符号整数</li>
 <li>浮点数中的精度陷阱</li>
 </ul>
-</li>
-<li><p>当心隐式的强制转换</p>
+<ol start="3">
+<li>当心隐式的强制转换</li>
+</ol>
 <ul>
 <li>类型错误可能被隐式的强制转换所隐藏</li>
 <li>重载的运算符+是进行加法运算还是字符串连接取决于参数类型</li>
@@ -894,281 +812,307 @@
 <li>具有<code>valueOf</code>方法的对象应该实现<code>toString</code>方法，返回一个<code>valueOf</code>方法产生的数字字符串表示</li>
 <li>测试一个值是否为未定义的值，应该使用<code>typeof</code>或者与<code>undefined</code>进行比较而不是用真值运算</li>
 </ul>
-</li>
-<li><p>原型类型优于封装对象  </p>
+<ol start="4">
+<li>原型类型优于封装对象</li>
+</ol>
 <ul>
 <li>当做相等比较时，原始类型的封装对象与其原始值行为不一样</li>
 <li>或者和设置原始类型值的属性会隐式地创建封装对象</li>
 </ul>
-</li>
-<li><p>避免对混合类型使用<code>==</code> 运算符</p>
+<ol start="5">
+<li>避免对混合类型使用<code>==</code> 运算符</li>
+</ol>
 <ul>
 <li>当类型不同时，<code>==</code>运算符应用了一套难以理解的隐式强制转换规则</li>
 <li>使用<code>===</code></li>
 </ul>
-</li>
-<li><p>了解分号插入的局限 </p>
-</li>
-<li><p>视字符串为16位的代码单元序列</p>
+<ol start="6">
+<li>了解分号插入的局限 </li>
+<li>视字符串为16位的代码单元序列</li>
+</ol>
 <ul>
 <li><code>JavaScript</code>字符串由16位的代码单元组成，而不是由<code>Unicode</code>组成</li>
 <li><code>JavaScript</code>使用两个代码单元表示2^16及其以上的<code>Unicode</code>的代码点。这两个代码单元被称为代理对。</li>
 <li>代理对甩开了字符串元素计数，<code>length、charAt、charCodeAt</code>方法以及正则表达式模式(例如<code>.</code>)受到了影响</li>
 <li>使用第三方库识别代码点的字符串操作</li>
 </ul>
-</li>
-</ol>
 <h3 id="变量作用域-10"><a href="#变量作用域-10" class="headerlink" title="变量作用域(10)"></a>变量作用域(10)</h3><ol start="8">
-<li><p>尽量减少全局对象</p>
-</li>
-<li><p>始终声明局部变量</p>
-</li>
-<li><p>避免使用<code>width</code></p>
-</li>
-<li><p>熟练掌握闭包</p>
+<li>尽量减少全局对象</li>
+<li>始终声明局部变量</li>
+<li>避免使用<code>width</code></li>
+<li>熟练掌握闭包</li>
+</ol>
 <ul>
 <li>函数可以引用定义在其外部作用域的变量</li>
 <li>闭包比创建它们的函数有更长的生命周期</li>
 <li>闭包在内部存储其外部变量的引用，并能读写这些变量</li>
 </ul>
-</li>
-<li><p>理解变量声明提升</p>
+<ol start="12">
+<li>理解变量声明提升</li>
+</ol>
 <ul>
 <li>在代码块中的变量声明会被隐式地提升到闭包函数的顶部</li>
 <li>重声明变量可视为单个变量</li>
 <li>考虑手动提升局部变量的声明，从而避免混淆</li>
 </ul>
-</li>
-<li><p>使用立即调用的函数表达式创建局部作用域</p>
+<ol start="13">
+<li>使用立即调用的函数表达式创建局部作用域</li>
+</ol>
 <ul>
 <li>理解绑定和赋值的区别</li>
 <li>闭包通过引用而不是值捕获它们的外部变量</li>
 <li>使用立即调用的函数表达式来创建局部作用域</li>
 <li>当心在立即调用的函数表达式中包裹代码块可能会改变其行为的情形</li>
 </ul>
-</li>
-<li><p>当心命名函数表达式笨拙的作用域  </p>
-</li>
-<li><p>当心局部块函数声明笨拙的作用域  </p>
-</li>
-<li><p>避免使用<code>Eval</code>创建局部变量</p>
-</li>
-<li><p>间接调用<code>Eval</code>函数优于直接调用</p>
-</li>
+<ol start="14">
+<li>当心命名函数表达式笨拙的作用域  </li>
+<li>当心局部块函数声明笨拙的作用域  </li>
+<li>避免使用<code>Eval</code>创建局部变量</li>
+<li>间接调用<code>Eval</code>函数优于直接调用</li>
 </ol>
 <h3 id="使用函数（12）"><a href="#使用函数（12）" class="headerlink" title="使用函数（12）"></a>使用函数（12）</h3><ol start="18">
-<li><p>理解函数调用、方法调用以及构造函数调用之间的不同</p>
+<li>理解函数调用、方法调用以及构造函数调用之间的不同</li>
+</ol>
 <ul>
 <li>方法调用将被查找方法属性的对象作为调用接收者</li>
 <li>函数调用将全局对象作为接收者。</li>
 <li>构造函数需要通过<code>new</code>运算符调用，并产生一个新的对象作为其接收者</li>
 </ul>
-</li>
-<li><p>熟练掌握高阶函数</p>
+<ol start="19">
+<li>熟练掌握高阶函数</li>
+</ol>
 <ul>
 <li>高阶函数是那些将函数作为参数或者返回值的函数</li>
 </ul>
-</li>
-<li><p>使用<code>call</code>方法自定义接收者来调用方法</p>
+<ol start="20">
+<li>使用<code>call</code>方法自定义接收者来调用方法</li>
+</ol>
 <ul>
 <li>使用<code>call</code>方法可以调用在给定的对象中不存在的方法</li>
 <li>使用<code>call</code>方法定义高阶函数允许使用者给回调函数指定接收者</li>
 </ul>
-</li>
-<li><p>使用<code>apply</code>方法通过不同数量的参数调用函数</p>
+<ol start="21">
+<li>使用<code>apply</code>方法通过不同数量的参数调用函数</li>
+</ol>
 <ul>
 <li>使用<code>apply</code>方法指定一个可计算的参数数组来调用可变参数的函数</li>
 <li>使用<code>apply</code>方法的第一个参数给可变参数的方法提供一个接收者</li>
 </ul>
-</li>
-<li><p>使用<code>arguments</code>创建可变参数的函数</p>
+<ol start="22">
+<li>使用<code>arguments</code>创建可变参数的函数</li>
+</ol>
 <ul>
 <li>使用隐式的<code>arguments</code>对象实现可变参数的函数</li>
 <li>考虑对可变参数提供一个额外的固定元数的版本，从而使使用者无需借助<code>apply</code>方法</li>
 </ul>
-</li>
-<li><p>永远不要修改<code>arguments</code>对象</p>
+<ol start="23">
+<li>永远不要修改<code>arguments</code>对象</li>
+</ol>
 <ul>
 <li>使用<code>[].slice.call(arguments)</code>将<code>arguments</code>对象复制到一个真正的数组中再进行修改</li>
 </ul>
-</li>
-<li><p>使用变量保持<code>arguments</code>的引用</p>
+<ol start="24">
+<li>使用变量保持<code>arguments</code>的引用</li>
+</ol>
 <ul>
 <li>当引用<code>arguments</code>时当心函数嵌套层级</li>
 <li>绑定一个明确作用域的引用到<code>arguments</code>变量，从而可以在嵌套的函数中引用它</li>
 </ul>
-</li>
-<li><p>使用<code>bind</code>方法提取具有确定接收者的方法</p>
+<ol start="25">
+<li>使用<code>bind</code>方法提取具有确定接收者的方法</li>
+</ol>
 <ul>
 <li>要注意，提取一个方法不会将方法的接收者绑定到方法的对象上</li>
 <li>当给高阶函数传递对象方法时，使用匿名函数在适当的接收者上调用该方法</li>
 <li>使用<code>bind</code>方法创建绑定到适当接收者的函数</li>
 </ul>
-</li>
-<li><p>使用<code>bind</code>方法实现函数柯里化(将函数与其参数的一个子集绑定)</p>
+<ol start="26">
+<li>使用<code>bind</code>方法实现函数柯里化(将函数与其参数的一个子集绑定)</li>
+</ol>
 <ul>
 <li>使用<code>bind</code>方法实现函数柯里化，即创建一个固定需求参数子集的委托函数</li>
 <li>传入<code>null</code>或<code>undefined</code>作为接收者的参数来实现函数柯里化</li>
 </ul>
-</li>
-<li><p>使用闭包而不是字符串来封装代码</p>
+<ol start="27">
+<li>使用闭包而不是字符串来封装代码</li>
+</ol>
 <ul>
 <li>当将字符串传递给<code>eval</code>函数以执行它们的<code>API</code>时，绝不要在字符串中包含局部变量的引用</li>
 <li>接受函数调用的<code>API</code>由于使用<code>eval</code>函数执行字符串的<code>API</code></li>
 </ul>
-</li>
-<li><p>不要信赖函数对象的<code>toString</code>方法</p>
-</li>
-<li><p>避免使用非标准的栈检查属性</p>
-</li>
+<ol start="28">
+<li>不要信赖函数对象的<code>toString</code>方法</li>
+<li>避免使用非标准的栈检查属性</li>
 </ol>
 <h3 id="对象和原型（13）"><a href="#对象和原型（13）" class="headerlink" title="对象和原型（13）"></a>对象和原型（13）</h3><ol start="30">
-<li>理解<code>prototype、getPrototypeOf</code>和__proto__之间的不同<ul>
+<li>理解<code>prototype、getPrototypeOf</code>和__proto__之间的不同</li>
+</ol>
+<ul>
 <li><code>C.prototype</code>属性是<code>new C()</code>创建的对象原型</li>
 <li><code>Object.getPrototypeOf(obj)</code>是<code>ES5</code>中检索对象原型的标准函数</li>
 <li><code>obj.__proto__</code>是检索对象原型的非标准方法</li>
 <li>类是由一个构造函数和一个关联的原型组成的一种设计模式</li>
 </ul>
-</li>
+<ol start="31">
 <li>使用<code>Object.getPrototypeOf</code>函数而不要使用<code>__proto__</code>属性</li>
-<li>始终不要修改<code>__proto__</code>属性<ul>
+<li>始终不要修改<code>__proto__</code>属性</li>
+</ol>
+<ul>
 <li>使用<code>Object.create</code>函数给新对象设置自定义的原型</li>
 </ul>
-</li>
+<ol start="33">
 <li>使构造函数与<code>new</code>操作符无关</li>
-<li>在原型中存储方法<ul>
+<li>在原型中存储方法</li>
+</ol>
+<ul>
 <li>将方法存储在实例对象中将创建该函数的多个副本，因为每个实例对象都有一份副本</li>
 <li>将方法存储于原型中优于存储在实例对象中</li>
 </ul>
-</li>
-<li>使用闭包存储私有数据<ul>
+<ol start="35">
+<li>使用闭包存储私有数据</li>
+</ol>
+<ul>
 <li>闭包变量是私有的，只能通过局部的引用获取</li>
 <li>将局部变量作为私有数据从而通过方法实现信息隐藏</li>
 </ul>
-</li>
-<li>只将实例状态存储在实例对象中<ul>
+<ol start="36">
+<li>只将实例状态存储在实例对象中</li>
+</ol>
+<ul>
 <li>共享可变数据可能会出问题，因为原型是被其所有的实例共享的</li>
 <li>将可变的实例状态存储在实例对象中</li>
 </ul>
-</li>
-<li>认识到<code>this</code>变量的隐式绑定问题<ul>
+<ol start="37">
+<li>认识到<code>this</code>变量的隐式绑定问题</li>
+</ol>
+<ul>
 <li><code>this</code>变量的作用域总是由其最近的封闭函数所绑定</li>
 <li>使用一个局部变量(通常命名为<code>self</code>、<code>me</code>或<code>that</code>)使得<code>this</code>绑定对于内部函数是可用的</li>
 </ul>
-</li>
-<li>在子类的构造函数中调用父类的构造函数<ul>
+<ol start="38">
+<li>在子类的构造函数中调用父类的构造函数</li>
+</ol>
+<ul>
 <li>使用<code>Object.create</code>函数来构造子类的原型对象以避免调用父类的构造函数</li>
 </ul>
-</li>
+<ol start="39">
 <li>不要重用父类的属性名</li>
-<li>避免继承标准类<ul>
+<li>避免继承标准类</li>
+</ol>
+<ul>
 <li>使用属性委托优于继承标准类</li>
 </ul>
-</li>
-<li>将原型视为实现细节<ul>
+<ol start="41">
+<li>将原型视为实现细节</li>
+</ol>
+<ul>
 <li>对象是接口，原型是实现</li>
 </ul>
-</li>
+<ol start="42">
 <li>避免使用轻率的猴子补丁</li>
 </ol>
 <h3 id="数组和字典（10）"><a href="#数组和字典（10）" class="headerlink" title="数组和字典（10）"></a>数组和字典（10）</h3><ol start="43">
 <li>使用<code>Object</code>的直接实例构造轻量级的字典</li>
 <li>使用<code>null</code>原型以防止原型污染</li>
-<li>使用<code>hasOwnProperty</code>方法以避免原型污染<ul>
+<li>使用<code>hasOwnProperty</code>方法以避免原型污染</li>
+</ol>
+<ul>
 <li>使用词法作用域和<code>call</code>方法避免覆盖<code>hasOwnProperty</code>方法</li>
 </ul>
-</li>
+<ol start="46">
 <li>使用数组而不要使用字典来存储有序集合</li>
-<li>绝不要在<code>Object.prototype</code>中增加可枚举的属性<ul>
+<li>绝不要在<code>Object.prototype</code>中增加可枚举的属性</li>
+</ol>
+<ul>
 <li>避免在<code>Object.prototype</code>中增加属性</li>
 <li>考虑编写一个函数代替<code>Object.prototype</code>方法</li>
 </ul>
-</li>
-<li>避免在枚举期间修改对象<ul>
+<ol start="48">
+<li>避免在枚举期间修改对象</li>
+</ol>
+<ul>
 <li>当使用<code>for..in</code>循环枚举一个对象的属性时确保不要修改该对象</li>
 <li>当迭代一个对象时，如果该对象的内容可能会在循环期间被改变，应该使用<code>while</code>循环或经典的<code>for</code>循环来替代<code>for..in</code>循环</li>
 <li>为了在不断变化的数据结构中能够预测枚举，考虑使用一个有序的数据结构</li>
 </ul>
-</li>
+<ol start="49">
 <li>数组迭代要优先使用<code>for</code>循环而不是<code>for..in</code>循环</li>
 <li>迭代方法优先于循环</li>
 <li>在类数组对象上复用通用的数组方法</li>
 <li>数组字面量优于数组构造函数</li>
 </ol>
 <h3 id="库和API设计-8"><a href="#库和API设计-8" class="headerlink" title="库和API设计(8)"></a>库和API设计(8)</h3><ol start="53">
-<li><p>保持一致的约定</p>
-</li>
-<li><p>将<code>undefined</code>看做“没有值”</p>
+<li>保持一致的约定</li>
+<li>将<code>undefined</code>看做“没有值”</li>
+</ol>
 <ul>
 <li>在允许0、NaN或空字符串为有效参数的地方，绝不要通过真值测试来实现参数默认值</li>
 </ul>
-</li>
-<li><p>接收关键字参数的选项对象</p>
+<ol start="55">
+<li>接收关键字参数的选项对象</li>
+</ol>
 <ul>
 <li>使用<code>extend</code>函数抽象出从选项对象中提取值的逻辑</li>
 </ul>
-</li>
-<li><p>避免不必要的状态</p>
+<ol start="56">
+<li>避免不必要的状态</li>
+</ol>
 <ul>
 <li>尽可能地使用无状态的<code>API</code></li>
 <li>如果<code>API</code>是有状态的，标示出每个操作与哪些状态有关联</li>
 </ul>
-</li>
-<li><p>使用结构类型设计灵活的接口</p>
+<ol start="57">
+<li>使用结构类型设计灵活的接口</li>
+</ol>
 <ul>
 <li>使用结构类型来设计灵活的对象接口</li>
 <li>结构接口更灵活、更轻便，所以应该避免使用继承</li>
 </ul>
-</li>
-<li><p>区分数组对象和类数组对象</p>
-</li>
-<li><p>避免过度的强制转换</p>
-</li>
-<li><p>支持方法链</p>
+<ol start="58">
+<li>区分数组对象和类数组对象</li>
+<li>避免过度的强制转换</li>
+<li>支持方法链</li>
+</ol>
 <ul>
 <li>使用方法链来连接无状态的操作</li>
 <li>通过在无状态的方法中返回新对象来支持方法链</li>
 <li>通过在有状态的方法中返回<code>this</code>来支持方法链</li>
 </ul>
-</li>
-</ol>
 <h3 id="并发-8"><a href="#并发-8" class="headerlink" title="并发(8)"></a>并发(8)</h3><ol start="61">
-<li><p>不要阻塞I&#x2F;O事件队列</p>
+<li>不要阻塞I&#x2F;O事件队列</li>
+</ol>
 <ul>
 <li>异步<code>API</code>使用回调函数来延缓代价高昂的操作以避免阻塞主应用程序</li>
 <li><code>JavaScript</code>并发地接收事件，但会使用一个事件队列按序地处理事件处理程序</li>
 <li>在应用程序事件队列中绝不要使用阻塞的<code>I/O</code></li>
 </ul>
-</li>
-<li><p>在异步序列中使用嵌套或命名的回调函数</p>
+<ol start="62">
+<li>在异步序列中使用嵌套或命名的回调函数</li>
+</ol>
 <ul>
 <li>使用嵌套或命名的回调函数按顺序地执行多个异步操作</li>
 </ul>
-</li>
-<li><p>当心丢弃错误</p>
-</li>
-<li><p>对异步循环使用递归</p>
+<ol start="63">
+<li>当心丢弃错误</li>
+<li>对异步循环使用递归</li>
+</ol>
 <ul>
 <li>循环不能是异步</li>
 <li>使用递归函数在事件循环的单独伦次中执行迭代</li>
 <li>在事件循环的单独轮次中执行递归，并不会导致调用栈溢出</li>
 </ul>
-</li>
-<li><p>不要在计算时阻塞事件队列</p>
-</li>
-<li><p>使用计数器来执行并行操作</p>
-</li>
-<li><p>绝不要同步地调用异步的回调函数</p>
-</li>
-<li><p>使用<code>promise</code>模式清洁异步逻辑</p>
+<ol start="65">
+<li>不要在计算时阻塞事件队列</li>
+<li>使用计数器来执行并行操作</li>
+<li>绝不要同步地调用异步的回调函数</li>
+<li>使用<code>promise</code>模式清洁异步逻辑</li>
+</ol>
 <ul>
 <li><code>promise</code>代表最终值，即并行操作完成时最终产生的结果</li>
 <li>使用<code>promise</code>组合不同的并行操作</li>
 <li>使用<code>promise</code>模式的<code>API</code>避免数据竞争</li>
 <li>在要求有意的竞争条件时使用<code>select</code></li>
 </ul>
-</li>
-</ol>
 
       
     </div>
@@ -1244,8 +1188,8 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="开发记录"><a href="#开发记录" class="headerlink" title="开发记录"></a>开发记录</h3><h4 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h4><p>&lt;!–code￼0–&gt;
-</p>
+          <h3 id="开发记录"><a href="#开发记录" class="headerlink" title="开发记录"></a>开发记录</h3><h4 id="Debug"><a href="#Debug" class="headerlink" title="Debug"></a>Debug</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">FragmentManager.enableDebugLoggin(true)</span><br><span class="line"></span><br><span class="line">android.os.Debug.waitForDebugger();</span><br><span class="line"></span><br><span class="line">//trigger your service</span><br><span class="line">&lt;service</span><br><span class="line">	android:name=&quot;....&quot;</span><br><span class="line">	android:exported=&quot;true&quot;</span><br><span class="line">	android:process=&quot;:sync&quot; /&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <h4 id="Log"><a href="#Log" class="headerlink" title="Log"></a>Log</h4><p><a target="_blank" rel="noopener" href="https://github.com/JakeWharton/hugo">hugo</a></p>
 
       
@@ -1324,66 +1268,14 @@
     <div class="post-body" itemprop="articleBody">
           <h2 id="使用Retrofit2-0和RxJava的MVP方案"><a href="#使用Retrofit2-0和RxJava的MVP方案" class="headerlink" title="使用Retrofit2.0和RxJava的MVP方案"></a>使用Retrofit2.0和RxJava的MVP方案</h2><p>设计符合android(MVP)方案的网络架构很有挑战的。当然，更具有挑战的是该设计也还完全符合Android的生命周期。我们能够使用<code>Retrofit</code>，<code>Volley</code>,或者<code>AsyncTask</code>能构建出我们的MVP方案,但我们如何处理当屏幕旋转时的网络请求？</p>
 <p>本文的目的是介绍一个能够很简单的使用MVP模式的网络框架，并且能够保证<code>Activity/Fragment</code>生命周期安全。本文需要<code>RxJava</code>和<code>Retrofit</code>的基本认识。</p>
-<p>&lt;!–more–&gt;
-</p>
-<h2 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h2><p>我们往下讲之前，简单的描述一下<code>Android</code>MVP是怎么样的？以及为什么使用它？</p>
-<p>MVP方案的目的是消除<code>view</code> 对它数据的依赖。这样允许三层各自独立测试，使程序更佳健壮。至于实现MVP的合理方式，有很多种。事实上，<code>Google</code>快速搜索下，你会看到很多相关的主题，它们各自都会有差异。
-下面，我会描述<code>Android</code> 分层的常见方式以及我如何定义各层的职责。
-<img data-src="/../image/mvp.png"></p>
-<h3 id="表现层"><a href="#表现层" class="headerlink" title="表现层"></a>表现层</h3><p>表现层是视图层和模型层的通讯桥梁。表现层的方法被视图层使用。表现层也有从模型层返回的数据逻辑以便视图层展示给用户。</p>
-<p>表现层可能实现一个接口，这个接口有时被称为<code>Interactor</code>，里面有视图层需要使用的方法。表现层的职责是从模型层请求数据并处理。</p>
-<h3 id="视图层"><a href="#视图层" class="headerlink" title="视图层"></a>视图层</h3><p>视图通常是一个<code>activity</code>或者一个<code>fragment</code>.我们的视图有一个<code>Presenter</code>的引用，这个引用由视图初始化。视图的主要职责是用户与视图的交互。视图会有接受从<code>Presenter</code>发送给UI元素的方法。</p>
-<h3 id="模型层"><a href="#模型层" class="headerlink" title="模型层"></a>模型层</h3><p>模型层是我们想要展示在视图层的数据源。我们的例子里，模型层是<code>NetworkService</code>，使用<code>POJO</code>。最好将模型层用这种方式构建，表现层不必知道数据使用硬盘，内存或者网络获取。</p>
-<h3 id="使用Retrofit2-0和RxJava来构建模型层"><a href="#使用Retrofit2-0和RxJava来构建模型层" class="headerlink" title="使用Retrofit2.0和RxJava来构建模型层"></a>使用Retrofit2.0和RxJava来构建模型层</h3><p>既然我们对MVP的实现方式已经有一个基本的认识，那我们开始对模型层来进行特殊改造。像我之前提到的，最大的挑战之一是设计一个能很好处理<code>Android</code>生命周期的网络架构。</p>
-<p>为什么这么困难？我不想深入讨论<code>Android</code>的<code>activity/fragment</code>生命周期，简单的说就是，当用户旋转屏幕时，<code>activity/fragment</code>被销毁和重建。
-如果你已经尝试过用(Retrofit, Volley, AsyncTasks或者其他方案)来实现标准的网络请求，你可能已经注意到了正常情况下都能正常使用，但当用户想要在网络请求过程中间旋转屏幕时。你的请求将无效，所有的<code>listeners/interfaces</code>被销毁。</p>
-<p>我们大多数人都已经发现咋么一个问题，一些人可能在网络请求期间禁止旋转屏幕，设置了一系列的<code>services</code>和<code>receivers</code>或者创建一个<code>fragment</code>，它的实例一直在这个过程被保存。然而这些方案都有各自的弊端。我们将会提供一个简单的方案。</p>
-<h3 id="Retrofit2-0和RxJava请求"><a href="#Retrofit2-0和RxJava请求" class="headerlink" title="Retrofit2.0和RxJava请求"></a>Retrofit2.0和RxJava请求</h3><p>首先添加它们的依赖</p>
-<p>&lt;!–code￼0–&gt;
-</p>
-<p>如果你曾经用过<code>Retrofit</code>，你对请求的接口创建应该很熟悉了。我们的例子将使用一个不带任何参数或者请求体的简单的<code>Get</code>请求</p>
-<p>&lt;!–code￼1–&gt;
-</p>
-<p>注意我们返回的是一个<code>FriendResponse</code>类型的<code>Observable</code>。</p>
-<p>下一步,我需要创建<code>Retrofit</code>实例。例子中，我选择使用<code>GsonConverterFactory</code>。使用<code>Retrofit2.0</code>时，我们需要包含<code>RxJavaCallAdapter</code></p>
-<p>&lt;!–code￼2–&gt;
-</p>
-<p>现在我们可以创建<code>Observable</code>和发送请求了。</p>
-<p>&lt;!–code￼3–&gt;
-</p>
-<p>上诉代码从网络API接口创建了<code>FriendResponse</code>的<code>Observable</code>。我定义这个可观察对象在新的线程中工作，并将结果返回到主线程。  </p>
-<p>调用<code>subscribe()</code>时发出请求。<code>subscribe()</code>方法返回<code>Subscription</code>对象，我们将在之后使用它来防止内存泄露。  </p>
-<p>但是，上面方式并没有解决生命周期问题。一旦设备旋转或者<code>activity/fragment</code>被杀掉，被观察对象被销毁，我们就没有这个请求的引用，无法做出相应的响应。事实上，你将它与标准的<code>Retrofit</code>请求对比，我们反倒更复杂了。</p>
-<p>幸运的是，这仅仅只是解决我们问题的第一步。</p>
-<h3 id="生命周期安全的请求"><a href="#生命周期安全的请求" class="headerlink" title="生命周期安全的请求"></a>生命周期安全的请求</h3><p>我们该如何解决生命周期问题呢？我们在<code>Application</code>创建一个单例。 </p>
-<p>&lt;!–code￼4–&gt;
-</p>
-<p>下一步将<code>Retrofit api</code>接口放到这个单例中。</p>
-<p>&lt;!–code￼5–&gt;
-</p>
-<p>最后，我们把被观察者的创建逻辑放到单例中。我们只有在缓存对象不在的时候才创建一个被观察对象。我们需要缓存被观察对象。</p>
-<p>首先，我们找个地方存放我们可能需要复用的被观察者对象。我在单例内创建一个<code>LruCache</code>对象。</p>
-<p>&lt;!–code￼6–&gt;
-</p>
-<p>下一步，创建一个方法以便获得被观察对象。这个对象会返回给<code>presenter</code>对象。</p>
-<p>&lt;!–code￼7–&gt;
-</p>
-<p>上诉方法接收任何类型的被观察者对象和对应的类参数，这些东西被使用来存储被观察对象。</p>
-<p><code>boolean</code>参数决定我们是否想要缓存可观察对象或者复用缓存可观察对象。没必要总是缓存并复用可观察对象</p>
-<p>如果缓存的被观察者没有被使用，那么我们将一个未准备的被观察者传给方法。为了合理的缓存被观察者，我们需要调用<code>cache()</code>将它加入<code>LruCache</code>.如果我们没有在加入<code>LruCache</code>之前调用<code>cache()</code>，那么被观察实例会被缓存，但请求&#x2F;响应都不会。
-我们的表现层已经准备好从模型层请求数据了，模型层将会返回一个含有数据的被观察者。</p>
-<p>下面的方法，我们每次调用<code>subscribe()</code>将会复用任何已经创建的请求&#x2F;响应.这就意味着如果响应已经返回，那么<code>onNext()</code>和<code>onComplete</code>将立即执行，请求将只做一次。</p>
-<p>&lt;!–code￼8–&gt;
-</p>
-<h3 id="捕获"><a href="#捕获" class="headerlink" title="捕获"></a>捕获</h3><p>当然，也有概率很小的异常。使用<code>RxJava</code>，如果我们不够小心，很容易导致订阅者泄露。如我之前提到的，当你订阅一个被观察者时，一个订阅对象返回。这个对象有两个方法，<code>isUnsubscribed()</code>和<code>unsubscribe()</code>。这允许我们在<code>activity/fragment</code>被销毁之前释放任何存在的<code>subscription</code>。</p>
-<p>因此，我们需要在表现层的<code>onPause()</code>或者<code>onDestroy()</code>方法调用下述方法。</p>
-<p>&lt;!–code￼9–&gt;
-</p>
-<p>上述方法检查订阅对象是否存在，如果存在并已经订阅，那么将取消订阅。
-我们也需要追踪一个请求已经发出以便我们能够在视图重新创建后重新订阅我们的缓存被观察者。我们在<code>savedInstanceState()</code>中做这件事。这允许表现层关心是否继续等待请求完成或者立即用缓存的响应来刷新视图。</p>
-<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p><code>Retrofit 2.0</code>和<code>RxJava</code>配合<code>MVP</code>模式使用一种伟大的组合。我们创建请求，但不用关心它的响应。这种方式也简化了视图层的工作流程。</p>
-<p><a target="_blank" rel="noopener" href="http://www.captechconsulting.com/blogs/a-mvp-approach-to-lifecycle-safe-requests-with-retrofit-20-and-rxjava">原文</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/02/21/Retrofit2.0-RxJava%E7%9A%84MVP%E6%96%B9%E6%A1%88/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1458,50 +1350,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="什么是ReactiveX"><a href="#什么是ReactiveX" class="headerlink" title="什么是ReactiveX"></a>什么是ReactiveX</h3><p><a target="_blank" rel="noopener" href="http://reactivex.io/">ReactiveX</a>是一种API，主要关注使用观察者模式,迭代器模式和具有函数式编程特点的可观察的数据流或者事件的组合和操作。能够处理实时数据，具有高效，简洁，拓展性强的特点。使用观察者和操作者来操作它们，ReactiveX提供一种可组合和弹性API来创建和操作数据流，简化异步编程的一些顾虑，如线程创建和并发问题。
-&lt;!--more--&gt;</p>
-<h3 id="RxJava介绍"><a href="#RxJava介绍" class="headerlink" title="RxJava介绍"></a>RxJava介绍</h3><p><a href="">RxJava</a>是开源的ReactiveX的Java实现.两个主要的类:<code>Observable</code>和<code>Subscriber</code>。<code>RxJava</code>中，被观察者是发出数据流或者事件流的类，订阅者是这些流的执行者。被观察者的标准流程是发出一个或多个流，然后是完全成功或者出错。一个被观察者能够有多个订阅者，对于被观察者发出的每个流，其将会被<code>Subscriber.onNext()</code>方法处理。一旦被观察者发布完了流，它将会调用<code>Subscriber.onCompleted()</code>方法，如果出错，那么会调用<code>Subscriber.onError()</code>。现在我们已经了解了被观察者和订阅者，我们继续介绍如何创建它们。</p>
-<p>&lt;!–code￼0–&gt;
-</p>
-<p>这个被观察者发出了数字1，2，3数据流，然后结束。现在我们需要创建一个订阅者来处理这些数据流。</p>
-<p>&lt;!–code￼1–&gt;
-</p>
-<p>订阅者将打印出所有被观察者发出的数据流以及通知我们流发送完成了。你可以将被观察者和订阅者用<code>Observable.subscribe</code>绑定。</p>
-<p>&lt;!–code￼2–&gt;
-</p>
-<p>使用<code>Observable.just()</code>方法创建一个被观察者来发布定义的数据能够简化上述代码，把订阅者变成匿名内部类。得到如下代码：</p>
-<p>&lt;!–code￼3–&gt;
-</p>
-<h3 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h3><p>创建和订阅被观察者很简单，但似乎没什么太大用处，但这仅仅只是<code>RxJava</code>的开始。任何的被观察者可以有自己的输出可以被操作符转换，能够同时使用多个操作符。例如，我们之前的被观察者，我们仅仅想发出奇数数据流。使用<code>filter()</code>操作符能够达到这个目的。</p>
-<p>&lt;!–code￼4–&gt;
-</p>
-<p>操作符<code>filter()</code>符会取走发出的数字，对奇数返回<code>true</code>，对偶数返回<code>false</code>，返回<code>false</code>的值不会发送给订阅者，我们不会看到它们的输出。注意<code>filter()</code>操作符返回一个被观察者，然后我们可以像之前一样订阅它。现在，我想要找出奇数的平方根。一种方式是在每个订阅者的<code>onNext()</code>中去计算。然而，这样子做的话，在以后可能无法进一步去转换数据。为了达到这个目的，我们使用<code>map()</code>操作符合<code>filter()</code>操作。</p>
-<p>&lt;!–code￼5–&gt;
-</p>
-<p>链式操作符是<code>RxJava</code>非常重要的一部分，它给予了你能够灵活的完成你想要做的任何事。带着被观察者和操作符是如何交互的这个问题，我们继续下一个主题: 应用<code>RxJava</code>到<code>Android</code>中。</p>
-<h3 id="Android中的简单线程"><a href="#Android中的简单线程" class="headerlink" title="Android中的简单线程"></a>Android中的简单线程</h3><p>在<code>Android</code>开发一个常见的场景是需要在后台进行一些工作，这些工作完成后，将结果通知给UI主线程来展示结果。在<code>Android</code>中，我们有几种方式可以实现这种操作，使用<code>AsyncTasks</code>, <code>Loaders</code>,<code>Services</code>等。然而，这些方案通常都不是最好的选择。<code>AsyncTask</code>很容易导致内存泄露，<code>CursorLoaders</code>需要大量的配置，<code>Service</code>更倾向于长时间在后台运行的任务，而不是一些能够快速完成的任务如网络请求或者从数据库加载数据。使用<code>RxJava</code>能够这些问题。下面这个布局，有一个按钮来开始操作，有一个一直显示的进度条表明我们的操作一直在后台线程运行，而不是在UI线程。</p>
-<p>&lt;!–code￼6–&gt;
-</p>
-<p>一旦按钮被点击，按钮将被禁用并开始工作，工作完成后，<code>SnackBar</code>会显示，按钮重新能够使用。这儿有个简单的<code>AsyncTask</code>以及我们长时间的操作.</p>
-<p>&lt;!–code￼7–&gt;
-</p>
-<p>现在，我们如何把<code>AsyncTask</code>转变成<code>RxJava</code>? 首先，添加<code>RxJava, RxAndroid</code>的依赖。然后我们需要创建一个被观察者来调用我们的长时间操作。</p>
-<p>&lt;!–code￼8–&gt;
-</p>
-<p>我们创建的被观察者将调用<code>longRunningOperation</code>并将结果传给<code>onNext()</code>,然后调用<code>onCompleted()</code>。下一步，我们需要订阅我们的被观察者。</p>
-<p>&lt;!–code￼9–&gt;
-</p>
-<p>在<code>RxJava</code>中默认是单线程，你将需要使用<code>observeOn()</code>和<code>subscribeOn()</code>方法来实现多线程。<code>RxJava</code>的被观察者使用调度器，如<code>Schedulers.io()</code>(用于阻塞I&#x2F;O操作),<code>Schedulers.computation()</code>(computational work),和<code>Schedulers.newThread()</code>(创建先线程).然而，从<code>Android</code>角度，你可能会好奇如何在UI主线程执行代码呢？我们使用<code>RxAndroid</code>能够实现这个目的。<code>RxAndroid</code>对<code>RxJava</code>进行了轻量级的拓展，其为UI主线程提供了一个调度器，也可以在任何<code>Handler</code>中运行。新的调度器中，被观察者在我们创建后台线程之前被创建，然后将结果通知UI主线程。</p>
-<p>&lt;!–code￼10–&gt;
-</p>
-<p>修改后的被观察者使用<code>Schedulers.io()</code>来订阅，将使用<code>AndroidSchedulers.mainThread()</code>在UI线程观察结果。先前所有的例子的被观察者会发出结果，我们需要其他的选项，用于当一个操作仅仅发出一个结果，然后就结束。<code>The Single</code>能够用来实现这种需求。</p>
-<p>&lt;!–code￼11–&gt;
-</p>
-<p>当使用<code>Single</code>，只有一个<code>onSuccess</code>动作和一个<code>onError</code>动作。单例有不同的操作器集合，允许将单例转化成被观察者。例如，使用<code>Single.mergeWith()</code>操作器，两个或更多相同类型的单例能够被一起合并来创建一个被观察者，发出每个单例的结果给被观察者。</p>
-<h3 id="防止内存泄露"><a href="#防止内存泄露" class="headerlink" title="防止内存泄露"></a>防止内存泄露</h3><p>因为<code>AsyncTask</code>在<code>Activity/Fragment</code>的生命周期中很容易导致类存泄露。不幸的是，使用<code>RxJava</code>也不能很好的消除内存泄露，但能够比较简单的防止其发生。如果你从头到尾都看了代码，你可能已经注意到，当你调用<code>Observable.subscribe()</code>时一个订阅者对象被返回。订阅者类只有两个方法<code>unsubscribe()和isUnsubscribed()</code>。为了防止内存泄露，在<code>Activity/Fragment</code>的<code>onDestroy</code>中，检查<code>Subscription.isUnsubscribed()</code>是否已经取消订阅。取消订阅将停止发送数据流到订阅者，将允许垃圾回收器回收相关的对象，防止任何与<code>RxJava</code>的内存泄露。如果你正在处理多个观察者和订阅者，所有的订阅者对象能够被添加到CompositeSubscription，使用<code>CompositeSubscription.unsubscribe()</code>来同时取消所有的订阅。</p>
-<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>不错，<code>RxJava</code>为<code>Android</code>提供了一种可供选择的多线程处理方法。能够简化后台处理，刷新UI操作。然而<code>RxJava</code>要求使用者对它的特性有深入的理解才能更好的使用它，在它身上花的时间越多，回报越大。有关<code>RxJava</code>更深层次的主题，本文就不在加以描述，如热和冷被观察者，处理后退，Rx的<code>Subject</code>类。使用<code>RxJava</code>转化<code>AsyncTask</code>的相同代码能够在<a target="_blank" rel="noopener" href="https://github.com/alex-townsend/GettingStartedRxAndroid">github</a>上找到</p>
-<p><a target="_blank" rel="noopener" href="http://www.captechconsulting.com/blogs/getting-started-with-rxjava-and-android">原文</a></p>
-
+          <h3 id="什么是ReactiveX"><a href="#什么是ReactiveX" class="headerlink" title="什么是ReactiveX"></a>什么是ReactiveX</h3><p><a target="_blank" rel="noopener" href="http://reactivex.io/">ReactiveX</a>是一种API，主要关注使用观察者模式,迭代器模式和具有函数式编程特点的可观察的数据流或者事件的组合和操作。能够处理实时数据，具有高效，简洁，拓展性强的特点。使用观察者和操作者来操作它们，ReactiveX提供一种可组合和弹性API来创建和操作数据流，简化异步编程的一些顾虑，如线程创建和并发问题。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/02/20/GettingStartedWithRxJavaAndAndroid/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1578,117 +1435,14 @@
     <div class="post-body" itemprop="articleBody">
           <h2 id="编程原理"><a href="#编程原理" class="headerlink" title="编程原理"></a><a target="_blank" rel="noopener" href="http://webpro.github.io/programming-principles/">编程原理</a></h2><p>每个程序猿如果理解编程原理和模式的话，那将会很受权益。这个概论是我自己的理解。它可能会对你在设计，讨论或者复习会有所帮助。请注意，它还远远未完成，你需要经常质疑这些原理。  </p>
 <p>这份列表是受<a target="_blank" rel="noopener" href="http://www.artima.com/weblogs/viewpost.jsp?thread=331531">The Principles of Good Programming</a>启发。我认为这份列表很完全，但无法完全与我个人的想法匹配。另外，我需要更详细的资源。如果你有任何建议或者意见，请联系我。</p>
-<p>&lt;!–more–&gt;
-</p>
-<h3 id="内容"><a href="#内容" class="headerlink" title="内容"></a>内容</h3><h4 id="通用"><a href="#通用" class="headerlink" title="通用"></a>通用</h4><ul>
-<li><a href="####KISS">Kiss原则(既简单又傻)</a></li>
-<li><a href="####YAGNI">YAGNI</a></li>
-<li><a href="">如果能工作的话，就采用最简单的方式</a></li>
-<li><a href="">Keep Things Dry</a></li>
-<li><a href="">Code For The Maintainer</a></li>
-<li><a href="">Avoid Premature Optimization</a></li>
-<li><a href="">Boy-Sout Rule</a></li>
-</ul>
-<h4 id="内部模块-x2F-类之间关系"><a href="#内部模块-x2F-类之间关系" class="headerlink" title="内部模块&#x2F;类之间关系"></a>内部模块&#x2F;类之间关系</h4><ul>
-<li><a href="####%E6%9C%80%E5%B0%8F%E8%80%A6%E5%90%88">最小耦合</a></li>
-<li><a href="">Law of Demeter</a></li>
-<li><a href="">Composition Over Inheritance</a></li>
-<li><a href="">Orthogonality</a></li>
-</ul>
-<h4 id="模块-x2F-类"><a href="#模块-x2F-类" class="headerlink" title="模块&#x2F;类"></a>模块&#x2F;类</h4><ul>
-<li><a href="">Maximise Cohesion</a></li>
-<li><a href="">Liskov Subtitution Principle</a></li>
-<li><a href="">Open&#x2F;Closed Principle</a></li>
-<li><a href="">Single REsponsibility Principle</a></li>
-<li><a href="">Hide Implementation Details</a></li>
-<li><a href="">Curly’s Law</a></li>
-<li><a href="">Encapsulate What Changes</a></li>
-<li><a href="">Interfae Segregation Principle</a></li>
-</ul>
-<h3 id="KISS"><a href="#KISS" class="headerlink" title="KISS"></a>KISS</h3><p>如果保持简单而不是复杂，大多数系统能够运行在最佳状态。</p>
-<h5 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>花更少的时间来写代码，产生更少的bug,更容易修改。</li>
-<li>大道至简</li>
-<li>只有当什么东西也无法被删除才是完美</li>
-</ul>
-<h6 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h6><ul>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/KISS_principle">KISS原则</a></li>
-<li><a target="_blank" rel="noopener" href="http://principles-wiki.net/principles:keep_it_simple_stupid">Keep It Simple Stupid(KISS)</a></li>
-</ul>
-<h3 id="YAGNI"><a href="#YAGNI" class="headerlink" title="YAGNI"></a>YAGNI</h3><p>YAGNI表示你不再需要它了:不再增加什么了，除非它真的需要。</p>
-<h5 id="为什么-1"><a href="#为什么-1" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>如果是为了将来的功能而添加代码，那么会减少当前版本的开发时间</li>
-<li>这将导致代码臃肿；软件变得庞大而复杂。</li>
-</ul>
-<h5 id="怎么做"><a href="#怎么做" class="headerlink" title="怎么做"></a>怎么做</h5><ul>
-<li>只实现那些你真正需要的东西。</li>
-</ul>
-<h5 id="资源-1"><a href="#资源-1" class="headerlink" title="资源"></a>资源</h5><ul>
-<li><a target="_blank" rel="noopener" href="http://c2.com/xp/YouArentGonnaNeedIt.html">You Arent Gonna Need It</a></li>
-<li><a target="_blank" rel="noopener" href="http://www.xprogramming.com/Practices/PracNotNeed.html">You’re NOT gonna need it !</a></li>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/You_ain't_gonna_need_it">You ain’t gonna need it</a></li>
-</ul>
-<h3 id="如果能够工作，那么用最简单的东西"><a href="#如果能够工作，那么用最简单的东西" class="headerlink" title="如果能够工作，那么用最简单的东西"></a>如果能够工作，那么用最简单的东西</h3><h5 id="为什么-2"><a href="#为什么-2" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>如果我们研究问题究竟是怎样的，那么进度与问题的复杂度成正比</li>
-</ul>
-<h5 id="怎么做-1"><a href="#怎么做-1" class="headerlink" title="怎么做"></a>怎么做</h5><ul>
-<li>扪心自问: “能做到这个最简单的方式”</li>
-</ul>
-<h5 id="资源-2"><a href="#资源-2" class="headerlink" title="资源"></a>资源</h5><ul>
-<li><a target="_blank" rel="noopener" href="http://c2.com/xp/DoTheSimplestThingThatCouldPossiblyWork.html">Do The Simplest Thing That Could Possibly Work</a></li>
-</ul>
-<h3 id="避免重复"><a href="#避免重复" class="headerlink" title="避免重复"></a>避免重复</h3><p>在整个软件系统中，每个知识点都必须有单一的，清楚地，权威地呈现。
-代码复用，重要的功能仅在一处实现，别处来调用。将相似功能抽出,使用抽象的方式来实现功能的多样性。</p>
-<h5 id="为什么-3"><a href="#为什么-3" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>重复可能导致维护很艰难，难以重构以及逻辑矛盾</li>
-<li>修改系统中的任何单一元素，不需要修改其他相关逻辑</li>
-<li>另外，逻辑上相关的元素都是统一的，可以预测的，保持同步</li>
-</ul>
-<h5 id="怎么做-2"><a href="#怎么做-2" class="headerlink" title="怎么做"></a>怎么做</h5><ul>
-<li>将业务规则，长的表达式，例如声明，数学方程式，元数据等仅仅放在一个地方</li>
-<li>定义单一，明确的代码，使用这些代码来生成程序实例</li>
-</ul>
-<h5 id="资源-3"><a href="#资源-3" class="headerlink" title="资源"></a>资源</h5><ul>
-<li><a target="_blank" rel="noopener" href="http://c2.com/cgi/wiki?DontRepeatYourself">Dont Repeat Yourself</a></li>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">Don’t repeat yourself</a></li>
-<li><a target="_blank" rel="noopener" href="http://programmer.97things.oreilly.com/wiki/index.php/Don't_Repeat_Yourself">Don’t Repeat Yourself</a></li>
-</ul>
-<h5 id="相关"><a href="#相关" class="headerlink" title="相关"></a>相关</h5><ul>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Abstraction_principle_(computer_programming">Abstraction principle</a>)</li>
-<li><a target="_blank" rel="noopener" href="http://c2.com/cgi/wiki?OnceAndOnlyOnce">Once And Only Once is a subset of DRY (also referred to as the goal of refactoring)</a></li>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Single_Source_of_Truth">Single Source of Truth</a></li>
-<li><a target="_blank" rel="noopener" href="http://thedailywtf.com/articles/The-WET-Cart">A violation of DRY is WET (Write Everything Twice)</a></li>
-</ul>
-<h3 id="代码可维护性"><a href="#代码可维护性" class="headerlink" title="代码可维护性"></a>代码可维护性</h3><h5 id="为什么-4"><a href="#为什么-4" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>维护是任何项目最昂贵的东西。</li>
-</ul>
-<h5 id="怎么做-3"><a href="#怎么做-3" class="headerlink" title="怎么做"></a>怎么做</h5><ul>
-<li>成为维护人</li>
-<li>写代码时，想象维护的人是一个很暴力的人，并且知道你在哪。</li>
-<li>多写注释</li>
-<li>别让维护者去想</li>
-<li>使用最小惊讶原则</li>
-</ul>
-<h5 id="资源-4"><a href="#资源-4" class="headerlink" title="资源"></a>资源</h5><p><a target="_blank" rel="noopener" href="http://c2.com/cgi/wiki?CodeForTheMaintainer">Code For The Maintainer</a>
-<a target="_blank" rel="noopener" href="http://blog.codinghorror.com/the-noble-art-of-maintenance-programming/">The Noble Art of Maintenance Programming</a></p>
-<h3 id="避免过早优化"><a href="#避免过早优化" class="headerlink" title="避免过早优化"></a>避免过早优化</h3><p>引用<a target="_blank" rel="noopener" href="http://en.wikiquote.org/wiki/Donald_Knuth"> Donald Knuth</a>的话:</p>
-<blockquote>
-<p>程序员浪费大量的时间来考虑，担心他们程序中不重要部分的速度，当调试和维护被考虑时，这些效率方面的考虑会造成消极的影响.我们应该忘掉所有的细微效率问题，大约97%的时间问题都是过早优化引起的，过早的优化是所有噩梦的根源，然而，我们不应该放过剩下3%的机会</p>
-</blockquote>
-<p>理解什么是和什么不是过早优化，是本节的重点。</p>
-<h5 id="为什么-5"><a href="#为什么-5" class="headerlink" title="为什么"></a>为什么</h5><ul>
-<li>不知道瓶颈在哪里。</li>
-<li>优化后，可能更难阅读和维护</li>
-</ul>
-<h4 id="怎么做-4"><a href="#怎么做-4" class="headerlink" title="怎么做"></a>怎么做</h4><ul>
-<li><a target="_blank" rel="noopener" href="http://c2.com/cgi/wiki?MakeItWorkMakeItRightMakeItFast">让它能正确工作</a></li>
-<li>只有你真的需要优化，你才去优化,只有当你知道瓶颈在哪里.</li>
-</ul>
-<h5 id="资源-5"><a href="#资源-5" class="headerlink" title="资源"></a>资源</h5><ul>
-<li><a target="_blank" rel="noopener" href="http://en.wikipedia.org/wiki/Program_optimization">Program optimization</a></li>
-<li><a target="_blank" rel="noopener" href="http://c2.com/cgi/wiki?PrematureOptimization">Premature Optimization</a></li>
-</ul>
-<h3 id="解耦"><a href="#解耦" class="headerlink" title="解耦"></a>解耦</h3>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2015/02/13/Program-principles/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

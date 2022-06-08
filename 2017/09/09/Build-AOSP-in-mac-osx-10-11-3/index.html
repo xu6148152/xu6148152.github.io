@@ -243,83 +243,84 @@
 <li>获取最新版的<a target="_blank" rel="noopener" href="https://www.macports.org/install.php">MacPorts</a>!</li>
 <li>打开控制台，编辑<code>bash</code>配置文件</li>
 </ol>
-<p>&lt;!–code￼0–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ vim ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
 <ol start="3">
 <li>在配置文件中插入</li>
 </ol>
-<p>&lt;!–code￼1–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export PATH=/opt/local/bin:$PATH</span><br></pre></td></tr></table></figure>
+
 <ol start="4">
 <li>重新载入配置信息</li>
 </ol>
-<p>&lt;!–code￼2–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ . ~/.bash_profile</span><br></pre></td></tr></table></figure>
+
 <ol start="5">
 <li>运行<code>port</code>命令检测是否成功安装</li>
 </ol>
-<p>&lt;!–code￼3–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ port</span><br></pre></td></tr></table></figure>
+
 <ol start="6">
 <li>安装需要的依赖包</li>
 </ol>
-<p>&lt;!–code￼4–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ POSIXLY_CORRECT=1 sudo port install gmake libsdl git gnupg</span><br></pre></td></tr></table></figure>
+
 <h4 id="安装java开发包-JDK1-7"><a href="#安装java开发包-JDK1-7" class="headerlink" title="安装java开发包(JDK1.7)"></a>安装<code>java</code>开发包(JDK1.7)</h4><h4 id="安装Repo"><a href="#安装Repo" class="headerlink" title="安装Repo"></a>安装<code>Repo</code></h4><p><code>Repo</code>是基于<code>git</code>的一种工具，能很方便的用来管理<code>Android</code>源码。更多信息请<a target="_blank" rel="noopener" href="http://source.android.com/source/developing.html">查看</a></p>
 <ol>
 <li>确保根目录下有<code>/bin</code>目录</li>
 </ol>
-<p>&lt;!–code￼5–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir ~/bin</span><br><span class="line">$ PATH=~/bin:$PATH</span><br></pre></td></tr></table></figure>
+
 <ol start="2">
 <li>下载<code>Repo</code>工具，确保它可以运行</li>
 </ol>
-<p>&lt;!–code￼6–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ curl https://storage.googleapis.com/git-repo-downloads/repo &gt; ~/bin/repo</span><br><span class="line">$ chmod a+x ~/bin/repo</span><br></pre></td></tr></table></figure>
+
 <h4 id="设置文件描述符"><a href="#设置文件描述符" class="headerlink" title="设置文件描述符"></a>设置文件描述符</h4><p><code>OSX</code>系统的默认文件描述符的数量太小，高并行构建可能会超出这个限制。为了突破这个限制，添加以下命令到<code>.bash_profile</code>中</p>
-<p>&lt;!–code￼7–&gt;
-</p>
-<h4 id="创建字符大小写敏感的虚拟驱动"><a href="#创建字符大小写敏感的虚拟驱动" class="headerlink" title="创建字符大小写敏感的虚拟驱动"></a>创建字符大小写敏感的虚拟驱动</h4><p>&lt;!–code￼8–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ vim ~/.bash_profile</span><br><span class="line">~~~~~</span><br><span class="line"># set the number of open files to be 1024</span><br><span class="line">ulimit -S -n 1024</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="创建字符大小写敏感的虚拟驱动"><a href="#创建字符大小写敏感的虚拟驱动" class="headerlink" title="创建字符大小写敏感的虚拟驱动"></a>创建字符大小写敏感的虚拟驱动</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hdiutil create -type SPARSE -fs &#x27;Case-sensitive Journaled HFS+&#x27; -size 100g ~/android.dmg</span><br></pre></td></tr></table></figure>
 <p>源码很大，因此建议要创建大一点的虚拟光驱</p>
 <p>挂载这个驱动:</p>
-<p>&lt;!–code￼9–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hdiutil attach ~/android.dmg -mountpoint /Volumes/android</span><br></pre></td></tr></table></figure>
+
 <p>你也可以用另一种方式，在配置文件中加入如下方法：</p>
-<p>&lt;!–code￼10–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">function mountAndroid &#123; hdiutil attach ~/android.dmg.sparseimage -mountpoint /Volumes/android; &#125;</span><br></pre></td></tr></table></figure>
+
 <p>然后运行如下命令:</p>
-<p>&lt;!–code￼11–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mountAndroid</span><br></pre></td></tr></table></figure>
+
 <h3 id="下载源文件"><a href="#下载源文件" class="headerlink" title="下载源文件"></a>下载源文件</h3><p>首先我们确定我们要下载的是哪个版本的源码，本文以<code>android-6.0.1_r30</code>为例</p>
 <p>首先在<code>/Volumes/android</code>创建一个工作目录</p>
-<p>&lt;!–code￼12–&gt;
-</p>
-<p>运行
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ repo init -u https://android.googlesource.com/platform/manifest -b android-5.0.0_r7.0.1</span><br></pre></td></tr></table></figure></p>
-<p>最后运行
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ cd /Volumes/android</span><br><span class="line">$ mkdir WORKING_DIRECTORY</span><br><span class="line">$ cd WORKING_DIRECTORY</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ repo init -u https://android.googlesource.com/platform/manifest -b android-5.0.0_r7.0.1</span><br></pre></td></tr></table></figure>
+
+<p>最后运行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">repo sync</span><br></pre></td></tr></table></figure>
-来下载源码</p>
-<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>在源码根目录运行
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source build/envsetup.sh</span><br></pre></td></tr></table></figure></p>
-<p>运行
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lunch</span><br></pre></td></tr></table></figure></p>
+<p>来下载源码</p>
+<h3 id="编译源码"><a href="#编译源码" class="headerlink" title="编译源码"></a>编译源码</h3><p>在源码根目录运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ source build/envsetup.sh</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ lunch</span><br></pre></td></tr></table></figure>
+
 <p>按回车选择<code>aosp_arm-eng</code>。</p>
 <p>安装openssl curl</p>
-<p>&lt;!–code￼17–&gt;
-</p>
-<p>运行
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">brew install curl --with-openssl</span><br><span class="line">export PATH=$(brew --prefix curl)/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>运行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">caffeinate make -j4</span><br></pre></td></tr></table></figure>
-<code>caffeinate</code>阻止休眠</p>
+<p><code>caffeinate</code>阻止休眠</p>
 <p>开始漫长的编译过程</p>
-<p>运行
+<p>运行</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">make idegen &amp;&amp; development/tools/idegen/idegen.sh</span><br></pre></td></tr></table></figure>
-生成可被<code>IDE</code>识别的工程。</p>
+<p>生成可被<code>IDE</code>识别的工程。</p>
 <h3 id="碰到的一些问题"><a href="#碰到的一些问题" class="headerlink" title="碰到的一些问题"></a>碰到的一些问题</h3><ul>
 <li>下载源码时，需要比较长的时间，还好支持断点续传。(被盾的地方，必须使用VPN)</li>
 <li>源码下载完之后，编译会碰到找不到MacOSsdk。按照文中开头的步骤即可解决</li>
-<li>编译过程中会出现<p>&lt;!–code￼20–&gt;</p>
-</li>
+<li>编译过程中会出现<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal error: linux/netfilter/xt_DSCP.h: No such file or directory</span><br></pre></td></tr></table></figure></li>
 </ul>
 <p>这是由于我的源码没有直接在<code>/Volumns/android</code>下下载，是从别的地方下载完之后拷贝过来的。而编译源码会严格区分大小写的。相应目录下有小写的头文件。</p>
 <p>解决方案是：</p>
@@ -327,21 +328,21 @@
 <li>严格按照官方文档描述，在相应目录下下载源码</li>
 <li>在<code>./external/iptables/include/linux/netfilter</code>中创建头文件<code>xt_DSCP.h</code>。在该头文件中加入如下代码:</li>
 </ol>
-<p>&lt;!–code￼21–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/*</span><br><span class="line">* based on ipt_FTOS.c (C) 2000 by Matthew G. Marsh &lt;mgm@paktronix.com&gt;</span><br><span class="line">* This software is distributed under GNU GPL v2, 1991</span><br><span class="line">*</span><br><span class="line">* See RFC2474 for a description of the DSCP field within the IP Header.</span><br><span class="line">*</span><br><span class="line">* xt_DSCP.h,v 1.7 2002/03/14 12:03:13 laforge Exp</span><br><span class="line">*/</span><br><span class="line">#ifndef _XT_DSCP_TARGET_H</span><br><span class="line">#define _XT_DSCP_TARGET_H</span><br><span class="line">#include &lt;linux/netfilter/xt_dscp.h&gt;</span><br><span class="line">#include &lt;linux/types.h&gt;</span><br><span class="line"></span><br><span class="line">/* target info */</span><br><span class="line">struct xt_DSCP_info &#123;</span><br><span class="line">    __u8 dscp;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct xt_tos_target_info &#123;</span><br><span class="line">    __u8 tos_value;</span><br><span class="line">    __u8 tos_mask;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">#endif /* _XT_DSCP_TARGET_H */</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>Java文件找不到</li>
 </ul>
-<p>&lt;!–code￼22–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">external/doclava/src/com/google/doclava/ClassInfo.java:20: error: package com.sun.javadoc does not exist import com.sun.javadoc.ClassDoc</span><br></pre></td></tr></table></figure>
+
 <p>解决方案是在配置文件中加入</p>
-<p>&lt;!–code￼23–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ export PATH=/Library/Java/JavaVirtualMachines/jdk1.7.0_75.jdk/Contents/Home/bin:$PATH</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>编译最新版的aosp可能会遇到<code>Unsupported curl, please use a curl not based on SecureTransport</code>。解决方案是运行一下命令</li>
 </ul>
-<p>&lt;!–code￼24–&gt;
-</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">brew install curl --with-openssl</span><br><span class="line">export PATH=$(brew --prefix curl)/bin:$PATH</span><br><span class="line">caffeinate make -j4</span><br></pre></td></tr></table></figure>
+
 
     </div>
 

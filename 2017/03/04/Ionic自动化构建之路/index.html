@@ -22,12 +22,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言本文主要讲述Ionic在公司最新产品中的应用 技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。 实践之路实践过程:  安装ionic, cordova框架。运行如下命令  &lt;!–code￼0–&gt;   创建ionic项目。使用如下命令，可以指定包名  &lt;!–c">
+    <meta name="description" content="前言本文主要讲述Ionic在公司最新产品中的应用 技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。 实践之路实践过程:  安装ionic, cordova框架。运行如下命令  12npm install -y .npm install -y ionic cordova   创建i">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Ionic自动化构建之路">
 <meta property="og:url" content="http://xu6148152.github.io/2017/03/04/Ionic%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9E%84%E5%BB%BA%E4%B9%8B%E8%B7%AF/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="前言本文主要讲述Ionic在公司最新产品中的应用 技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。 实践之路实践过程:  安装ionic, cordova框架。运行如下命令  &lt;!–code￼0–&gt;   创建ionic项目。使用如下命令，可以指定包名  &lt;!–c">
+<meta property="og:description" content="前言本文主要讲述Ionic在公司最新产品中的应用 技术背景公司计划发布新的产品。为了利用现有的资源，快速构建产品，采用ionic作为基础框架。ionic是一款H5移动开发框架，打包插件基于apache cordova。 实践之路实践过程:  安装ionic, cordova框架。运行如下命令  12npm install -y .npm install -y ionic cordova   创建i">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-03-04T07:51:33.000Z">
 <meta property="article:modified_time" content="2017-03-04T07:52:28.000Z">
@@ -231,29 +231,28 @@
 <ul>
 <li>安装<code>ionic</code>, <code>cordova</code>框架。运行如下命令</li>
 </ul>
-<p>&lt;!–code￼0–&gt;
-</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm install -y .</span><br><span class="line">npm install -y ionic cordova</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>创建<code>ionic</code>项目。使用如下命令，可以指定包名</li>
 </ul>
-<p>&lt;!–code￼1–&gt;
-</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ionic start xxx(项目名称) --<span class="built_in">id</span> xxx(包名)</span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>下载需要的<code>cordova</code>插件</li>
 <li>获取资源文件</li>
 <li>更新配置文件</li>
 <li>添加支持平台</li>
 </ul>
-<p>&lt;!–code￼2–&gt;
-</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ionic platform add android</span><br></pre></td></tr></table></figure>
 <ul>
 <li>构建项目</li>
 </ul>
-<p>&lt;!–code￼3–&gt;
-</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ionic build xxx(平台)</span><br></pre></td></tr></table></figure>
+
 <h3 id="可持续集成"><a href="#可持续集成" class="headerlink" title="可持续集成"></a>可持续集成</h3><p>为了可持续集成，那么我这里将整个项目分为两部分，一部分固定不变的，即每次框架自动生成的文件。另一部分为我们一直需要修改的。因此这里的想法是，将改变的部分分离出去。每次运行脚本，自动生成文件。然后使用改变的部分覆盖自动生成的部分。这里改变的部分，主要包括配置文件，<code>Native</code>代码以及资源文件。替换完毕，打包签名出<code>apk</code>文件，并上传云服务。根据此思路，编写<code>python</code>脚本:</p>
-<p>&lt;!–code￼4–&gt;
-</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 覆盖配置文件</span></span><br><span class="line">copy_file(<span class="string">&#x27;config.xml&#x27;</span>, subfix)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖build.gradle文件</span></span><br><span class="line">copy_file(<span class="string">&#x27;build.gradle&#x27;</span>, androidPath)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖 AndroidManifest</span></span><br><span class="line">copy_file(<span class="string">&#x27;AndroidManifest.xml&#x27;</span>, androidPath)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖资源文件</span></span><br><span class="line"><span class="comment"># 先删除资源文件</span></span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    remove_tree(toDirectory + <span class="string">&#x27;/resources&#x27;</span>)</span><br><span class="line"><span class="keyword">except</span> OSError:</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖资源文件</span></span><br><span class="line">copy_tree(fromDirectory, toDirectory + <span class="string">&#x27;/resources&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 覆盖native代码</span></span><br><span class="line">copy_tree(fromDirectory, toDirectory)</span><br></pre></td></tr></table></figure>
+
 <p>之后签名打包，上传云服务</p>
 <h3 id="难点"><a href="#难点" class="headerlink" title="难点"></a>难点</h3><ol>
 <li>由于默认初始化项目，会自动生成一个包名。为了指定包名，因此需要使用<code>--id</code>来指定包名</li>

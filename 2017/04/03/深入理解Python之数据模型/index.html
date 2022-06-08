@@ -22,12 +22,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符| 种类  | 方法名称 | | ————- | ————- | | 字符串&#x2F;字节表示  | __repr__, __str__, __format__, __bytes  | | 数值转换  | __abs__, __bool__, __complex, __int__, __float__, __hash__">
+    <meta name="description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符   种类 方法名称    字符串&#x2F;字节表示 __repr__, __str__, __format__, __bytes   数值转换 __abs__, __bool__, __complex, __int__, __float__, __hash__, __index__   模拟集合 __len__, __">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入理解Python之数据模型">
 <meta property="og:url" content="http://xu6148152.github.io/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符| 种类  | 方法名称 | | ————- | ————- | | 字符串&#x2F;字节表示  | __repr__, __str__, __format__, __bytes  | | 数值转换  | __abs__, __bool__, __complex, __int__, __float__, __hash__">
+<meta property="og:description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符   种类 方法名称    字符串&#x2F;字节表示 __repr__, __str__, __format__, __bytes   数值转换 __abs__, __bool__, __complex, __int__, __float__, __hash__, __index__   模拟集合 __len__, __">
 <meta property="og:locale">
 <meta property="article:published_time" content="2017-04-03T09:23:12.000Z">
 <meta property="article:modified_time" content="2017-04-03T09:31:35.000Z">
@@ -225,28 +225,94 @@
     
     <div class="post-body" itemprop="articleBody">
         <h3 id="数据模型-Data-Model"><a href="#数据模型-Data-Model" class="headerlink" title="数据模型(Data Model)"></a>数据模型(Data Model)</h3><p><code>python</code>提供了很多特殊的方法</p>
-<h4 id="不含操作符"><a href="#不含操作符" class="headerlink" title="不含操作符"></a>不含操作符</h4><p>| 种类  | 方法名称 |
-| ————- | ————- |
-| 字符串&#x2F;字节表示  | <code>__repr__</code>, <code>__str__</code>, <code>__format__</code>, <code>__bytes</code>  |
-| 数值转换  | <code>__abs__</code>, <code>__bool__</code>, <code>__complex</code>, <code>__int__</code>, <code>__float__</code>, <code>__hash__</code>, <code>__index__</code>  |
-| 模拟集合 | <code>__len__</code>, <code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem</code>, <code>__contains__</code>|
-| 迭代器 | <code>__iter__</code>, <code>__reversed__</code>, <code>__next__</code>|
-| 模拟调用 | <code>__call__</code> |
-| 上下文管理 | <code>__enter__</code>, <code>__exit__</code> |
-| 实例创建和销毁 | <code>__new__</code>, <code>__init__</code>, <code>__del__</code>| 
-| 属性管理 | <code>__getattr__</code>, <code>__getattribute__</code>, <code>__setattr__</code>, <code>__delattr__</code>, <code>__dir__</code>|
-| 属性描述器 | <code>__get__</code>, <code>__set__</code>, <code>__delete__</code>|
-| 类服务 | <code>__prepare__</code>, <code>__instancecheck__</code>, <code>__subclasscheck__</code>|</p>
-<h4 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h4><p>| 种类 | 方法名和相关操作符 |
-| ————– | —————|
-| 一元数值操作符 | <code>__neg__</code>-, <code>__pos__</code>+, <code>__abs__</code>() |
-| 比较操作符 | <code>__lt__</code>&lt;, <code>__le__</code>&lt;&#x3D;, <code>__eq__</code>&#x3D;, <code>__ne__</code>!&#x3D;, <code>__gt__</code>&gt;, <code>__ge__</code>&gt;&#x3D; |
-| 算术操作符 | <code>__add__</code>+, <code>__sub__</code>-, <code>__mul__</code>*, <code>__truediv__</code>&#x2F;, <code>__floordiv__</code>&#x2F;&#x2F;, <code>__mod__</code>%, <code>__divmod__ divmod()</code>, <code>__pow__ **或者(pow())</code>, <code>__round__ round()</code> |
-| 反向算术操作符 | <code>__radd__</code>, <code>__rsub__</code>, <code>__rmul__</code>, <code>__rtruediv__</code>, <code>__rfloordiv__</code>, <code>__rmod__</code>, <code>__rdivmod__</code>, <code>__rpow__</code> |
-| 自操作符 | <code>_iadd__</code>, <code>__isub__</code>, <code>__imul__</code>, <code>__itruediv__</code>, <code>__ifloordiv__</code>, <code>__imod__</code>, <code>__ipow__</code> |
-| 位操作符 | <code>__invert__</code>~, <code>__lshift__</code>&lt;&lt;, <code>__rshift__</code>&gt;&gt;, <code>__and__</code>&amp;, <code>__or__</code>|, <code>__xor__</code>^ |
-| 反向位操作符 | <code>__rlshift__</code>, <code>__rrshift__</code>, <code>__rand__</code>, <code>__rxor__</code>, <code>__ror__</code>
-| 自增位操作符 | <code>__ilshift__</code>, <code>__irshift__</code>, <code>__iand__</code>, <code>__ixor__</code>, <code>__ior__</code></p>
+<h4 id="不含操作符"><a href="#不含操作符" class="headerlink" title="不含操作符"></a>不含操作符</h4><table>
+<thead>
+<tr>
+<th>种类</th>
+<th>方法名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字符串&#x2F;字节表示</td>
+<td><code>__repr__</code>, <code>__str__</code>, <code>__format__</code>, <code>__bytes</code></td>
+</tr>
+<tr>
+<td>数值转换</td>
+<td><code>__abs__</code>, <code>__bool__</code>, <code>__complex</code>, <code>__int__</code>, <code>__float__</code>, <code>__hash__</code>, <code>__index__</code></td>
+</tr>
+<tr>
+<td>模拟集合</td>
+<td><code>__len__</code>, <code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem</code>, <code>__contains__</code></td>
+</tr>
+<tr>
+<td>迭代器</td>
+<td><code>__iter__</code>, <code>__reversed__</code>, <code>__next__</code></td>
+</tr>
+<tr>
+<td>模拟调用</td>
+<td><code>__call__</code></td>
+</tr>
+<tr>
+<td>上下文管理</td>
+<td><code>__enter__</code>, <code>__exit__</code></td>
+</tr>
+<tr>
+<td>实例创建和销毁</td>
+<td><code>__new__</code>, <code>__init__</code>, <code>__del__</code></td>
+</tr>
+<tr>
+<td>属性管理</td>
+<td><code>__getattr__</code>, <code>__getattribute__</code>, <code>__setattr__</code>, <code>__delattr__</code>, <code>__dir__</code></td>
+</tr>
+<tr>
+<td>属性描述器</td>
+<td><code>__get__</code>, <code>__set__</code>, <code>__delete__</code></td>
+</tr>
+<tr>
+<td>类服务</td>
+<td><code>__prepare__</code>, <code>__instancecheck__</code>, <code>__subclasscheck__</code></td>
+</tr>
+</tbody></table>
+<h4 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h4><table>
+<thead>
+<tr>
+<th>种类</th>
+<th>方法名和相关操作符</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>一元数值操作符</td>
+<td><code>__neg__</code>-, <code>__pos__</code>+, <code>__abs__</code>()</td>
+</tr>
+<tr>
+<td>比较操作符</td>
+<td><code>__lt__</code>&lt;, <code>__le__</code>&lt;&#x3D;, <code>__eq__</code>&#x3D;, <code>__ne__</code>!&#x3D;, <code>__gt__</code>&gt;, <code>__ge__</code>&gt;&#x3D;</td>
+</tr>
+<tr>
+<td>算术操作符</td>
+<td><code>__add__</code>+, <code>__sub__</code>-, <code>__mul__</code>*, <code>__truediv__</code>&#x2F;, <code>__floordiv__</code>&#x2F;&#x2F;, <code>__mod__</code>%, <code>__divmod__ divmod()</code>, <code>__pow__ **或者(pow())</code>, <code>__round__ round()</code></td>
+</tr>
+<tr>
+<td>反向算术操作符</td>
+<td><code>__radd__</code>, <code>__rsub__</code>, <code>__rmul__</code>, <code>__rtruediv__</code>, <code>__rfloordiv__</code>, <code>__rmod__</code>, <code>__rdivmod__</code>, <code>__rpow__</code></td>
+</tr>
+<tr>
+<td>自操作符</td>
+<td><code>_iadd__</code>, <code>__isub__</code>, <code>__imul__</code>, <code>__itruediv__</code>, <code>__ifloordiv__</code>, <code>__imod__</code>, <code>__ipow__</code></td>
+</tr>
+<tr>
+<td>位操作符</td>
+<td><code>__invert__</code>~, <code>__lshift__</code>&lt;&lt;, <code>__rshift__</code>&gt;&gt;, <code>__and__</code>&amp;, <code>__or__</code></td>
+</tr>
+<tr>
+<td>反向位操作符</td>
+<td><code>__rlshift__</code>, <code>__rrshift__</code>, <code>__rand__</code>, <code>__rxor__</code>, <code>__ror__</code></td>
+</tr>
+<tr>
+<td>自增位操作符</td>
+<td><code>__ilshift__</code>, <code>__irshift__</code>, <code>__iand__</code>, <code>__ixor__</code>, <code>__ior__</code></td>
+</tr>
+</tbody></table>
 <ul>
 <li>通过实现上述特殊的方法，你自己的对象能表现得像内置类型。例如为了让对象打印出来可读性更好，这个时候需要实现<code>__repr__</code>和<code>__str__</code> <a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/1436703/difference-between-str-and-repr-in-python">区别</a></li>
 </ul>
