@@ -22,22 +22,22 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="概述Zookeeper是分布式调度服务。在分布式系统当中，当集群中的部分节点出现故障，那么需要通知其他节点。Zookeeper主要就是用来解决这个问题 实例以上将编写Zookeeper客户端程序，来展示其是如何管理集群中的节点 组和成员Zookeeper可以看成是一个高可用的文件系统，但它没有文件和文件夹的概念，其是一个树状结构。它的基本单元是znode，其主要用来存储数据。  创建组123456">
+    <meta name="description" content="概述Zookeeper是分布式调度服务。在分布式系统当中，当集群中的部分节点出现故障，那么需要通知其他节点。Zookeeper主要就是用来解决这个问题 实例以上将编写Zookeeper客户端程序，来展示其是如何管理集群中的节点 组和成员Zookeeper可以看成是一个高可用的文件系统，但它没有文件和文件夹的概念，其是一个树状结构。它的基本单元是znode，其主要用来存储数据。   创建组12345">
 <meta property="og:type" content="article">
 <meta property="og:title" content="深入浅出ZooKeeper">
 <meta property="og:url" content="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="概述Zookeeper是分布式调度服务。在分布式系统当中，当集群中的部分节点出现故障，那么需要通知其他节点。Zookeeper主要就是用来解决这个问题 实例以上将编写Zookeeper客户端程序，来展示其是如何管理集群中的节点 组和成员Zookeeper可以看成是一个高可用的文件系统，但它没有文件和文件夹的概念，其是一个树状结构。它的基本单元是znode，其主要用来存储数据。  创建组123456">
+<meta property="og:description" content="概述Zookeeper是分布式调度服务。在分布式系统当中，当集群中的部分节点出现故障，那么需要通知其他节点。Zookeeper主要就是用来解决这个问题 实例以上将编写Zookeeper客户端程序，来展示其是如何管理集群中的节点 组和成员Zookeeper可以看成是一个高可用的文件系统，但它没有文件和文件夹的概念，其是一个树状结构。它的基本单元是znode，其主要用来存储数据。   创建组12345">
 <meta property="og:locale">
-<meta property="og:image" content="http://xu6148152.github.io/znode.jpeg">
-<meta property="og:image" content="http://xu6148152.github.io/consistency.jpeg">
-<meta property="og:image" content="http://xu6148152.github.io/state.jpeg">
+<meta property="og:image" content="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/znode.jpeg">
+<meta property="og:image" content="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/consistency.jpeg">
+<meta property="og:image" content="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/state.jpeg">
 <meta property="article:published_time" content="2018-04-01T08:29:43.000Z">
-<meta property="article:modified_time" content="2018-04-01T08:29:43.000Z">
+<meta property="article:modified_time" content="2022-06-08T10:19:41.003Z">
 <meta property="article:author" content="Binea">
-<meta property="article:tag" content="ZooKeeper">
+<meta property="article:tag" content="ZooKeeper, server">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xu6148152.github.io/znode.jpeg">
+<meta name="twitter:image" content="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/znode.jpeg">
 
 
 <link rel="canonical" href="http://xu6148152.github.io/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/">
@@ -210,6 +210,13 @@
 
       <time title="Created: 2018-04-01 16:29:43" itemprop="dateCreated datePublished" datetime="2018-04-01T16:29:43+08:00">2018-04-01</time>
     </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-06-08 18:19:41" itemprop="dateModified" datetime="2022-06-08T18:19:41+08:00">2022-06-08</time>
+    </span>
 
   
     <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
@@ -231,8 +238,11 @@
         <h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p><code>Zookeeper</code>是分布式调度服务。在分布式系统当中，当集群中的部分节点出现故障，那么需要通知其他节点。<code>Zookeeper</code>主要就是用来解决这个问题</p>
 <h3 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h3><p>以上将编写<code>Zookeeper</code>客户端程序，来展示其是如何管理集群中的节点</p>
 <h4 id="组和成员"><a href="#组和成员" class="headerlink" title="组和成员"></a>组和成员</h4><p><code>Zookeeper</code>可以看成是一个高可用的文件系统，但它没有文件和文件夹的概念，其是一个树状结构。它的基本单元是<code>znode</code>，其主要用来存储数据。</p>
-<p><img data-src="/./znode.jpeg"></p>
+<img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/znode.jpeg" class="" title="znode">
+
 <h4 id="创建组"><a href="#创建组" class="headerlink" title="创建组"></a>创建组</h4><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">open</span> <span class="class"><span class="keyword">class</span> <span class="title">ConnectionWatcher</span> : <span class="type">Watcher &#123;</span></span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> zk: ZooKeeper? = <span class="literal">null</span></span><br><span class="line">    <span class="keyword">var</span> connectedSignal: CountDownLatch = CountDownLatch(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(IOException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">connect</span><span class="params">(hosts: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">        zk = ZooKeeper(hosts, CreateGroup.SESSION_TIMEOUT, <span class="keyword">this</span>)</span><br><span class="line">        connectedSignal.await()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="function"><span class="keyword">fun</span> <span class="title">process</span><span class="params">(event: <span class="type">WatchedEvent</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (event!!.state == Watcher.Event.KeeperState.SyncConnected) &#123;</span><br><span class="line">            connectedSignal.countDown()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">close</span><span class="params">()</span></span> &#123;</span><br><span class="line">        zk!!.close()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CreateGroup</span> : <span class="type">ConnectionWatcher</span></span>() &#123;</span><br><span class="line">    <span class="keyword">companion</span> <span class="keyword">object</span> &#123;</span><br><span class="line">        <span class="keyword">val</span> SESSION_TIMEOUT: <span class="built_in">Int</span> = <span class="number">5000</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Throws(KeeperException::class, InterruptedException::class)</span></span><br><span class="line">    <span class="function"><span class="keyword">fun</span> <span class="title">create</span><span class="params">(groupName: <span class="type">String</span>?)</span></span> &#123;</span><br><span class="line">        <span class="keyword">val</span> path = <span class="string">&quot;/&quot;</span> + groupName</span><br><span class="line">        <span class="keyword">val</span> createPath = zk!!.create(path, <span class="literal">null</span>, ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT)</span><br><span class="line">        System.<span class="keyword">out</span>.println(<span class="string">&quot;Created &quot;</span> + createPath)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<!--moreve-->
 
 <p>创建一个<code>CreateGroup</code>对象，然后调用<code>connect</code>方法,通过<code>ZooKeeper</code>的<code>api</code>与<code>ZooKeeper</code>服务器连接。指定三个参数，服务端主机名以及端口，连接超时时间，<code>Watcher</code>接口的实例，<code>Watcher</code>主要是负责接收<code>ZooKeeper</code>数据变化时产生的事件回调。</p>
 <p>创建之后使用<code>CountDownLatch</code>，让当前线程等待，直到<code>ZooKeeper</code>准备就绪。当<code>ZooKeeper</code>准备就绪时，<code>Watcher</code>接口的方法<code>process</code>会回调连接成功事件，然后<code>CountDownLatch</code>释放。</p>
@@ -312,7 +322,8 @@
 <p> 如果之前的<code>leader</code>回到集群，那么会被当做是一个<code>follower</code>。<code>leader</code>选举很快，大概200ms就能够产生结果，所以不会影响效率</p>
 <p> <code>ensemble</code>的所有节点都会在更新内存中的<code>znode</code>树的副本之前，先将更新数据写入到硬盘上</p>
 <h4 id="数据一致性"><a href="#数据一致性" class="headerlink" title="数据一致性"></a>数据一致性</h4><p><code>ensemble</code>集群中<code>follower</code>的<code>update</code>操作会滞后于<code>leader</code>操作。<code>Zookeeper</code>客户端的最佳实践是全部链接到<code>follower</code>上。然而客户端是有可能链接到<code>leader</code>上的，并且客户端控制不了这个选择，客户端也不知道连接到<code>follower</code>还是<code>leader</code>。一般的操作都是读直接从<code>follower</code>读取，写需要写入到<code>leader</code>。这跟数据库的读写分离类似</p>
-<p><img data-src="/./consistency.jpeg"></p>
+<img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/consistency.jpeg" class="">
+
 <p>每一个对<code>znode</code>树的更新操作，都会被赋予一个全局的唯一<code>ID</code>，我们称为<code>zxid</code>。更新操作的<code>ID</code>按照发生的时间顺序升序排序</p>
 <p><code>Zookeeper</code>在数据一致性上实现了以下几方面:</p>
 <ul>
@@ -335,7 +346,9 @@
 <h4 id="状态"><a href="#状态" class="headerlink" title="状态"></a>状态</h4><p><code>ZooKeeper</code>对象在他的生命周期内会有不同的状态，我们通过<code>getState()</code>来获取当前的状态</p>
 <figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">getState(): States</span><br></pre></td></tr></table></figure>
 
-<p>新构建的<code>ZooKeeper</code>对象在尝试连接<code>ZooKeeper</code>服务时的状态是<code>CONNECTING</code>,一旦建立成功，那么状态变成<code>CONNECTED</code><br><img data-src="/./state.jpeg"></p>
+<p>新构建的<code>ZooKeeper</code>对象在尝试连接<code>ZooKeeper</code>服务时的状态是<code>CONNECTING</code>,一旦建立成功，那么状态变成<code>CONNECTED</code>  </p>
+<img data-src="/2018/04/01/%E6%B7%B1%E5%85%A5%E6%B5%85%E5%87%BAZooKeeper/state.jpeg" class="">
+
 
     </div>
 
@@ -345,7 +358,7 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/ZooKeeper/" rel="tag"># ZooKeeper</a>
+              <a href="/tags/ZooKeeper-server/" rel="tag"># ZooKeeper, server</a>
           </div>
 
         
