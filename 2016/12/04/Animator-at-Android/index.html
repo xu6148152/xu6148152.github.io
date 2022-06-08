@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图  ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Animator at Android">
+<meta property="og:url" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图  ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有的">
+<meta property="og:locale">
+<meta property="og:image" content="http://xu6148152.github.io/animator.png">
+<meta property="og:image" content="http://xu6148152.github.io/ValueAnimator.png">
+<meta property="og:image" content="http://xu6148152.github.io/interpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/LinearInterpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/AccelerateDecelerateInterpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/AccelerateInterpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/AnticipateInterpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/AnticipateOvershootinterpolator.png">
+<meta property="og:image" content="http://xu6148152.github.io/TypeEvaluator.png">
+<meta property="og:image" content="http://xu6148152.github.io/transition.png">
+<meta property="article:published_time" content="2016-12-04T13:17:02.000Z">
+<meta property="article:modified_time" content="2016-12-25T10:33:39.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xu6148152.github.io/animator.png">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2016/12/04/Animator-at-Android/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2016/12/04/Animator-at-Android/","path":"2016/12/04/Animator-at-Android/","title":"Animator at Android"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Animator at Android | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Animator"><span class="nav-number">1.</span> <span class="nav-text">Animator</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ValueAnimator"><span class="nav-number">1.1.</span> <span class="nav-text">ValueAnimator</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#AnimationHandler"><span class="nav-number">1.1.1.</span> <span class="nav-text">AnimationHandler</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%92%E5%80%BC%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">插值器</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#LinearInterpolator-%E7%BA%BF%E6%80%A7%E6%8F%92%E5%80%BC%E5%99%A8"><span class="nav-number">1.2.1.</span> <span class="nav-text">LinearInterpolator(线性插值器)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AccelerateDecelerateInterpolator-%E5%8A%A0%E5%87%8F%E9%80%9F%E6%8F%92%E5%80%BC%E5%99%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">AccelerateDecelerateInterpolator(加减速插值器)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AccelerateInterpolator-%E5%8A%A0%E9%80%9F%E6%8F%92%E5%80%BC%E5%99%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">AccelerateInterpolator(加速插值器)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AnticipateInterpolator"><span class="nav-number">1.2.4.</span> <span class="nav-text">AnticipateInterpolator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AnticipateOvershootInterpolator"><span class="nav-number">1.2.5.</span> <span class="nav-text">AnticipateOvershootInterpolator</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TypeEvaluator-%E4%BC%B0%E5%80%BC%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">TypeEvaluator(估值器)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ArgbEvaluator"><span class="nav-number">1.3.1.</span> <span class="nav-text">ArgbEvaluator</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IntEvaluator"><span class="nav-number">1.3.2.</span> <span class="nav-text">IntEvaluator</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Choreograhper"><span class="nav-number">1.4.</span> <span class="nav-text">Choreograhper</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.4.1.</span> <span class="nav-text">流程图</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ObjectAnimator"><span class="nav-number">1.5.</span> <span class="nav-text">ObjectAnimator</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PropertyValuesHolder-%E5%A4%84%E7%90%86setter-getter%E7%9A%84%E5%AF%BB%E6%89%BE"><span class="nav-number">1.6.</span> <span class="nav-text">PropertyValuesHolder 处理setter, getter的寻找</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#KeyFrame"><span class="nav-number">1.7.</span> <span class="nav-text">KeyFrame</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AnimatorSet"><span class="nav-number">1.8.</span> <span class="nav-text">AnimatorSet</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LayoutTransition"><span class="nav-number">1.9.</span> <span class="nav-text">LayoutTransition</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ViewPropertyAnimator"><span class="nav-number">1.10.</span> <span class="nav-text">ViewPropertyAnimator</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Transition"><span class="nav-number">2.</span> <span class="nav-text">Transition</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%9B%BE"><span class="nav-number">2.1.</span> <span class="nav-text">结构图</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%BC%80%E5%A7%8B%E8%BD%AC%E5%9C%BA%E5%8A%A8%E7%94%BB"><span class="nav-number">2.1.1.</span> <span class="nav-text">开始转场动画</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AutoTransition"><span class="nav-number">2.1.2.</span> <span class="nav-text">AutoTransition</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TransitionSet"><span class="nav-number">2.1.3.</span> <span class="nav-text">TransitionSet</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ChangeText-%E8%87%AA%E5%AE%9A%E4%B9%89transition"><span class="nav-number">2.1.4.</span> <span class="nav-text">ChangeText(自定义transition)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ChangeBound"><span class="nav-number">2.1.5.</span> <span class="nav-text">ChangeBound</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-1"><span class="nav-number">2.1.5.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Slide"><span class="nav-number">2.1.6.</span> <span class="nav-text">Slide</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-2"><span class="nav-number">2.1.6.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Scale"><span class="nav-number">2.1.7.</span> <span class="nav-text">Scale</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-3"><span class="nav-number">2.1.7.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Explode"><span class="nav-number">2.1.8.</span> <span class="nav-text">Explode</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-4"><span class="nav-number">2.1.8.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TransitionName"><span class="nav-number">2.1.9.</span> <span class="nav-text">TransitionName</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ImageTransform"><span class="nav-number">2.1.10.</span> <span class="nav-text">ImageTransform</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ReColor"><span class="nav-number">2.1.11.</span> <span class="nav-text">ReColor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Rotate"><span class="nav-number">2.1.12.</span> <span class="nav-text">Rotate</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-5"><span class="nav-number">2.1.12.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Progress"><span class="nav-number">2.1.13.</span> <span class="nav-text">Progress</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Change-Scene"><span class="nav-number">2.1.14.</span> <span class="nav-text">Change Scene</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-6"><span class="nav-number">2.1.14.1.</span> <span class="nav-text">源码分析</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Fade"><span class="nav-number">2.1.15.</span> <span class="nav-text">Fade</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结:</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/12/04/Animator-at-Android/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Animator at Android | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Animator at Android
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-12-04 21:17:02" itemprop="dateCreated datePublished" datetime="2016-12-04T21:17:02+08:00">2016-12-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2016-12-25 18:33:39" itemprop="dateModified" datetime="2016-12-25T18:33:39+08:00">2016-12-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Animator"><a href="#Animator" class="headerlink" title="Animator"></a>Animator</h3><p>其是<code>Android3.0</code>之后加入的作用于对象属性的动画,<code>Animator</code>是所有属性动画的基类，其下有<code>ValueAnimator</code>,<code>AnimatorSet</code>,由<code>ValueAnimator</code>再拓展出<code>ObjectAnimator</code>,<code>TimeAnimator</code></p>
+<p>其整体结构图</p>
+<p><img data-src="/./animator.png" alt="animator"></p>
+<h4 id="ValueAnimator"><a href="#ValueAnimator" class="headerlink" title="ValueAnimator"></a>ValueAnimator</h4><p>为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的<code>Handler</code>里面以确保所有的属性改变都会在<code>UI</code>线程。主要<code>API</code>:</p>
+<p>&lt;!–code￼0–&gt;
+</p>
+<p>这些方法里面都是进行值得初始化</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p>都是重新封装转化成<code>PropertyValuesHolder</code>，这是封装动画属性和值得对象，之后会详细介绍</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>设置估值器，最后也是由<code>PropertyValuesHolder</code>保存</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<p>开始动画的逻辑其实很简单，主要是判断动画是否需要反转。最终动画的更新交给<code>AnimationHandler</code></p>
+<h5 id="AnimationHandler"><a href="#AnimationHandler" class="headerlink" title="AnimationHandler"></a>AnimationHandler</h5><p>处理所有运行中的动画的定时脉冲，这个机制能确保所有的动画都运行在<code>UI</code>线程，其使用<code>Choreograhper(用于调整动画输入和绘制的时机)</code>来执行周期的回调</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>流程图</p>
+<p><img data-src="/./ValueAnimator.png" alt="ValueAnimator"></p>
+<h4 id="插值器"><a href="#插值器" class="headerlink" title="插值器"></a>插值器</h4><p>插值器是描述动画变化的频率。其主要方法是  </p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>类关系图:<br><img data-src="/./interpolator.png" alt="interpolator"></p>
+<p>系统已经为开发者准备了一些默认的插值器，我们来简单看下这些插值器的算法</p>
+<h5 id="LinearInterpolator-线性插值器"><a href="#LinearInterpolator-线性插值器" class="headerlink" title="LinearInterpolator(线性插值器)"></a>LinearInterpolator(线性插值器)</h5><p>&lt;!–code￼6–&gt;
+</p>
+<p><img data-src="/./LinearInterpolator.png"></p>
+<h5 id="AccelerateDecelerateInterpolator-加减速插值器"><a href="#AccelerateDecelerateInterpolator-加减速插值器" class="headerlink" title="AccelerateDecelerateInterpolator(加减速插值器)"></a>AccelerateDecelerateInterpolator(加减速插值器)</h5><p>&lt;!–code￼7–&gt;
+</p>
+<p><img data-src="/./AccelerateDecelerateInterpolator.png">  </p>
+<p>其特性是在动画开始和结束阶段变化缓慢，中间阶段变化迅速</p>
+<h5 id="AccelerateInterpolator-加速插值器"><a href="#AccelerateInterpolator-加速插值器" class="headerlink" title="AccelerateInterpolator(加速插值器)"></a>AccelerateInterpolator(加速插值器)</h5><p>&lt;!–code￼8–&gt;
+</p>
+<p><img data-src="/./AccelerateInterpolator.png"><br>其特点是动画变化速度一直加快，有个加速因子，默认为1。</p>
+<h5 id="AnticipateInterpolator"><a href="#AnticipateInterpolator" class="headerlink" title="AnticipateInterpolator"></a>AnticipateInterpolator</h5><p>&lt;!–code￼9–&gt;
+</p>
+<p><img data-src="/./AnticipateInterpolator.png"></p>
+<h5 id="AnticipateOvershootInterpolator"><a href="#AnticipateOvershootInterpolator" class="headerlink" title="AnticipateOvershootInterpolator"></a>AnticipateOvershootInterpolator</h5><p>&lt;!–code￼10–&gt;
+</p>
+<p><img data-src="/./AnticipateOvershootinterpolator.png"></p>
+<p>还有很多别的插值器。这里就不多加赘述了。只要将相应的算法写入<code>getInterpolation</code>中即可</p>
+<p>使用的地方</p>
+<p>&lt;!–code￼11–&gt;
+</p>
+<h4 id="TypeEvaluator-估值器"><a href="#TypeEvaluator-估值器" class="headerlink" title="TypeEvaluator(估值器)"></a>TypeEvaluator(估值器)</h4><p>根据当前的动画频率，起始值，结束值计算当前值</p>
+<p><img data-src="/./TypeEvaluator.png"></p>
+<p>&lt;!–code￼12–&gt;
+</p>
+<h5 id="ArgbEvaluator"><a href="#ArgbEvaluator" class="headerlink" title="ArgbEvaluator"></a>ArgbEvaluator</h5><p>&lt;!–code￼13–&gt;
+</p>
+<p>算法是线性函数，主要因子<code>fraction</code>来自插值器的计算, <code>y= a + kx</code></p>
+<h5 id="IntEvaluator"><a href="#IntEvaluator" class="headerlink" title="IntEvaluator"></a>IntEvaluator</h5><p>&lt;!–code￼14–&gt;
+</p>
+<p>估值器主要实在<code>KeyFrames</code>中使用，而<code>KeyFrames</code>存在<code>PropertyValuesHolder</code>当中，最终<code>Choreographer</code>来更新动画使用</p>
+<h4 id="Choreograhper"><a href="#Choreograhper" class="headerlink" title="Choreograhper"></a>Choreograhper</h4><p>协调动画，输入和绘制的时间。其会收到来自显示系统的定时脉冲，然后安排工作作为下一帧渲染的一部分。</p>
+<p>&lt;!–code￼15–&gt;
+</p>
+<ul>
+<li>初始化，创建<code>FrameHandler</code>，创建回调队列</li>
+</ul>
+<p>&lt;!–code￼16–&gt;
+</p>
+<ul>
+<li>将回调加入回调队列，如果没有延时，锁定当前帧，如果使用<code>VSYNC</code>，诺当前运行在相同的线程，直接通过<code>FrameDisplayEventReceiver</code>要求同步，其他情况发送消息到<code>Handler</code>中执行。<code>Handler</code>处理三种消息,<code>MSG_DO_FRAME</code>,<code>MSG_DO_SCHEDULE_VSYNC</code>, <code>MSG_DO_SCHEDULE_CALLBACK</code></li>
+</ul>
+<p>&lt;!–code￼17–&gt;
+</p>
+<ul>
+<li><code>MSG_DO_FRAME</code>:判断当前帧时间，低于上次绘制时间，要求同步。否则调用<code>doCallbacks</code>，执行回调队列中的回调</li>
+</ul>
+<h5 id="流程图"><a href="#流程图" class="headerlink" title="流程图"></a>流程图</h5><h4 id="ObjectAnimator"><a href="#ObjectAnimator" class="headerlink" title="ObjectAnimator"></a>ObjectAnimator</h4><p>支持对目标对象的属性做动画，对<code>ValueAnimator</code>的拓展</p>
+<p>&lt;!–code￼18–&gt;
+</p>
+<ul>
+<li><code>ObjectAnimator</code>比<code>ValueAnimator</code>多了<code>target</code>和<code>Property</code>，这些信息都在<code>PropertyValuesHolder</code>,必须要要有getter&#x2F;setter才能更新目标对象</li>
+</ul>
+<h4 id="PropertyValuesHolder-处理setter-getter的寻找"><a href="#PropertyValuesHolder-处理setter-getter的寻找" class="headerlink" title="PropertyValuesHolder 处理setter, getter的寻找"></a>PropertyValuesHolder 处理setter, getter的寻找</h4><p>&lt;!–code￼19–&gt;
+</p>
+<ul>
+<li><code>PropertyValuesHolder</code>主要持有动画的相关属性信息，包括关键帧集，插值器，估值器等</li>
+</ul>
+<h4 id="KeyFrame"><a href="#KeyFrame" class="headerlink" title="KeyFrame"></a>KeyFrame</h4><p>动画关键帧，保存动画某一帧的时间&#x2F;值。被<code>ValueAnimator</code>使用来计算两个值之间的动画值。<code>PropertyValuesHolder</code>保存了<code>KeyFrames</code>其保存了多个<code>KeyFrame</code>。简单来说<code>KeyFrame</code>就是我们做动画的起始值，中间值，结束值，这些都是由开发者定义。</p>
+<p>&lt;!–code￼20–&gt;
+</p>
+<ul>
+<li>动画至少会包含两个关键帧，一个起始关键帧，一个结束关键帧。中间有多少关键帧由开发者自行定义</li>
+</ul>
+<h4 id="AnimatorSet"><a href="#AnimatorSet" class="headerlink" title="AnimatorSet"></a>AnimatorSet</h4><p>允许同时播放多个动画或者定义动画的播放顺序</p>
+<p>&lt;!–code￼21–&gt;
+</p>
+<ul>
+<li>流程: <ol>
+<li>首先禁止异步运行动画，设置所有动画的时间和插值器。</li>
+<li>对所有的动画进行排序(根据依赖关系),取消所有老的监听。如果动画没有依赖，加入即将开始的动画队列，否则创建依赖监听，创建临时依赖</li>
+<li>没有延时，启动动画。否则创建延时动画，延时动画结束后，后续动画开始</li>
+<li>动画开始监听回调，如果没有动画，动画结束监听回调</li>
+</ol>
+</li>
+</ul>
+<p>&lt;!–code￼22–&gt;
+</p>
+<ul>
+<li>包含两个规则，一起，后续</li>
+</ul>
+<p>&lt;!–code￼23–&gt;
+</p>
+<h4 id="LayoutTransition"><a href="#LayoutTransition" class="headerlink" title="LayoutTransition"></a>LayoutTransition</h4><p><code>ViewGroup</code>布局发生改变时播放动画。这个动画的核心概念是两个类型的改变会引起四种不同的动画运行。这两种改变时<code>appearing</code>和<code>disappearing</code>。</p>
+<p>&lt;!–code￼24–&gt;
+</p>
+<p>动画类型，用一个字节表示</p>
+<p>&lt;!–code￼25–&gt;
+</p>
+<ul>
+<li>主要流程<ol>
+<li>启动一个延时动画来移除为执行的动画</li>
+<li>监听布局变化,如果是<code>ValueAnimator</code>，判断起始帧和结束帧是否一样，如果一样表示结束.否则根据布局改变的原因设置动画类型，开始动画</li>
+<li>移除缓存动画</li>
+</ol>
+</li>
+</ul>
+<h4 id="ViewPropertyAnimator"><a href="#ViewPropertyAnimator" class="headerlink" title="ViewPropertyAnimator"></a>ViewPropertyAnimator</h4><p>自动优化<code>View</code>对象的属性动画。如果想做1个或者两个属性动画，使用<code>ObjectAnimator</code>，其也可以设置属性值，合理的刷新视图。但是如果有多个属性要同时动画，或者想要使用更简洁的语法，那么可以使用<code>ViewPropertyAnimator</code></p>
+<p>&lt;!–code￼26–&gt;
+</p>
+<ul>
+<li>上述流程, 做属性动画都会调用<code>animateProperty</code>，其内部会调用<code>animatePropertyBy</code><ol>
+<li>首先会取消这个属性上存在的动画</li>
+<li>构建<code>NameValuesHolder</code></li>
+<li>调用<code>removeCallbacks(runnable)</code>，取消之前动画</li>
+<li>调用<code>postOnAnimation(runnable)</code>，开始动画</li>
+</ol>
+</li>
+</ul>
+<h3 id="Transition"><a href="#Transition" class="headerlink" title="Transition"></a>Transition</h3><p>主要用于做转场动画，其会保存场景转变的信息。任何转变有两个主要工作: 1. 捕获属性值 2. 基于捕获的属性值改变做动画。**无法与<code>TextureView</code>和<code>SurfaceView</code>一起使用。对于<code>SurfaceView</code>，由于其是从非UI线程更新UI，因此会造成不同步。对于<code>TextureView</code>，由于转场动画依赖<code>ViewOverlay</code>，而其又无法与<code>TextureView</code>一起工作。</p>
+<h4 id="结构图"><a href="#结构图" class="headerlink" title="结构图"></a>结构图</h4><p><img data-src="/./transition.png" alt="transition"></p>
+<p>&lt;!–code￼27–&gt;
+</p>
+<h5 id="开始转场动画"><a href="#开始转场动画" class="headerlink" title="开始转场动画"></a>开始转场动画</h5><p>&lt;!–code￼28–&gt;
+</p>
+<ul>
+<li>流程<ol>
+<li>未设置<code>Transition</code>，使用默认<code>Transition</code>，也就是<code>AutoTransition</code></li>
+<li>暂停当前正在运行的转场动画，捕获当前场景，取消之前的转场动画</li>
+<li>设置当前场景</li>
+<li>设置绘制(<code>preDraw</code>)监听，在其当中捕获场景和开始转场动画</li>
+</ol>
+</li>
+</ul>
+<h5 id="AutoTransition"><a href="#AutoTransition" class="headerlink" title="AutoTransition"></a>AutoTransition</h5><p>组合转场动画，包括渐变和区域改变。<code>Transition</code>由<code>TransitionManger</code>管理。一般可以使用<code>beginDelayedTransition</code>开始一个转场动画，默认的转场动画为<code>AutoTransition</code>:</p>
+<p>&lt;!–code￼29–&gt;
+</p>
+<p>效果如下:</p>
+<p>&lt;!–swig￼49–&gt;
+</p>
+<h6 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h6><blockquote>
+<p>继承自TransitionSet</p>
+</blockquote>
+<p>&lt;!–code￼30–&gt;
+</p>
+<ul>
+<li>顺序播放渐出，区域变化，渐入动画</li>
+</ul>
+<h5 id="TransitionSet"><a href="#TransitionSet" class="headerlink" title="TransitionSet"></a>TransitionSet</h5><blockquote>
+<p>继承自Transition</p>
+</blockquote>
+<p>&lt;!–code￼31–&gt;
+</p>
+<ul>
+<li>调用各个<code>Transition</code>的方法</li>
+</ul>
+<p>&lt;!–code￼32–&gt;
+</p>
+<ul>
+<li>使用各自<code>Transition</code>创建动画。为第一个转场动画设置必要的延时</li>
+</ul>
+<p>&lt;!–code￼33–&gt;
+</p>
+<ul>
+<li>动画开始，由各个<code>Transition</code>开始动画，在这里会区分动画是串行播放，还是并行播放。</li>
+</ul>
+<h5 id="ChangeText-自定义transition"><a href="#ChangeText-自定义transition" class="headerlink" title="ChangeText(自定义transition)"></a>ChangeText(自定义transition)</h5><p>&lt;!–swig￼50–&gt;
+</p>
+<p>&lt;!–code￼34–&gt;
+</p>
+<ul>
+<li>上述代码也能实现相同的功能，<code>ChangeText</code>只是对其进行了进一步的封装。这里不分析其源码</li>
+</ul>
+<h5 id="ChangeBound"><a href="#ChangeBound" class="headerlink" title="ChangeBound"></a>ChangeBound</h5><p>&lt;!–swig￼51–&gt;
+</p>
+<h6 id="源码分析-1"><a href="#源码分析-1" class="headerlink" title="源码分析"></a>源码分析</h6><blockquote>
+<p>继承<code>Transition</code></p>
+</blockquote>
+<p>&lt;!–code￼35–&gt;
+</p>
+<ul>
+<li>保存当前<code>View</code>的边界状态</li>
+</ul>
+<blockquote>
+<p>创建动画，代码很长，核心代码</p>
+</blockquote>
+<p>&lt;!–code￼36–&gt;
+</p>
+<ul>
+<li>主要功能是判断<code>View</code>的边界有没有发生改变，如果发生改变，使用对应的位置变化动画，主要包括<code>topLeft, bottomRight, position</code>。如果没有发生改变，则在<code>View</code>上绘制<code>Overlay</code>并对其做<code>path</code>动画。</li>
+</ul>
+<p>设置<code>pathMotion</code></p>
+<blockquote>
+<p>其是一个抽象类，用于描述<code>Transition</code>的<code>Path</code>信息</p>
+</blockquote>
+<p>&lt;!–swig￼52–&gt;
+</p>
+<p>&lt;!–code￼37–&gt;
+</p>
+<ul>
+<li>实现<code>getPath</code>以便提供两点之间的变化频率</li>
+</ul>
+<h5 id="Slide"><a href="#Slide" class="headerlink" title="Slide"></a>Slide</h5><blockquote>
+<p>继承自<code>Visibility</code></p>
+</blockquote>
+<p>&lt;!–swig￼53–&gt;
+</p>
+<h6 id="源码分析-2"><a href="#源码分析-2" class="headerlink" title="源码分析"></a>源码分析</h6><p>&lt;!–code￼38–&gt;
+</p>
+<ul>
+<li>保存当前<code>View</code>位置</li>
+</ul>
+<blockquote>
+<p>其<code>createAnimator</code>在父类<code>Visibility</code>中被重写，当中调用<code>onAppear</code>和<code>onDisappear</code>，这两个方法分别有各自的重载方法，由子类提供具体的实现，默认无动画</p>
+</blockquote>
+<p>&lt;!–code￼39–&gt;
+</p>
+<ul>
+<li>使用<code>CalculateSlide</code>接口的实现计算<code>View</code>离开或者进入场景时的位置，最后由<code>TranslationAnimationCreator</code>创建动画</li>
+</ul>
+<h5 id="Scale"><a href="#Scale" class="headerlink" title="Scale"></a>Scale</h5><p>&lt;!–swig￼54–&gt;
+</p>
+<p>设置<code>alpha</code></p>
+<p>&lt;!–swig￼55–&gt;
+</p>
+<h6 id="源码分析-3"><a href="#源码分析-3" class="headerlink" title="源码分析"></a>源码分析</h6><p>private Animator createAnimation(final View view, float startScale, float endScale, TransitionValues values) {
+        final float initialScaleX &#x3D; view.getScaleX();
+        final float initialScaleY &#x3D; view.getScaleY();
+        float startScaleX &#x3D; initialScaleX * startScale;
+        float endScaleX &#x3D; initialScaleX * endScale;
+        float startScaleY &#x3D; initialScaleY * startScale;
+        float endScaleY &#x3D; initialScaleY * endScale;</p>
+<pre><code>    if (values != null) &#123;
+        Float savedScaleX = (Float) values.values.get(PROPNAME_SCALE_X);
+        Float savedScaleY = (Float) values.values.get(PROPNAME_SCALE_Y);
+        // if saved value is not equal initial value it means that previous
+        // transition was interrupted and in the onTransitionEnd
+        // we&#39;ve applied endScale. we should apply proper value to
+        // continue animation from the interrupted state
+        if (savedScaleX != null &amp;&amp; savedScaleX != initialScaleX) &#123;
+            startScaleX = savedScaleX;
+        &#125;
+        if (savedScaleY != null &amp;&amp; savedScaleY != initialScaleY) &#123;
+            startScaleY = savedScaleY;
+        &#125;
+    &#125;
+
+    view.setScaleX(startScaleX);
+    view.setScaleY(startScaleY);
+
+    Animator animator = TransitionUtils.mergeAnimators(
+            ObjectAnimator.ofFloat(view, View.SCALE_X, startScaleX, endScaleX),
+            ObjectAnimator.ofFloat(view, View.SCALE_Y, startScaleY, endScaleY));
+    addListener(new TransitionListenerAdapter() &#123;
+        @Override
+        public void onTransitionEnd(Transition transition) &#123;
+            view.setScaleX(initialScaleX);
+            view.setScaleY(initialScaleY);
+        &#125;
+    &#125;);
+    return animator;
+</code></pre>
+<p>}</p>
+<ul>
+<li>合并<code>x, y</code>缩放的动画，合并是采用<code>TransitionSet</code>，如下</li>
+</ul>
+<p>&lt;!–code￼40–&gt;
+</p>
+<h5 id="Explode"><a href="#Explode" class="headerlink" title="Explode"></a>Explode</h5><blockquote>
+<p>继承自Visibility</p>
+</blockquote>
+<p>&lt;!–swig￼56–&gt;
+</p>
+<h6 id="源码分析-4"><a href="#源码分析-4" class="headerlink" title="源码分析"></a>源码分析</h6><p>&lt;!–code￼41–&gt;
+</p>
+<ul>
+<li>通过<code>calculateOut</code>计算扩散的距离，使用<code>TranslationAnimationCreator</code>创建动画</li>
+</ul>
+<p>&lt;!–code￼42–&gt;
+</p>
+<ul>
+<li>计算场景动画的偏移量，如果为0，随机算出偏移量，算出x, y偏移量的平方根，求出最大距离<h5 id="TransitionName"><a href="#TransitionName" class="headerlink" title="TransitionName"></a>TransitionName</h5></li>
+</ul>
+<blockquote>
+<p>设置要做动画的标识，在之后的动画中会对这些标识的<code>View</code>做动画</p>
+</blockquote>
+<p>&lt;!–swig￼57–&gt;
+</p>
+<h5 id="ImageTransform"><a href="#ImageTransform" class="headerlink" title="ImageTransform"></a>ImageTransform</h5><p>&lt;!–swig￼58–&gt;
+</p>
+<h5 id="ReColor"><a href="#ReColor" class="headerlink" title="ReColor"></a>ReColor</h5><p>&lt;!–swig￼59–&gt;
+</p>
+<h5 id="Rotate"><a href="#Rotate" class="headerlink" title="Rotate"></a>Rotate</h5><blockquote>
+<p>继承自Transition的旋转动画</p>
+</blockquote>
+<p>&lt;!–swig￼60–&gt;
+</p>
+<h6 id="源码分析-5"><a href="#源码分析-5" class="headerlink" title="源码分析"></a>源码分析</h6><p>&lt;!–code￼43–&gt;
+</p>
+<ul>
+<li>创建旋转动画</li>
+</ul>
+<h5 id="Progress"><a href="#Progress" class="headerlink" title="Progress"></a>Progress</h5><p>&lt;!–swig￼61–&gt;
+</p>
+<h5 id="Change-Scene"><a href="#Change-Scene" class="headerlink" title="Change Scene"></a>Change Scene</h5><p>&lt;!–swig￼62–&gt;
+</p>
+<h6 id="源码分析-6"><a href="#源码分析-6" class="headerlink" title="源码分析"></a>源码分析</h6><p>&lt;!–code￼44–&gt;
+</p>
+<ul>
+<li>先淡出效果(<code>Fade</code>)，改变区域(<code>ChangeBound</code>)，淡入效果(<code>Fade</code>)</li>
+</ul>
+<h5 id="Fade"><a href="#Fade" class="headerlink" title="Fade"></a>Fade</h5><p>渐变转场动画，继承自<code>Visibility</code></p>
+<p>&lt;!–code￼45–&gt;
+</p>
+<ul>
+<li>捕获初始场景的<code>alpha</code>值</li>
+</ul>
+<p>&lt;!–code￼46–&gt;
+</p>
+<ul>
+<li>创建渐变属性动画，其会由<code>onAppear()</code>和<code>onDisAppear</code>调用</li>
+</ul>
+<p>&lt;!–code￼47–&gt;
+</p>
+<ul>
+<li>这两个方法由<code>Visibility</code>的<code>createAnimator</code>调用</li>
+</ul>
+<p>&lt;!–code￼48–&gt;
+</p>
+<ul>
+<li><code>View</code>显示或隐藏时会创建对应的渐变动画。<code>Transition</code>的<code>playTransition</code>会调用<code>createAnimators</code>，其内部会调用<code>createAnimator</code>。</li>
+<li>整体流程是启动<code>Transition</code>-&gt;创建动画(<code>createAnimators</code>)-&gt;创建单个动画(<code>createAnimator</code>由<code>Transition</code>子类实现,默认空)-&gt;<code>Visibility</code>的<code>onAppear()</code>&#x2F;<code>onDisappear</code>-&gt;子类<code>createAnimator</code></li>
+</ul>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结:"></a>总结:</h3><blockquote>
+<p><code>Transition</code>动画其实是对属性动画的一种高级封装。其主要流程是<code>TransitionManager</code>调用<code>beginDelayedTransition</code>,内部监听了<code>OnPreDrawListener</code>，其在<code>onPreDraw</code>调用<code>captureView</code>用于获取当前<code>View</code>的状态,调用<code>playTransition</code>开始转场动画。之后创建动画<code>createAnimator</code>。这其中<code>captureView</code>都是由子类实现，而<code>createAnimator</code>则可以由子类选择重写。最终动画的开始还有调用<code>animator.start()</code></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/12/03/Picasso%E8%A7%A3%E6%9E%90/" rel="prev" title="Picasso解析">
+                  <i class="fa fa-chevron-left"></i> Picasso解析
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/12/31/2016%E6%80%BB%E7%BB%93/" rel="next" title="2016总结">
+                  2016总结 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

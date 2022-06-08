@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符| 种类  | 方法名称 | | ————- | ————- | | 字符串&#x2F;字节表示  | __repr__, __str__, __format__, __bytes  | | 数值转换  | __abs__, __bool__, __complex, __int__, __float__, __hash__">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Python之数据模型">
+<meta property="og:url" content="http://xu6148152.github.io/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="数据模型(Data Model)python提供了很多特殊的方法 不含操作符| 种类  | 方法名称 | | ————- | ————- | | 字符串&#x2F;字节表示  | __repr__, __str__, __format__, __bytes  | | 数值转换  | __abs__, __bool__, __complex, __int__, __float__, __hash__">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-04-03T09:23:12.000Z">
+<meta property="article:modified_time" content="2017-04-03T09:31:35.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/","path":"2017/04/03/深入理解Python之数据模型/","title":"深入理解Python之数据模型"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解Python之数据模型 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B-Data-Model"><span class="nav-number">1.</span> <span class="nav-text">数据模型(Data Model)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%90%AB%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">1.1.</span> <span class="nav-text">不含操作符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">1.2.</span> <span class="nav-text">操作符</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解Python之数据模型 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Python之数据模型
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2017-04-03 17:23:12 / Modified: 17:31:35" itemprop="dateCreated datePublished" datetime="2017-04-03T17:23:12+08:00">2017-04-03</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="数据模型-Data-Model"><a href="#数据模型-Data-Model" class="headerlink" title="数据模型(Data Model)"></a>数据模型(Data Model)</h3><p><code>python</code>提供了很多特殊的方法</p>
+<h4 id="不含操作符"><a href="#不含操作符" class="headerlink" title="不含操作符"></a>不含操作符</h4><p>| 种类  | 方法名称 |
+| ————- | ————- |
+| 字符串&#x2F;字节表示  | <code>__repr__</code>, <code>__str__</code>, <code>__format__</code>, <code>__bytes</code>  |
+| 数值转换  | <code>__abs__</code>, <code>__bool__</code>, <code>__complex</code>, <code>__int__</code>, <code>__float__</code>, <code>__hash__</code>, <code>__index__</code>  |
+| 模拟集合 | <code>__len__</code>, <code>__getitem__</code>, <code>__setitem__</code>, <code>__delitem</code>, <code>__contains__</code>|
+| 迭代器 | <code>__iter__</code>, <code>__reversed__</code>, <code>__next__</code>|
+| 模拟调用 | <code>__call__</code> |
+| 上下文管理 | <code>__enter__</code>, <code>__exit__</code> |
+| 实例创建和销毁 | <code>__new__</code>, <code>__init__</code>, <code>__del__</code>| 
+| 属性管理 | <code>__getattr__</code>, <code>__getattribute__</code>, <code>__setattr__</code>, <code>__delattr__</code>, <code>__dir__</code>|
+| 属性描述器 | <code>__get__</code>, <code>__set__</code>, <code>__delete__</code>|
+| 类服务 | <code>__prepare__</code>, <code>__instancecheck__</code>, <code>__subclasscheck__</code>|</p>
+<h4 id="操作符"><a href="#操作符" class="headerlink" title="操作符"></a>操作符</h4><p>| 种类 | 方法名和相关操作符 |
+| ————– | —————|
+| 一元数值操作符 | <code>__neg__</code>-, <code>__pos__</code>+, <code>__abs__</code>() |
+| 比较操作符 | <code>__lt__</code>&lt;, <code>__le__</code>&lt;&#x3D;, <code>__eq__</code>&#x3D;, <code>__ne__</code>!&#x3D;, <code>__gt__</code>&gt;, <code>__ge__</code>&gt;&#x3D; |
+| 算术操作符 | <code>__add__</code>+, <code>__sub__</code>-, <code>__mul__</code>*, <code>__truediv__</code>&#x2F;, <code>__floordiv__</code>&#x2F;&#x2F;, <code>__mod__</code>%, <code>__divmod__ divmod()</code>, <code>__pow__ **或者(pow())</code>, <code>__round__ round()</code> |
+| 反向算术操作符 | <code>__radd__</code>, <code>__rsub__</code>, <code>__rmul__</code>, <code>__rtruediv__</code>, <code>__rfloordiv__</code>, <code>__rmod__</code>, <code>__rdivmod__</code>, <code>__rpow__</code> |
+| 自操作符 | <code>_iadd__</code>, <code>__isub__</code>, <code>__imul__</code>, <code>__itruediv__</code>, <code>__ifloordiv__</code>, <code>__imod__</code>, <code>__ipow__</code> |
+| 位操作符 | <code>__invert__</code>~, <code>__lshift__</code>&lt;&lt;, <code>__rshift__</code>&gt;&gt;, <code>__and__</code>&amp;, <code>__or__</code>|, <code>__xor__</code>^ |
+| 反向位操作符 | <code>__rlshift__</code>, <code>__rrshift__</code>, <code>__rand__</code>, <code>__rxor__</code>, <code>__ror__</code>
+| 自增位操作符 | <code>__ilshift__</code>, <code>__irshift__</code>, <code>__iand__</code>, <code>__ixor__</code>, <code>__ior__</code></p>
+<ul>
+<li>通过实现上述特殊的方法，你自己的对象能表现得像内置类型。例如为了让对象打印出来可读性更好，这个时候需要实现<code>__repr__</code>和<code>__str__</code> <a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/1436703/difference-between-str-and-repr-in-python">区别</a></li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/03/04/Ionic%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9E%84%E5%BB%BA%E4%B9%8B%E8%B7%AF/" rel="prev" title="Ionic自动化构建之路">
+                  <i class="fa fa-chevron-left"></i> Ionic自动化构建之路
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/" rel="next" title="深入理解Python之数组序列">
+                  深入理解Python之数组序列 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

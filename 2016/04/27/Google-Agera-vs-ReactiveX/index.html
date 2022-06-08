@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原文 介绍如果你经常关注Android开发动态的话，或者关注Reactive相关的动态,最近Google有个重大发布。它们发布了针对于Android的反应式编程库:Agera。 By Google是Google一个从事Google Play Movies的小组。当然，这听起来更像Google. 不管是谁发布的，我们要关注的是，它与现有的反应式编程库RxJava,Reactor以及Akka-Stre">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Google Agera vs. ReactiveX">
+<meta property="og:url" content="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="原文 介绍如果你经常关注Android开发动态的话，或者关注Reactive相关的动态,最近Google有个重大发布。它们发布了针对于Android的反应式编程库:Agera。 By Google是Google一个从事Google Play Movies的小组。当然，这听起来更像Google. 不管是谁发布的，我们要关注的是，它与现有的反应式编程库RxJava,Reactor以及Akka-Stre">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-04-27T06:48:15.000Z">
+<meta property="article:modified_time" content="2016-04-27T06:48:15.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/","path":"2016/04/27/Google-Agera-vs-ReactiveX/","title":"Google Agera vs. ReactiveX"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Google Agera vs. ReactiveX | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83API"><span class="nav-number">2.</span> <span class="nav-text">核心API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Agera-Observable"><span class="nav-number">3.</span> <span class="nav-text">Agera Observable</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Agera-Updatable"><span class="nav-number">4.</span> <span class="nav-text">Agera Updatable</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Agera-MutableRepository"><span class="nav-number">4.1.</span> <span class="nav-text">Agera MutableRepository</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">4.2.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%88%E7%BB%93"><span class="nav-number">4.3.</span> <span class="nav-text">终结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E8%AE%BE%E8%AE%A1%E7%8E%B0%E4%BB%A3%E5%8C%96%E7%9A%84%E6%97%A0%E5%8F%82%E5%8F%8D%E5%BA%94%E5%BC%8FAPI"><span class="nav-number">5.</span> <span class="nav-text">如何设计现代化的无参反应式API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E8%AE%BA"><span class="nav-number">6.</span> <span class="nav-text">结论</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/04/27/Google-Agera-vs-ReactiveX/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Google Agera vs. ReactiveX | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Google Agera vs. ReactiveX
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-04-27 14:48:15" itemprop="dateCreated datePublished" datetime="2016-04-27T14:48:15+08:00">2016-04-27</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="http://akarnokd.blogspot.com/2016/04/google-agera-vs-reactivex.html">原文</a></p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p>如果你经常关注<code>Android</code>开发动态的话，或者关注<code>Reactive</code>相关的动态,最近<code>Google</code>有个重大发布。它们发布了针对于<code>Android</code>的反应式编程库:<code>Agera</code>。</p>
+<p><code>By Google</code>是<code>Google</code>一个从事<code>Google Play Movies</code>的小组。当然，这听起来更像<code>Google</code>.</p>
+<p>不管是谁发布的，我们要关注的是，它与现有的反应式编程库<code>RxJava</code>,<code>Reactor</code>以及<code>Akka-Streams</code>有什么区别</p>
+<h3 id="核心API"><a href="#核心API" class="headerlink" title="核心API"></a>核心API</h3><p><code>Agera</code>基于少值观察者模式:被观察者通过<code>update()</code>拿到更新和变化的信号.然后响应这些变化来算出什么改变了。以下是一个无参反应式数据流，它依赖一端<code>update</code></p>
+<p>&lt;!–code￼0–&gt;
+</p>
+<p>它们看起来挺合理的？不幸的事，它们也有<code>java.util.Observable</code>和其他基于<code>addListener/removeListener</code>的反应式API</p>
+<h3 id="Agera-Observable"><a href="#Agera-Observable" class="headerlink" title="Agera Observable"></a>Agera Observable</h3><p>这对方法的问题是每个添加了<code>Updatable</code>行为的<code>Observable</code>都不得不去记住原始的<code>Updatable</code>以便能移除同样的<code>Updatable</code>:</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p>这导致一个争论点，在管道的每个阶段独立的下游<code>Updatabels</code>。是的，<code>RxJava&#39;s Subjects</code>和<code>ConnectableObservables</code>也有类似的争议点，但它们之后的链式操作符不会有争议。不幸的是，反应式流规范，在当前版本，<code>Publishers</code>也有类似的问题。现在<code>RxJava2.x</code>,<code>Rsc</code>和<code>Reactor</code>完全忽略了这些东西,结果是操作起来变得更严格了。</p>
+<p>第二个微不足道的问题是你不能多次添加相同的<code>Updatable</code>。因为你无法在不同的<code>subscriptions</code>中通过<code>Map</code>区分它们，如果这么干，会出现异常。通常这是很少发生的，因为大多数的终端需求都很单一。</p>
+<p>第三个比较大的问题：当<code>Updatable</code>不再注册在<code>Observable</code>时抛出。这在终端用户触发移除操作时，而这个操作又引发别的操作，它们当中一个会抛出异常。这就是为何现在反应式变成不能够被取消的缘故。</p>
+<p>第四个理论问题,<code>addUpdatable</code>和<code>removeUpdatable</code>会相互竞争，一些下游的操作符想在某个上游操作符已经调用了<code>addUpdatable</code>之后断开。一个可能的问题是<code>removeUpdate</code>调用抛出异常而<code>addUpdatable</code>成功，这回导致信号流向任何地方和导致相关的对象不想要的持有。</p>
+<h3 id="Agera-Updatable"><a href="#Agera-Updatable" class="headerlink" title="Agera Updatable"></a>Agera Updatable</h3><p>我们来从消费者角度看看API。<code>Updatable</code>是一个单一函数接口的方法，这让它能简单的给<code>Observable</code>添加监听</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>相当简单，现在我们移除我们的监听</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<p>这会产生一个异常:两个<code>lambdas</code>不是相同的对象。这在基于<code>addListener/removeListener</code>的API当中是相当常见的问题。解决方案是存储<code>lambda</code>，当需要的时候去用它：</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>有点不方便，但不会更糟了。如果你有很多<code>Observables</code>和很多<code>Updatables</code>呢？你需要记住谁注册在谁上，在相同的字段保持引用它们。<code>Rx.NET</code>的原始设计有个好主意来减少这种必须的单引用：</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>当然，我们在调用<code>close()</code>时同样需要考虑：</p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<h4 id="Agera-MutableRepository"><a href="#Agera-MutableRepository" class="headerlink" title="Agera MutableRepository"></a>Agera MutableRepository</h4><p>如果值发生变化，<code>Agera MutableRepository</code>会通过<code>update()</code>通知注册的<code>Updatables</code>。这和<code>BehaviorSubject</code>很像，区别是新值如果不调用<code>get()</code>不会流到消费者:</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p>当通过工厂方法创建仓库时，<code>Looper</code>中会调用<code>update()</code>。</p>
+<p>&lt;!–code￼8–&gt;
+</p>
+<p>20秒之后<code>Set</code>最终会有多大？有人可能会认为是100,000。事实上，值可能在1~100,000之间!原因是<code>accept()</code>和<code>get()</code>并发运行，如果消费者运行比较慢，<code>accept()</code>会覆盖当前仓库的值。</p>
+<h4 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h4><p>使用异步通常意味着会碰到异步相关的问题。<code>RxJava</code>和其他类似的东西都会有这种问题：出现某种错误了，这个流程自动清掉，而开发者希望的是能够重新开始。错误和清理在某些情况下很复杂，成熟的库都花费了大量的精力来解决这些问题，因此开发者不需要在这上面浪费很多时间。</p>
+<p><code>Agera</code>基础API不会自己处理错误，你需要自己对错误进行处理。如果你用<code>Agera</code>组成多个服务，你需要建立自己的错误处理框架.由于并发和中断状态使它处理起来很笨重和延迟。</p>
+<h4 id="终结"><a href="#终结" class="headerlink" title="终结"></a>终结</h4><p><code>Agera</code>对一个完成流不会发出通知，你需要自己知道它什么时候会完成。这在简单用户界面上不会有什么问题。然而，后台异步操作需要知道要发出多少信号，没有数据的话，你如何收到<code>update()</code>相关通知</p>
+<h3 id="如何设计现代化的无参反应式API"><a href="#如何设计现代化的无参反应式API" class="headerlink" title="如何设计现代化的无参反应式API"></a>如何设计现代化的无参反应式API</h3><p>看看以下例子：</p>
+<p>&lt;!–code￼9–&gt;
+</p>
+<p>你很简单的就能获得它该有的功能。你如果要处理别的类型信号，将<code>Void</code>替换成你想要的类型就可以了。</p>
+<p>如果一个库由于需要学习很多操作符而让人感到很笨重的话，你可以拷贝它，删除你不需要的东西。当然，你需要更新修复问题和性能优化后的代码。</p>
+<p>如果拷贝和修改听起来不够有吸引力，你能按照<code>Reactive-Streams</code>规定开发自己的库;<code>Publisher&lt;Void&gt;</code>,<code>&lt;Subscriber&lt;Void&gt;</code>和其他东西。你能很方便的与其他的<code>Reactive-Streams</code>库一起工作，你能通过它的兼容性测试来测试你的库。</p>
+<p>当然，编写反应式库很麻烦，按照<code>Reactive-Streams</code>编写更麻烦。所以，综合考虑，你可以拓展API</p>
+<p>如果你真的想要编写无参反应式流，这有几个你需要考虑的建议：</p>
+<p><strong>1)不要分开<code>addListener</code>和<code>removeListener</code>。</strong>单一的入口简化中间操作的开发。</p>
+<p>&lt;!–code￼10–&gt;
+</p>
+<p><strong>2)考虑支持取消和移除而不是返回一个可以取消的令牌或者可移除的动作：</strong></p>
+<p>&lt;!–code￼11–&gt;
+</p>
+<p><strong>3)考虑至少添加一个错误信号接收：</strong></p>
+<p>&lt;!–code￼12–&gt;
+</p>
+<p><strong>4)考虑提供队列的异步操作.</strong></p>
+<h3 id="结论"><a href="#结论" class="headerlink" title="结论"></a>结论</h3><p>其实作者就是来黑<code>Agera</code>的。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/04/04/smaller-apk/" rel="prev" title="APK瘦身">
+                  <i class="fa fa-chevron-left"></i> APK瘦身
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/04/28/A-successful-git-branching-model/" rel="next" title="优秀的git分支模型">
+                  优秀的git分支模型 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

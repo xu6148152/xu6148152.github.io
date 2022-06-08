@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="DictionariesDictionary是Python中最常用的数据结构之一 推导式&lt;!–code￼0–&gt;  使用setdefault处理无key&lt;!–code￼1–&gt;   可以使用get(key, defaultValue)和setdefault(key, defaultValue)来处理key不存在的情况,也可以使用collections.defaultdict(v">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Python之Dictionaries和Sets">
+<meta property="og:url" content="http://xu6148152.github.io/2017/04/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8BDictionaries%E5%92%8CSets/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="DictionariesDictionary是Python中最常用的数据结构之一 推导式&lt;!–code￼0–&gt;  使用setdefault处理无key&lt;!–code￼1–&gt;   可以使用get(key, defaultValue)和setdefault(key, defaultValue)来处理key不存在的情况,也可以使用collections.defaultdict(v">
+<meta property="og:locale">
+<meta property="og:image" content="http://xu6148152.github.io/dict_hash_algorithm.png">
+<meta property="article:published_time" content="2017-04-15T08:57:42.000Z">
+<meta property="article:modified_time" content="2017-04-15T09:01:45.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xu6148152.github.io/dict_hash_algorithm.png">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/04/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8BDictionaries%E5%92%8CSets/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/04/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8BDictionaries%E5%92%8CSets/","path":"2017/04/15/深入理解Python之Dictionaries和Sets/","title":"深入理解Python之Dictionaries和Sets"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解Python之Dictionaries和Sets | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Dictionaries"><span class="nav-number">1.</span> <span class="nav-text">Dictionaries</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E5%AF%BC%E5%BC%8F"><span class="nav-number">1.1.</span> <span class="nav-text">推导式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8setdefault%E5%A4%84%E7%90%86%E6%97%A0key"><span class="nav-number">1.2.</span> <span class="nav-text">使用setdefault处理无key</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#missing"><span class="nav-number">1.3.</span> <span class="nav-text">__missing__</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%84%E7%A7%8D%E5%90%84%E6%A0%B7%E7%9A%84dict"><span class="nav-number">1.4.</span> <span class="nav-text">各种各样的dict</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#collections-OrderedDict"><span class="nav-number">1.4.1.</span> <span class="nav-text">collections.OrderedDict</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#collections-ChainMap"><span class="nav-number">1.4.2.</span> <span class="nav-text">collections.ChainMap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#collections-Counter"><span class="nav-number">1.4.3.</span> <span class="nav-text">collections.Counter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#userDict"><span class="nav-number">1.4.4.</span> <span class="nav-text">userDict</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UserDict%E6%B4%BE%E7%94%9F"><span class="nav-number">1.5.</span> <span class="nav-text">UserDict派生</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8D%E5%8F%AF%E6%94%B9Mapping"><span class="nav-number">1.6.</span> <span class="nav-text">不可改Mapping</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Set"><span class="nav-number">2.</span> <span class="nav-text">Set</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Set%E8%AF%AD%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">Set语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Set%E6%8E%A8%E5%AF%BC%E5%BC%8F"><span class="nav-number">2.2.</span> <span class="nav-text">Set推导式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96"><span class="nav-number">3.</span> <span class="nav-text">其他</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">3.1.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A5%BD%E5%A4%84%E5%92%8C%E5%9D%8F%E5%A4%84"><span class="nav-number">3.2.</span> <span class="nav-text">好处和坏处</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/04/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8BDictionaries%E5%92%8CSets/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解Python之Dictionaries和Sets | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Python之Dictionaries和Sets
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2017-04-15 16:57:42 / Modified: 17:01:45" itemprop="dateCreated datePublished" datetime="2017-04-15T16:57:42+08:00">2017-04-15</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="Dictionaries"><a href="#Dictionaries" class="headerlink" title="Dictionaries"></a>Dictionaries</h3><p><code>Dictionary</code>是<code>Python</code>中最常用的数据结构之一</p>
+<h4 id="推导式"><a href="#推导式" class="headerlink" title="推导式"></a>推导式</h4><p>&lt;!–code￼0–&gt;
+</p>
+<h4 id="使用setdefault处理无key"><a href="#使用setdefault处理无key" class="headerlink" title="使用setdefault处理无key"></a>使用<code>setdefault</code>处理无<code>key</code></h4><p>&lt;!–code￼1–&gt;
+</p>
+<ul>
+<li>可以使用<code>get(key, defaultValue)</code>和<code>setdefault(key, defaultValue)</code>来处理<code>key</code>不存在的情况,也可以使用<code>collections.defaultdict(value)</code>来设置创建默认<code>new-key</code>的字典。采用这方式，如果<code>dd</code>是一个<code>defaultdict</code>,那么当<code>dd[k]</code>不存在时，会调用<code>default_factory</code>来创建一个默认值，但返回结果依然是<code>None</code></li>
+</ul>
+<h4 id="missing"><a href="#missing" class="headerlink" title="__missing__"></a><code>__missing__</code></h4><p>这个方法默认是没有定义的，当<code>dict</code>的子类提供了这个方法的实现，那么当<code>key</code>不存在时，不会抛出异常<code>KeyError</code>，<code>__getitem__</code>会调用<code>__missing__</code></p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<ul>
+<li>这里需要注意<code>isintance</code>检查<code>key</code>是否为<code>str</code>,否则会陷入死循环。使用<code>k in dict.keys()</code>效率很高</li>
+</ul>
+<h4 id="各种各样的dict"><a href="#各种各样的dict" class="headerlink" title="各种各样的dict"></a>各种各样的<code>dict</code></h4><p>除了<code>defaultdict</code>之外，还会有很多别的<code>dict</code></p>
+<h5 id="collections-OrderedDict"><a href="#collections-OrderedDict" class="headerlink" title="collections.OrderedDict"></a>collections.OrderedDict</h5><p><code>key</code>有顺序的<code>dict</code>，类似<code>Java</code>中的<code>TreeMap</code></p>
+<h5 id="collections-ChainMap"><a href="#collections-ChainMap" class="headerlink" title="collections.ChainMap"></a>collections.ChainMap</h5><p>将多个<code>dict</code>当成一个<code>dict</code>，按顺序搜索<code>key</code>，只要搜索到<code>key</code>，结果返回成功</p>
+<h5 id="collections-Counter"><a href="#collections-Counter" class="headerlink" title="collections.Counter"></a>collections.Counter</h5><p>持有<code>key</code>的计数</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<h5 id="userDict"><a href="#userDict" class="headerlink" title="userDict"></a>userDict</h5><p>纯<code>Python</code>实现的标准<code>dict</code></p>
+<ul>
+<li>一般来说<code>userDict</code>被用来集成，其他几个直接使用</li>
+</ul>
+<h4 id="UserDict派生"><a href="#UserDict派生" class="headerlink" title="UserDict派生"></a>UserDict派生</h4><p><code>UserDict</code>内部提供了很多默认的实现方法，因此直接从<code>UserDict</code>继承会很方便。<code>UserDict</code>不是继承<code>dict</code>，但其内部有个<code>dict</code>实例。这是真正数据存储的地方</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<h4 id="不可改Mapping"><a href="#不可改Mapping" class="headerlink" title="不可改Mapping"></a>不可改Mapping</h4><p>标准库提供的映射类型都是可以修改的。你可能想让你的映射不能够被修改。<code>Python3.3</code>之后，标准库提供了只读的<code>MappingProxy</code></p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<ul>
+<li>上面的代码会抛出异常，因为<code>d_proxy</code>是不允许被修改的</li>
+</ul>
+<h3 id="Set"><a href="#Set" class="headerlink" title="Set"></a>Set</h3><p>&lt;!–code￼6–&gt;
+</p>
+<ul>
+<li>需要注意<code>Set</code>的元素必须是能哈希的</li>
+<li>支持<code>&amp;(intersetion)</code></li>
+</ul>
+<h4 id="Set语法"><a href="#Set语法" class="headerlink" title="Set语法"></a>Set语法</h4><p><code>Python3</code>中，<code>set</code>标准表示方法<code>s = &#123;1&#125;</code>。使用这个方式会比使用<code>set([1])</code>效率高</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<ul>
+<li>使用<code>dis</code>来查看两种方式的字节码操作。第一种方式效率明显高于第二种</li>
+</ul>
+<h4 id="Set推导式"><a href="#Set推导式" class="headerlink" title="Set推导式"></a>Set推导式</h4><p>&lt;!–code￼8–&gt;
+</p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h4><p>| 数据量 | 因子 | dict时间 | 因子 | 
+| ————- |————-| —–| ——-|
+|1000| 1x | 0.000202s | 1.00x |
+|10000 | 10x | 0.000140s | 0.69x| 
+|100000 | 100x | 0.000228s | 1.13x |
+|1000000 | 1000x | 0.000290s | 1.44x | 
+|10000000 | 10000x | 0.000337s | 1.67x |</p>
+<p><code>dict</code>的高性能多亏了<code>hashtable</code></p>
+<p><img data-src="/./dict_hash_algorithm.png" alt="dict_hash_algorithm"></p>
+<h4 id="好处和坏处"><a href="#好处和坏处" class="headerlink" title="好处和坏处"></a>好处和坏处</h4><ul>
+<li><p><code>key</code>必须要能<code>hash</code>,需要满足</p>
+<ul>
+<li>支持<code>hash()</code>，同一个对象返回的值总是相同</li>
+<li>支持<code>eq()</code></li>
+<li>如果<code>a==b</code>，那么<code>hash(a)==hash(b)</code></li>
+<li>用户定义的类型的<code>hash</code>值是<code>id()</code></li>
+</ul>
+</li>
+<li><p>内存开销大</p>
+</li>
+<li><p>key搜索非常快</p>
+<ul>
+<li><code>dict</code>是典型的以空间换取时间</li>
+</ul>
+</li>
+<li><p>key的顺序依赖插入顺序</p>
+</li>
+<li><p>添加数据会影响已存在<code>key</code>的顺序</p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/" rel="prev" title="深入理解Python之数组序列">
+                  <i class="fa fa-chevron-left"></i> 深入理解Python之数组序列
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/22/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E5%87%BD%E6%95%B0/" rel="next" title="深入理解Python之函数">
+                  深入理解Python之函数 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文基于aosp8.0源码分析  Service的启动Service的启动分两种，一种startService，另一种bindService StartService一般我们会在Activity中通过startService来启动一个服务 Activity.startService其内部实际上是由ContextWrapper的startService来启动，实际启动的地方是在ContextImp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="源码角度分析Service">
+<meta property="og:url" content="http://xu6148152.github.io/2017/09/10/%E6%BA%90%E7%A0%81%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90Service/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="本文基于aosp8.0源码分析  Service的启动Service的启动分两种，一种startService，另一种bindService StartService一般我们会在Activity中通过startService来启动一个服务 Activity.startService其内部实际上是由ContextWrapper的startService来启动，实际启动的地方是在ContextImp">
+<meta property="og:locale">
+<meta property="og:image" content="http://xu6148152.github.io/startService.png">
+<meta property="og:image" content="http://xu6148152.github.io/bindService.png">
+<meta property="article:published_time" content="2017-09-10T14:37:39.000Z">
+<meta property="article:modified_time" content="2017-09-25T09:39:38.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="framework">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xu6148152.github.io/startService.png">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/09/10/%E6%BA%90%E7%A0%81%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90Service/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/09/10/%E6%BA%90%E7%A0%81%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90Service/","path":"2017/09/10/源码角度分析Service/","title":"源码角度分析Service"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>源码角度分析Service | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Service%E7%9A%84%E5%90%AF%E5%8A%A8"><span class="nav-number">1.</span> <span class="nav-text">Service的启动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#StartService"><span class="nav-number">1.1.</span> <span class="nav-text">StartService</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Activity-startService"><span class="nav-number">1.1.1.</span> <span class="nav-text">Activity.startService</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ContextImpl-startService"><span class="nav-number">1.1.2.</span> <span class="nav-text">ContextImpl.startService</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ContextImpl-startServiceCommon"><span class="nav-number">1.1.3.</span> <span class="nav-text">ContextImpl.startServiceCommon</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IActivityManager-aidl"><span class="nav-number">1.1.4.</span> <span class="nav-text">IActivityManager.aidl</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActivityManagerService-startService"><span class="nav-number">1.1.5.</span> <span class="nav-text">ActivityManagerService.startService</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveServices-startServiceLocked"><span class="nav-number">1.1.6.</span> <span class="nav-text">ActiveServices.startServiceLocked</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveServices-startServiceInnerLocked"><span class="nav-number">1.1.7.</span> <span class="nav-text">ActiveServices.startServiceInnerLocked</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveService-bringUpServiceLocked"><span class="nav-number">1.1.8.</span> <span class="nav-text">ActiveService.bringUpServiceLocked</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveServices-realStartServiceLocked"><span class="nav-number">1.1.9.</span> <span class="nav-text">ActiveServices.realStartServiceLocked</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActivityThread-scheduleCreateService"><span class="nav-number">1.1.10.</span> <span class="nav-text">ActivityThread.scheduleCreateService</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BindService"><span class="nav-number">1.2.</span> <span class="nav-text">BindService</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveServices-bindServiceLocked"><span class="nav-number">1.2.1.</span> <span class="nav-text">ActiveServices.bindServiceLocked</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ActiveServices-bringUpServiceLocked"><span class="nav-number">1.2.2.</span> <span class="nav-text">ActiveServices.bringUpServiceLocked</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E5%BA%8F%E5%9B%BE"><span class="nav-number">2.</span> <span class="nav-text">时序图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#StartService-1"><span class="nav-number">2.1.</span> <span class="nav-text">StartService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BindService-1"><span class="nav-number">2.2.</span> <span class="nav-text">BindService</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/09/10/%E6%BA%90%E7%A0%81%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90Service/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="源码角度分析Service | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          源码角度分析Service
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-09-10 22:37:39" itemprop="dateCreated datePublished" datetime="2017-09-10T22:37:39+08:00">2017-09-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2017-09-25 17:39:38" itemprop="dateModified" datetime="2017-09-25T17:39:38+08:00">2017-09-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>本文基于aosp8.0源码分析</p>
+</blockquote>
+<h3 id="Service的启动"><a href="#Service的启动" class="headerlink" title="Service的启动"></a>Service的启动</h3><p><code>Service</code>的启动分两种，一种<code>startService</code>，另一种<code>bindService</code></p>
+<h4 id="StartService"><a href="#StartService" class="headerlink" title="StartService"></a>StartService</h4><p>一般我们会在<code>Activity</code>中通过<code>startService</code>来启动一个服务</p>
+<h5 id="Activity-startService"><a href="#Activity-startService" class="headerlink" title="Activity.startService"></a>Activity.startService</h5><p>其内部实际上是由<code>ContextWrapper</code>的<code>startService</code>来启动，实际启动的地方是在<code>ContextImpl.startService</code></p>
+<h5 id="ContextImpl-startService"><a href="#ContextImpl-startService" class="headerlink" title="ContextImpl.startService"></a>ContextImpl.startService</h5><p>&lt;!–code￼0–&gt;
+</p>
+<h5 id="ContextImpl-startServiceCommon"><a href="#ContextImpl-startServiceCommon" class="headerlink" title="ContextImpl.startServiceCommon"></a>ContextImpl.startServiceCommon</h5><p>&lt;!–code￼1–&gt;
+</p>
+<ul>
+<li>这里首选需要验证服务,5.0之后隐世服务就不被允许，何为隐世，未指定包名，未指定类名</li>
+</ul>
+<p>&lt;!–code￼2–&gt;
+</p>
+<ul>
+<li>从<code>ServiceManager</code>中获取<code>ActivityManager</code>的<code>IBinder</code>对象</li>
+<li>通过<code>IPC</code>获取了<code>ActivityManagerService</code>对象</li>
+<li>每个系统服务都采用了<code>AIDL</code>的方式进行，不直接对外暴露代理</li>
+</ul>
+<h5 id="IActivityManager-aidl"><a href="#IActivityManager-aidl" class="headerlink" title="IActivityManager.aidl"></a>IActivityManager.aidl</h5><p>该文件对应的<code>native</code>实现</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<h5 id="ActivityManagerService-startService"><a href="#ActivityManagerService-startService" class="headerlink" title="ActivityManagerService.startService"></a>ActivityManagerService.startService</h5><p>&lt;!–code￼4–&gt;
+</p>
+<ul>
+<li><code>ActivityManagerService</code>就是<code>ActivityManager</code>定义的<code>AIDL</code>的具体实现</li>
+<li>调用<code>ActiveServices.startServiceLocked</code></li>
+</ul>
+<h5 id="ActiveServices-startServiceLocked"><a href="#ActiveServices-startServiceLocked" class="headerlink" title="ActiveServices.startServiceLocked"></a>ActiveServices.startServiceLocked</h5><p>&lt;!–code￼5–&gt;
+</p>
+<p>检查<code>Service</code>调用者合法性。创建并缓存<code>Service</code>信息</p>
+<h5 id="ActiveServices-startServiceInnerLocked"><a href="#ActiveServices-startServiceInnerLocked" class="headerlink" title="ActiveServices.startServiceInnerLocked"></a>ActiveServices.startServiceInnerLocked</h5><p>&lt;!–code￼6–&gt;
+</p>
+<p>调用<code>bringUpServiceLocked</code>，处理返回结果</p>
+<h5 id="ActiveService-bringUpServiceLocked"><a href="#ActiveService-bringUpServiceLocked" class="headerlink" title="ActiveService.bringUpServiceLocked"></a>ActiveService.bringUpServiceLocked</h5><p>&lt;!–code￼7–&gt;
+</p>
+<p>如果服务已经启动，调用<code>sendserviceArgsLocked</code>。首次创建。获取进程信息。调用<code>realStartServiceLocked</code></p>
+<h5 id="ActiveServices-realStartServiceLocked"><a href="#ActiveServices-realStartServiceLocked" class="headerlink" title="ActiveServices.realStartServiceLocked"></a>ActiveServices.realStartServiceLocked</h5><p>&lt;!–code￼8–&gt;
+</p>
+<p>更新服务优先级。通知<code>ApplicationThread</code>创建启动<code>Service</code>。之后调用<code>sendServiceArgsLocked</code>，其作用，处理<code>Service</code>参数，并回调<code>onStartCommand</code></p>
+<h5 id="ActivityThread-scheduleCreateService"><a href="#ActivityThread-scheduleCreateService" class="headerlink" title="ActivityThread.scheduleCreateService"></a>ActivityThread.scheduleCreateService</h5><p>&lt;!–code￼9–&gt;
+</p>
+<ul>
+<li><p><code>H Handler</code>发出消息，创建<code>service</code></p>
+</li>
+<li><p>总结; 在8.0中，一个服务的启动流程是:
+<code>ContextImpl.startService</code> -&gt; <code>startCommonService</code>-&gt;<code>ActivityManager.getService</code>-&gt;<code>ServiceManager.getService</code>-&gt;(IPC) <code>AMS.startService</code>-&gt; <code>ActiveService.startServiceLocked</code>-&gt;<code>startServiceInnerLocked</code>-&gt;<code>bringUpServiceLocked</code>-&gt;<code>realStartServiceLocked</code>-&gt;<code>ApplicationThread.scheduleCreateService</code>-&gt;<code>H.handleCreateService</code></p>
+</li>
+</ul>
+<h4 id="BindService"><a href="#BindService" class="headerlink" title="BindService"></a>BindService</h4><p><code>bindService</code>的流程，跟<code>startService</code>很相似。</p>
+<h5 id="ActiveServices-bindServiceLocked"><a href="#ActiveServices-bindServiceLocked" class="headerlink" title="ActiveServices.bindServiceLocked"></a>ActiveServices.bindServiceLocked</h5><p>&lt;!–code￼10–&gt;
+</p>
+<p><code>ServiceRecord</code>存储每个<code>Binder</code>，也就是<code>ServiceConnection</code>。内部的数据结构都是<code>Set</code>，确保<code>Binder</code>唯一。调用<code>bringUpServiceLocked</code></p>
+<h5 id="ActiveServices-bringUpServiceLocked"><a href="#ActiveServices-bringUpServiceLocked" class="headerlink" title="ActiveServices.bringUpServiceLocked"></a>ActiveServices.bringUpServiceLocked</h5><p>&lt;!–code￼11–&gt;
+</p>
+<p>首次绑定<code>Service</code>的过程和<code>startService</code>一样。也是调用<code>realStartServiceLocked</code>。非首次也是调用<code>sendServiceArgsLocked</code>,这个函数中，如果有<code>startService</code>的话，那么会发出消息通知<code>ApplicationThread</code>需要处理<code>onStartCommand</code>。<code>BindService</code>下，会直接返回</p>
+<p>&lt;!–code￼12–&gt;
+</p>
+<p>创建过程一样。创建完之后会检查是否有<code>Binder</code>。如果有直接通知<code>ApplicationThread</code>需要绑定服务。</p>
+<h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><p>客户端发起启动服务请求,通过<code>IPC</code>的方式通知<code>SystemServer</code>进程中的<code>ActivityManagerService</code>，然后通知<code>ApplicationThread</code>创建服务  </p>
+<h3 id="时序图"><a href="#时序图" class="headerlink" title="时序图"></a>时序图</h3><h4 id="StartService-1"><a href="#StartService-1" class="headerlink" title="StartService"></a>StartService</h4><p><img data-src="/./startService.png" alt="startService"></p>
+<h4 id="BindService-1"><a href="#BindService-1" class="headerlink" title="BindService"></a>BindService</h4><p><img data-src="/./bindService.png" alt="bindService"></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/framework/" rel="tag"># framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/09/09/Build-AOSP-in-mac-osx-10-11-3/" rel="prev" title="Build AOSP(8.0) in mac osx 10.12.6">
+                  <i class="fa fa-chevron-left"></i> Build AOSP(8.0) in mac osx 10.12.6
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/09/15/%E6%BA%90%E7%A0%81%E8%A7%92%E5%BA%A6%E5%88%86%E6%9E%90App%E5%90%AF%E5%8A%A8/" rel="next" title="源码角度分析App启动">
+                  源码角度分析App启动 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

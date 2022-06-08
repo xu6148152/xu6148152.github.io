@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Android开发30条经验有两种人，一种是自己摸索来学习，一种是通过别人的建议。这儿有些经验我想与你们分享：&lt;!--more--&gt; 1. 使用任何第三方库之前，请慎重考虑，一会是一个很严重的提交。 2. 如果用户看不到它，别绘制它。 3. 除非你真的需要使用数据库，否则别用。 4. 方法数很容易超过65K，**multidexing可以帮助你。 5. RxJava是比AsyncTas">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android开发30条经验">
+<meta property="og:url" content="http://xu6148152.github.io/2016/03/14/Building-Android-Apps-30things/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Android开发30条经验有两种人，一种是自己摸索来学习，一种是通过别人的建议。这儿有些经验我想与你们分享：&lt;!--more--&gt; 1. 使用任何第三方库之前，请慎重考虑，一会是一个很严重的提交。 2. 如果用户看不到它，别绘制它。 3. 除非你真的需要使用数据库，否则别用。 4. 方法数很容易超过65K，**multidexing可以帮助你。 5. RxJava是比AsyncTas">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-03-14T07:16:24.000Z">
+<meta property="article:modified_time" content="2016-04-24T09:22:04.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2016/03/14/Building-Android-Apps-30things/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2016/03/14/Building-Android-Apps-30things/","path":"2016/03/14/Building-Android-Apps-30things/","title":"Android开发30条经验"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android开发30条经验 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android%E5%BC%80%E5%8F%9130%E6%9D%A1%E7%BB%8F%E9%AA%8C"><span class="nav-number">1.</span> <span class="nav-text">Android开发30条经验</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/03/14/Building-Android-Apps-30things/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Android开发30条经验 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android开发30条经验
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-03-14 15:16:24" itemprop="dateCreated datePublished" datetime="2016-03-14T15:16:24+08:00">2016-03-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2016-04-24 17:22:04" itemprop="dateModified" datetime="2016-04-24T17:22:04+08:00">2016-04-24</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Android开发30条经验"><a href="#Android开发30条经验" class="headerlink" title="Android开发30条经验"></a>Android开发30条经验</h2><p>有两种人，一种是自己摸索来学习，一种是通过别人的建议。这儿有些经验我想与你们分享：<br>&lt;!--more--&gt;
+1. 使用任何第三方库之前，请慎重考虑，一会是一个很<strong>严重</strong>的提交。
+2. 如果用户看不到它，<strong>别绘制它</strong>。
+3. 除非你真的需要使用数据库，否则别用。
+4. 方法数很容易超过65K，**<code>multidexing</code><strong>可以帮助你。
+5. <code>RxJava</code>是比<code>AsyncTasks</code>更好的选择。
+6. <code>Retrofit</code>是最好的网络库。
+7. 使用<code>Retrolambda</code>来简化代码。
+8. 混合使用<code>RxJava, Retrofit, Retrolambda</code>很棒！
+9. <code>EventBus</code>很棒，但不要使用太多，它会让代码很难调试。
+10. <a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/package-by-features-not-layers-2d076df1964d">按功能分包，而不是按层分包</a>。
+11. 把任何东西都从主线程移除掉。
+12. 使用<code>lint</code>来帮助你优化布局。
+13. 如果你使用<code>gradle</code>，尽一切<a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/speeding-up-gradle-builds-619c442113cb">可能</a>来加速。<a target="_blank" rel="noopener" href="https://medium.com/@shelajev/6-tips-to-speed-up-your-gradle-build-3d98791d3df9#.60bijkglh">方式</a>
+14. <a target="_blank" rel="noopener" href="https://medium.com/the-engineering-team/speeding-up-gradle-builds-619c442113cb">提取编译报告</a>，看看什么比较耗时。
+15. 使用<a target="_blank" rel="noopener" href="http://fernandocejas.com/2015/07/18/architecting-android-the-evolution/">知名</a>的架构
+16. 测试很花时间，但它使代码更健壮。
+17. 使用依赖注入使项目更具模块化和更方便测试。
+18. 听听<a target="_blank" rel="noopener" href="http://fragmentedpodcast.com/">fragmentedpodcast</a>将会对你很有帮助。
+19. 不要使用你自己的邮箱作为android市场的发布账号。
+20. 总是使用合理的输入类型(EditText)
+21. 使用</strong>analytics**来查找使用的模式和隔离代码。
+22. 总是更新到最新的库(使用<code>dryrun</code>来测试它们)
+23. 你的服务应该做它们需要做的事情，尽可能快的销毁。
+24. 使用<code>Account Manager</code>来建议登录用户名和邮箱地址。
+25. 使用可持续集成平台来构建和发布你的产品。
+26. 不要运行自己的<code>CI</code>服务器，维护这个服务器是很耗时的。使用<code>circleci, travis或者shippable</code>，它们很便宜，并且需要关注的东西很少。
+27. <a target="_blank" rel="noopener" href="https://github.com/Triple-T/gradle-play-publisher">自动部署到市场</a>。
+28. 如果一个库很巨大，你仅仅只是需要当中的一小部分功能，简化它（使用proguard)。
+29. 别使用太多的模块。如果模块不是经常修改，应该考虑将其打包成<code>.jar/.aar</code>，这样构建速度会大大提高。
+30. 使用SVG
+31. 使库抽象化，这样能很方便的切换到别的库。
+32. 监控连接和连接类型。
+33. 监控电量和电池
+34. 用户界面就像小丑，如果你需要解释它，那还不如不要。
+35. 性能测试很重要。</p>
+<p><a target="_blank" rel="noopener" href="https://medium.com/@cesarmcferreira/building-android-apps-30-things-that-experience-made-me-learn-the-hard-way-313680430bf9#.1mrpcgfuo">原文</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2015/05/03/Effective-JavaScript/" rel="prev" title="Effective JavaScript">
+                  <i class="fa fa-chevron-left"></i> Effective JavaScript
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/04/04/smaller-apk/" rel="next" title="APK瘦身">
+                  APK瘦身 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

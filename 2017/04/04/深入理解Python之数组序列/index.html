@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="列表推导式和生成器表达式列表推导式可读性&lt;!–code￼0–&gt;   上面两个代码的效果是一样的，test2使用列表推导式的可读性会更好  &lt;!–code￼1–&gt;   对于上述代码，在python2.x中，x的值是C。而在python3.x中，x的值依然是my precious。在python3.x中，列表推导式的变量不再泄露，其有自己的内部作用域  列表推导式和map,fi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Python之数组序列">
+<meta property="og:url" content="http://xu6148152.github.io/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="列表推导式和生成器表达式列表推导式可读性&lt;!–code￼0–&gt;   上面两个代码的效果是一样的，test2使用列表推导式的可读性会更好  &lt;!–code￼1–&gt;   对于上述代码，在python2.x中，x的值是C。而在python3.x中，x的值依然是my precious。在python3.x中，列表推导式的变量不再泄露，其有自己的内部作用域  列表推导式和map,fi">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-04-04T09:26:00.000Z">
+<meta property="article:modified_time" content="2017-04-08T06:47:59.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/","path":"2017/04/04/深入理解Python之数组序列/","title":"深入理解Python之数组序列"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解Python之数组序列 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%92%8C%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.</span> <span class="nav-text">列表推导式和生成器表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%8F%AF%E8%AF%BB%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">列表推导式可读性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E8%A1%A8%E6%8E%A8%E5%AF%BC%E5%BC%8F%E5%92%8Cmap-filter"><span class="nav-number">1.2.</span> <span class="nav-text">列表推导式和map,filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%9B%E5%8D%A1%E5%B0%94%E7%A7%AF"><span class="nav-number">1.3.</span> <span class="nav-text">笛卡尔积</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E5%99%A8%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">生成器表达式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Tuples%E4%B8%8D%E4%BB%85%E6%98%AF%E4%B8%8D%E5%8F%AF%E5%8F%98%E7%9A%84%E5%BA%8F%E5%88%97"><span class="nav-number">2.</span> <span class="nav-text">Tuples不仅是不可变的序列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Tuple%E4%BD%9C%E4%B8%BARecords"><span class="nav-number">2.1.</span> <span class="nav-text">Tuple作为Records</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Tuple%E8%A7%A3%E5%8C%85"><span class="nav-number">2.1.1.</span> <span class="nav-text">Tuple解包</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%91%BD%E5%90%8DTuple"><span class="nav-number">2.1.2.</span> <span class="nav-text">命名Tuple</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%87%E7%89%87"><span class="nav-number">3.</span> <span class="nav-text">切片</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E4%BA%8C%E5%88%86%E6%B3%95%E7%AE%A1%E7%90%86%E5%BA%8F%E5%88%97"><span class="nav-number">4.</span> <span class="nav-text">使用二分法管理序列</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE"><span class="nav-number">4.1.</span> <span class="nav-text">查找</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F"><span class="nav-number">4.2.</span> <span class="nav-text">排序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84"><span class="nav-number">5.</span> <span class="nav-text">数组</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MemoryView"><span class="nav-number">6.</span> <span class="nav-text">MemoryView</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8C%E7%AB%AF%E9%98%9F%E5%88%97%E5%92%8C%E5%85%B6%E4%BB%96%E9%98%9F%E5%88%97"><span class="nav-number">7.</span> <span class="nav-text">双端队列和其他队列</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/04/04/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E7%BB%84%E5%BA%8F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解Python之数组序列 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Python之数组序列
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-04-04 17:26:00" itemprop="dateCreated datePublished" datetime="2017-04-04T17:26:00+08:00">2017-04-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2017-04-08 14:47:59" itemprop="dateModified" datetime="2017-04-08T14:47:59+08:00">2017-04-08</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="列表推导式和生成器表达式"><a href="#列表推导式和生成器表达式" class="headerlink" title="列表推导式和生成器表达式"></a>列表推导式和生成器表达式</h3><h4 id="列表推导式可读性"><a href="#列表推导式可读性" class="headerlink" title="列表推导式可读性"></a>列表推导式可读性</h4><p>&lt;!–code￼0–&gt;
+</p>
+<ul>
+<li>上面两个代码的效果是一样的，<code>test2</code>使用列表推导式的可读性会更好</li>
+</ul>
+<p>&lt;!–code￼1–&gt;
+</p>
+<ul>
+<li>对于上述代码，在<code>python2.x</code>中，<code>x</code>的值是<code>C</code>。而在<code>python3.x</code>中，<code>x</code>的值依然是<code>my precious</code>。在<code>python3.x</code>中，列表推导式的变量不再泄露，其有自己的内部作用域</li>
+</ul>
+<h4 id="列表推导式和map-filter"><a href="#列表推导式和map-filter" class="headerlink" title="列表推导式和map,filter"></a>列表推导式和<code>map</code>,<code>filter</code></h4><p>列表推导式也能做到<code>map</code>和<code>filter</code>能做到的</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<ul>
+<li>上述两个表达式的结果一样，但使用列表推导式会更简洁。而且它们的效率也差不多。我们来测试一下它们的效率</li>
+</ul>
+<p>&lt;!–code￼3–&gt;
+</p>
+<ul>
+<li>运行结果:</li>
+</ul>
+<p>&lt;!–code￼4–&gt;
+</p>
+<h4 id="笛卡尔积"><a href="#笛卡尔积" class="headerlink" title="笛卡尔积"></a>笛卡尔积</h4><p>列表推导式能从两个或多个迭代对象中生成笛卡尔积</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<ul>
+<li>结果</li>
+</ul>
+<p>&lt;!–code￼6–&gt;
+</p>
+<h4 id="生成器表达式"><a href="#生成器表达式" class="headerlink" title="生成器表达式"></a>生成器表达式</h4><p>&lt;!–code￼7–&gt;
+</p>
+<ul>
+<li>通过使用生成器表达式可以省去构建数组的成本</li>
+</ul>
+<h3 id="Tuples不仅是不可变的序列"><a href="#Tuples不仅是不可变的序列" class="headerlink" title="Tuples不仅是不可变的序列"></a><code>Tuples</code>不仅是不可变的序列</h3><h4 id="Tuple作为Records"><a href="#Tuple作为Records" class="headerlink" title="Tuple作为Records"></a><code>Tuple</code>作为<code>Records</code></h4><p>&lt;!–code￼8–&gt;
+</p>
+<h5 id="Tuple解包"><a href="#Tuple解包" class="headerlink" title="Tuple解包"></a><code>Tuple</code>解包</h5><p>&lt;!–code￼9–&gt;
+</p>
+<ul>
+<li><code>python3.x</code>之前还支持函数参数解包。</li>
+</ul>
+<h5 id="命名Tuple"><a href="#命名Tuple" class="headerlink" title="命名Tuple"></a>命名<code>Tuple</code></h5><p>&lt;!–code￼10–&gt;
+</p>
+<ul>
+<li><code>_field</code>是<code>tuple</code>类的属性名</li>
+<li><code>_make</code>允许使用迭代器初始化<code>named tuple</code></li>
+<li><code>_asdict</code>返回一个用<code>name tuple</code>构建的排过序的字典</li>
+</ul>
+<h3 id="切片"><a href="#切片" class="headerlink" title="切片"></a>切片</h3><p><code>python</code>中所有的序列类型都支持切片操作</p>
+<p>&lt;!–code￼11–&gt;
+</p>
+<ul>
+<li>执行上述代码会报错，但事实上<code>t</code>已经变成了<code>[30, 40, 50, 60]</code></li>
+<li>不要将可变对象放到<code>tuple</code>中</li>
+<li><code>+=</code>不是一个原子操作。从上面我们看到，其实异常时在它执行完之后抛出的</li>
+<li>使用<code>dis</code>能够很方便的查看<code>python</code>字节码</li>
+</ul>
+<h3 id="使用二分法管理序列"><a href="#使用二分法管理序列" class="headerlink" title="使用二分法管理序列"></a>使用二分法管理序列</h3><h4 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h4><p>&lt;!–code￼12–&gt;
+</p>
+<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><p>&lt;!–code￼13–&gt;
+</p>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><p>使用<code>array.tofile和array.fromfile</code>，效率很高。读取使用
+<code>array.tofile</code>创建的二进制文件中的1千万个双精度浮点数仅需0.1s。这速度是从文件读取数字的60倍。写操作是7倍。并且最后生成的文件小</p>
+<blockquote>
+<p>注意，<code>Python3.4</code>之后<code>array</code>已经没有内置的排序方法</p>
+</blockquote>
+<h3 id="MemoryView"><a href="#MemoryView" class="headerlink" title="MemoryView"></a>MemoryView</h3><p>&lt;!–code￼14–&gt;
+</p>
+<h3 id="双端队列和其他队列"><a href="#双端队列和其他队列" class="headerlink" title="双端队列和其他队列"></a>双端队列和其他队列</h3><p>&lt;!–code￼15–&gt;
+</p>
+<ul>
+<li>除了<code>deque</code>之外，其他一些标准库也实现了<code>queues</code>: <ul>
+<li><code>queue</code>: <code>Queue</code>, <code>LifoQueue</code>, <code>PriorityQueue</code></li>
+<li><code>multiprocessing</code>: <code>JoinableQueue</code></li>
+<li><code>asyncio</code></li>
+<li><code>heapq</code></li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/04/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%95%B0%E6%8D%AE%E6%A8%A1%E5%9E%8B/" rel="prev" title="深入理解Python之数据模型">
+                  <i class="fa fa-chevron-left"></i> 深入理解Python之数据模型
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/04/15/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8BDictionaries%E5%92%8CSets/" rel="next" title="深入理解Python之Dictionaries和Sets">
+                  深入理解Python之Dictionaries和Sets <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

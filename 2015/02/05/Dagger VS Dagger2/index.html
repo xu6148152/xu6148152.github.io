@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Daggerdagger是square开源的JAVA依赖注入框架，为何我们要使用依赖注入，答案在这里，简而言之依赖注入就是为某个对象提供它所需要的东西（它的依赖），而不是由依赖自己构造，这对于测试很重要。 当然依赖注入不是仅仅只适用于测试，它同样也能很简单的创建可复用，高灵活性的模块。能够在整个应用程序中分享模块,也可以根据开发环境选择运行的模块。 使用Dagger声明依赖dagger会构造应用程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Dagger VS Dagger2">
+<meta property="og:url" content="http://xu6148152.github.io/2015/02/05/Dagger%20VS%20Dagger2/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Daggerdagger是square开源的JAVA依赖注入框架，为何我们要使用依赖注入，答案在这里，简而言之依赖注入就是为某个对象提供它所需要的东西（它的依赖），而不是由依赖自己构造，这对于测试很重要。 当然依赖注入不是仅仅只适用于测试，它同样也能很简单的创建可复用，高灵活性的模块。能够在整个应用程序中分享模块,也可以根据开发环境选择运行的模块。 使用Dagger声明依赖dagger会构造应用程">
+<meta property="og:locale">
+<meta property="article:published_time" content="2015-02-05T07:16:24.000Z">
+<meta property="article:modified_time" content="2016-12-14T07:10:44.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2015/02/05/Dagger%20VS%20Dagger2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2015/02/05/Dagger%20VS%20Dagger2/","path":"2015/02/05/Dagger VS Dagger2/","title":"Dagger VS Dagger2"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Dagger VS Dagger2 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Dagger"><span class="nav-number">1.</span> <span class="nav-text">Dagger</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Dagger"><span class="nav-number">1.1.</span> <span class="nav-text">使用Dagger</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E4%BE%9D%E8%B5%96"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">声明依赖</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BB%A1%E8%B6%B3%E4%BE%9D%E8%B5%96%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.</span> <span class="nav-text">满足依赖关系</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%A7%86%E5%9B%BE"><span class="nav-number">1.2.1.</span> <span class="nav-text">构建视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Singletons"><span class="nav-number">1.2.2.</span> <span class="nav-text">@Singletons</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%87%92%E6%B3%A8%E5%85%A5"><span class="nav-number">1.2.3.</span> <span class="nav-text">懒注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Provider%E7%9A%84%E6%B3%A8%E5%85%A5"><span class="nav-number">1.2.4.</span> <span class="nav-text">Provider的注入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%AE%9A%E7%AC%A6"><span class="nav-number">1.2.5.</span> <span class="nav-text">限定符</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E6%B3%A8%E5%85%A5-%E4%B8%8D%E5%B8%B8%E7%94%A8"><span class="nav-number">1.2.6.</span> <span class="nav-text">静态注入(不常用)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%9C%9F%E9%AA%8C%E8%AF%81"><span class="nav-number">1.2.7.</span> <span class="nav-text">编译期验证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E6%9C%9F%E4%BB%A3%E7%A0%81%E7%94%9F%E6%88%90"><span class="nav-number">1.2.8.</span> <span class="nav-text">编译期代码生成</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E5%A4%8D%E5%86%99"><span class="nav-number">1.2.9.</span> <span class="nav-text">模块复写</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Dagger2"><span class="nav-number">2.</span> <span class="nav-text">Dagger2</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%A7%86%E5%9B%BE-1"><span class="nav-number">2.0.1.</span> <span class="nav-text">构建视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%91%E5%AE%9A%E8%A7%86%E5%9B%BE"><span class="nav-number">2.0.2.</span> <span class="nav-text">绑定视图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E4%BE%8B%E5%92%8C%E4%BD%9C%E7%94%A8%E5%9F%9F%E7%BB%91%E5%AE%9A"><span class="nav-number">2.0.3.</span> <span class="nav-text">单例和作用域绑定</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2015/02/05/Dagger%20VS%20Dagger2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Dagger VS Dagger2 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Dagger VS Dagger2
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2015-02-05 15:16:24" itemprop="dateCreated datePublished" datetime="2015-02-05T15:16:24+08:00">2015-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2016-12-14 15:10:44" itemprop="dateModified" datetime="2016-12-14T15:10:44+08:00">2016-12-14</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Dagger"><a href="#Dagger" class="headerlink" title="Dagger"></a>Dagger</h2><p><a target="_blank" rel="noopener" href="https://github.com/square/dagger">dagger</a>是square开源的JAVA<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dependency_injection">依赖注入</a>框架，为何我们要使用<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Dependency_injection">依赖注入</a>，答案在<a target="_blank" rel="noopener" href="http://stackoverflow.com/questions/130794/what-is-dependency-injection">这里</a>，简而言之依赖注入就是为某个对象提供它所需要的东西（它的依赖），而不是由依赖自己构造，这对于测试很重要。
+当然依赖注入不是仅仅只适用于测试，它同样也能很简单的创建可复用，高灵活性的模块。能够在整个应用程序中分享模块,也可以根据开发环境选择运行的模块。</p>
+<h3 id="使用Dagger"><a href="#使用Dagger" class="headerlink" title="使用Dagger"></a>使用Dagger</h3><h5 id="声明依赖"><a href="#声明依赖" class="headerlink" title="声明依赖"></a>声明依赖</h5><p>dagger会构造应用程序类的实例并可以提供它所需的依赖。使用<code>javax.inject.Inject annotation</code>来定义那些构造方法和字段是应用程序需要的。</p>
+<p>使用<code>@Inject</code>来注解构造方法来表示Dagger需要构造的类。当需要一个新的实例，Dagger会获取需要的参数并调用相应的构造方法。</p>
+<p>&lt;!–code￼0–&gt;
+</p>
+<p>Dagger能直接注入字段。这个例子获得一个<code>Header</code>实例和一个<code>Pump</code>实例</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p>如果你的类有<code>@Inject</code>的字段，但没有<code>@Inject</code>的构造方法,Dagger将会使用无参构造方法，类如果缺少<code>@Inject</code>将无法被Dagger构造.Dagger不支持方法注入。</p>
+<h3 id="满足依赖关系"><a href="#满足依赖关系" class="headerlink" title="满足依赖关系"></a>满足依赖关系</h3><p>默认情况下，Dagger通过构造实例来满足如上所述的每个依赖.如果你需要一个<code>CoffeeMaker</code>,Dagger将通过<code>new CoffeeMaker()</code>并设置可注入的字段来获取这个实例。</p>
+<p>但<code>@Inject</code>并不是随处都能有效</p>
+<ul>
+<li>接口不能被构造  </li>
+<li>第三方库的类不能被注解  </li>
+<li>可配置的对象一定要配置！</li>
+</ul>
+<p>对于上述情况<code>@Inject</code>是无法满足的，使用<code>@Provides</code>来注解方法满足一个依赖.方法的返回值类型定义了需要的依赖。
+例如,当需要<code>Heater</code>时，<code>provideHeater()</code>会被调用。</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>对于<code>@Provides</code>来获取他们自己的依赖.当需要<code>Pump</code>时，也需要一个<code>Thermosiphon </code>  </p>
+<p>所有的<code>@Provides</code>方法必须属于一个模块.这些类有<code>@Module</code></p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<p>通常,<code>@Provides</code>方法以provide为前缀，模块的类以Module为后缀</p>
+<h4 id="构建视图"><a href="#构建视图" class="headerlink" title="构建视图"></a>构建视图</h4><p>含有<code>@Inject</code>和<code>@Provides</code>的类是对象的视图,被它们的依赖链接。通过<code>ObjectGraph.create()</code>来获取这个视图,这个视图可以接受一个或者多个modules:</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>为了使用视图，我们需要启动注入.这通常需要注入到控制台程序的主入口类里或者是<code>android</code>中的<code>activity</code>。在<code>coffee</code>例子中，<code>CoffeeApp</code>开始依赖注入。我们要求视图提供一个被注入类的实例:</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>剩下的问题就是<code>CoffeeApp</code>无法被视图识别，我们需要显式的将它注册到<code>@Module</code>模块当中</p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<p>注入的选项在编译期被验证。这能够将问题前移到项目开发早期(重构)
+既然视图已经被创建，根对象也已经注入，我们能开始运行<code>coffee maker app</code>了。</p>
+<h4 id="Singletons"><a href="#Singletons" class="headerlink" title="@Singletons"></a>@Singletons</h4><p>在<code>@Provides</code>方法或者可注入的类使用<code>@Singleton</code>.视图将会使用这个类对象作为单例。</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p>在一个可注解的类使用<code>@Singleton</code>能被作为文档.它能提醒维护者知道这个类可能被多线程共享</p>
+<p>&lt;!–code￼8–&gt;
+</p>
+<h4 id="懒注入"><a href="#懒注入" class="headerlink" title="懒注入"></a>懒注入</h4><p>有时你会需要一个对象延后初始化。你可以延迟创建<code>Lazy&lt;T&gt;</code>直到<code>Lazy&lt;T&gt;</code>的<code>get()</code>方法被首次调用。如果T是单例，在ObjectGraph中的<code>Lazy&lt;T&gt;</code>都会是同一个实例。否则都会创建各自的<code>Lazy&lt;T&gt;</code>实例.</p>
+<p>&lt;!–code￼9–&gt;
+</p>
+<h4 id="Provider的注入"><a href="#Provider的注入" class="headerlink" title="Provider的注入"></a>Provider的注入</h4><p>有时你需要获得多个实例。你有几种选择(工厂,建造者等)一种选择是注入<code>Provider&lt;T&gt;</code>而不是<code>T</code>.当<code>.get()</code>被调用时，一个<code>Provider&lt;T&gt;</code>创建一个<code>T</code>实例</p>
+<p>&lt;!–code￼10–&gt;
+</p>
+<h4 id="限定符"><a href="#限定符" class="headerlink" title="限定符"></a>限定符</h4><p>有时单独的类型无法满足定义一个依赖。例如一个<code>sophisticated coffee maker</code> app想分离加热器的水喝托盘.
+在这种情况下，我们添加了一个限定符注解。任何注解都有自己的一个<code>@Qualifier</code>注解</p>
+<p>&lt;!–code￼11–&gt;
+</p>
+<p>你能够创建你自己的限定符注解，或者直接使用<code>@Named</code>.</p>
+<p>&lt;!–code￼12–&gt;
+</p>
+<p>&lt;!–code￼13–&gt;
+</p>
+<h4 id="静态注入-不常用"><a href="#静态注入-不常用" class="headerlink" title="静态注入(不常用)"></a>静态注入(不常用)</h4><p>&lt;!–code￼14–&gt;
+</p>
+<p>使用<code>ObjectGraph.injectStatics()</code>来赋值这些静态字段</p>
+<h4 id="编译期验证"><a href="#编译期验证" class="headerlink" title="编译期验证"></a>编译期验证</h4><p>Dagger包含了注解处理器能否验证<code>modules</code>和<code>injections</code>.这个处理器很严格，如果有任何不合理的绑定都会导致编译器错误.例如这个<code>Module</code>缺少了执行器的绑定:</p>
+<p>&lt;!–code￼15–&gt;
+</p>
+<p>可以通过为为Executor方法加上<code>@Provides</code>,或者标记这个<code>module</code>为<code>incomplete</code>.未完成的模块是可以缺少依赖。</p>
+<p>&lt;!–code￼16–&gt;
+</p>
+<p>模块使用被注入类中没有的类型会触发错误。</p>
+<p>&lt;!–code￼17–&gt;
+</p>
+<p>上述例子Example里仅仅只是注入了<code>Heater</code>而没有<code>Chiller</code>
+如果你的模块的绑定将会被外部使用，可以标记这个模块为<code>library</code></p>
+<p>&lt;!–code￼18–&gt;
+</p>
+<p>为了使编译期验证能够通过，创建一个模块时，可以包含所有项目中的模块。注解处理器将会检测到问题，并报告。</p>
+<p>&lt;!–code￼19–&gt;
+</p>
+<h4 id="编译期代码生成"><a href="#编译期代码生成" class="headerlink" title="编译期代码生成"></a>编译期代码生成</h4><p>Dagger的注解处理器可能会生成源文件，这些源文件的名字可能像<code>$InjectAdapter.java</code>或者<code>DripCoffeeModule$ModuleAdapter</code>.这些文件是Dagger的详细实现，你不应该需要直接使用它。虽然它们能够被逐步调试。</p>
+<h4 id="模块复写"><a href="#模块复写" class="headerlink" title="模块复写"></a>模块复写</h4><p>如果同样的依赖有多个竞争的<code>@Provides</code>方法,Dagger将会编译出错。但有时使用测试代码来替换产品代码是很有必要的。使用<code>@overrides = true</code>在模块注解中,能够用其他模块覆盖当前模块。</p>
+<p>&lt;!–code￼20–&gt;
+</p>
+<h2 id="Dagger2"><a href="#Dagger2" class="headerlink" title="Dagger2"></a>Dagger2</h2><p>Dagger2是由Google基于Dagger的基础开发的依赖注入框架.它与Dagger有什么不同呢？主要不同在于Dagger2将Dagger中的<code>Graph</code>替换成了<code>Component</code></p>
+<h4 id="构建视图-1"><a href="#构建视图-1" class="headerlink" title="构建视图"></a>构建视图</h4><p>在Dagger2中，视图是一个包含多个不带参数的方法的接口,这些方法返回相应的类型.在接口上使用<code>@Componet</code>并传入<code>module</code>类型作为模块的参数，之后Dagger2会完全生成这个接口的实现代码。</p>
+<p>&lt;!–code￼21–&gt;
+</p>
+<p>实现有与接口一样的名字，前缀是Dagger.通过调用<code>builder()</code>获得一个实例</p>
+<p>&lt;!–code￼22–&gt;
+</p>
+<p>&lt;!–code￼23–&gt;
+</p>
+<p>上述的<code>@Component</code>将会生成一个名为<code>DaggerFoo_Bar_BazComponent</code>的组件。</p>
+<p>Any module with an accessible default constructor can be elided as the builder will construct an instance automatically if none is set. And for any module whose @Provides methods are all static, the implementation doesn’t need an instance at all. If all dependencies can be constructed without the user creating a dependency instance, then the generated implementation will also have a create() method that can be used to get a new instance without having to deal with the builder.</p>
+<p>&lt;!–code￼24–&gt;
+</p>
+<p>现在<code>CoffeeApp</code>能简便的使用Dagger生成的<code>CoffeeShop</code>实现代码来拿到一个完全注入的<code>CoffeeMaker</code></p>
+<p>&lt;!–code￼25–&gt;
+</p>
+<h4 id="绑定视图"><a href="#绑定视图" class="headerlink" title="绑定视图"></a>绑定视图</h4><p>上述例子展示了如何构建一个带有额外类型绑定的组件,但有各种机制来绑定视图。</p>
+<ul>
+<li>那些直接通过<code>@Component.modules</code>或者通过<code>@Module.includes</code>引用的模块当中的方法<ul>
+<li>任何带有<code>@Inject</code>构造器的类型或者带有<code>@Scope</code></li>
+<li>组件提供了组件依赖的方法</li>
+<li>组件自己</li>
+<li>任何包含子组件的建造者</li>
+<li>以上绑定类型中的<code>Provider</code>或<code>Lazy</code></li>
+</ul>
+</li>
+</ul>
+<h4 id="单例和作用域绑定"><a href="#单例和作用域绑定" class="headerlink" title="单例和作用域绑定"></a>单例和作用域绑定</h4><p>&lt;!–code￼26–&gt;
+</p>
+<p>&lt;!–code￼27–&gt;
+</p>
+<p>Dagger2将组件实现的实例与视图中的作用域实例联系起来了。组件需要声明他们想要对外展示的作用域。</p>
+<p>&lt;!–code￼28–&gt;
+</p>
+<p>Dagger支持方法注入<br>Dagger2不支持静态注入<br>Dagger2不支持Override</p>
+<p>….其他的几乎都一样了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Dagger1中视图是由<code>ObjectGraph </code>通过反射组成。而dagger2是由<code>@Component</code>,用户定义类型在编译期生成的。从<code>ObjectGraph</code>到<code>Component</code>的转变是Dagger1和Dagger2最大的不同。</p>
+<p>&lt;!–code￼29–&gt;
+</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2015/01/05/SubSet/" rel="prev" title="SubSet">
+                  <i class="fa fa-chevron-left"></i> SubSet
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2015/02/13/Program-principles/" rel="next" title="编程原理">
+                  编程原理 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

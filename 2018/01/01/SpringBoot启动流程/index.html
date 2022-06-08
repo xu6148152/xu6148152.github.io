@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Java程序的启动入口是在main方法。因此如果我们要了解SpringBoot的启动流程，那么我们可以从main着手 入口&lt;!–code￼0–&gt;  构造SpringApplication构造SpringApplication对象。在其内部进行初始化操作 &lt;!–code￼1–&gt;  判断是否是Web程序首先将当前类添加到启动类中，判断是否是Web程序 1234567891011">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SpringBoot启动流程">
+<meta property="og:url" content="http://xu6148152.github.io/2018/01/01/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Java程序的启动入口是在main方法。因此如果我们要了解SpringBoot的启动流程，那么我们可以从main着手 入口&lt;!–code￼0–&gt;  构造SpringApplication构造SpringApplication对象。在其内部进行初始化操作 &lt;!–code￼1–&gt;  判断是否是Web程序首先将当前类添加到启动类中，判断是否是Web程序 1234567891011">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-01-01T15:26:58.000Z">
+<meta property="article:modified_time" content="2018-01-01T15:26:58.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2018/01/01/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2018/01/01/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/","path":"2018/01/01/SpringBoot启动流程/","title":"SpringBoot启动流程"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>SpringBoot启动流程 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%A5%E5%8F%A3"><span class="nav-number">1.</span> <span class="nav-text">入口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E9%80%A0SpringApplication"><span class="nav-number">2.</span> <span class="nav-text">构造SpringApplication</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A4%E6%96%AD%E6%98%AF%E5%90%A6%E6%98%AFWeb%E7%A8%8B%E5%BA%8F"><span class="nav-number">2.1.</span> <span class="nav-text">判断是否是Web程序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%BE%E5%87%BA%E6%89%80%E6%9C%89%E5%BA%94%E7%94%A8%E5%88%9D%E5%A7%8B%E5%8C%96%E5%99%A8"><span class="nav-number">2.2.</span> <span class="nav-text">找出所有应用初始化器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%BE%E5%87%BA%E6%89%80%E6%9C%89%E5%BA%94%E7%94%A8%E7%A8%8B%E5%BA%8F%E7%9B%91%E5%90%AC%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">找出所有应用程序监听器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringApplication-run"><span class="nav-number">3.</span> <span class="nav-text">SpringApplication run</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2018/01/01/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="SpringBoot启动流程 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SpringBoot启动流程
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2018-01-01 23:26:58" itemprop="dateCreated datePublished" datetime="2018-01-01T23:26:58+08:00">2018-01-01</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><code>Java</code>程序的启动入口是在<code>main</code>方法。因此如果我们要了解<code>SpringBoot</code>的启动流程，那么我们可以从<code>main</code>着手</p>
+<h3 id="入口"><a href="#入口" class="headerlink" title="入口"></a>入口</h3><p>&lt;!–code￼0–&gt;
+</p>
+<h3 id="构造SpringApplication"><a href="#构造SpringApplication" class="headerlink" title="构造SpringApplication"></a>构造SpringApplication</h3><p>构造<code>SpringApplication</code>对象。在其内部进行初始化操作</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<h4 id="判断是否是Web程序"><a href="#判断是否是Web程序" class="headerlink" title="判断是否是Web程序"></a>判断是否是Web程序</h4><p>首先将当前类添加到启动类中，判断是否是<code>Web</code>程序
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="type">boolean</span> <span class="title function_">deduceWebEnvironment</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (String className : WEB_ENVIRONMENT_CLASSES) &#123;</span><br><span class="line">        <span class="keyword">if</span> (!ClassUtils.isPresent(className, <span class="literal">null</span>)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="type">boolean</span> <span class="title function_">isPresent</span><span class="params">(String className, ClassLoader classLoader)</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        forName(className, classLoader);</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">catch</span> (Throwable ex) &#123;</span><br><span class="line">        <span class="comment">// Class or one of its dependencies is not present...</span></span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+通过判断<code>javax.servlet.Servlet</code>,<code>org.springframework.web.context.ConfigurableWebApplicationContext</code>能否被加载类确定是否是<code>Web</code>程序</p>
+<h4 id="找出所有应用初始化器"><a href="#找出所有应用初始化器" class="headerlink" title="找出所有应用初始化器"></a>找出所有应用初始化器</h4><p>&lt;!–code￼3–&gt;
+</p>
+<p>从<code>spring.factories</code>文件中找出<code>key</code>为<code>ApplicationContextInitializer</code>的类实例并实例化，默认情况下从<code>spring.factories</code>文件中找出的<code>key</code>为<code>ApplicationContextInitializer</code>的类有以下五种:</p>
+<ol>
+<li>org.springframework.boot.context.config.DelegatingApplicationContextInitializer</li>
+<li>org.springframework.boot.context.ContextIdApplicationContextInitializer</li>
+<li>org.springframework.boot.context.ConfigurationWarningsApplicationContextInitializer</li>
+<li>org.springframework.boot.context.web.ServerPortInfoApplicationContextInitializer</li>
+<li>org.springframework.boot.autoconfigure.logging.AutoConfigurationReportLoggingInitializer</li>
+</ol>
+<h4 id="找出所有应用程序监听器"><a href="#找出所有应用程序监听器" class="headerlink" title="找出所有应用程序监听器"></a>找出所有应用程序监听器</h4><p>从<code>spring.factories</code>中找出所有<code>key</code>为<code>ApplicationListener</code>的应用程序监听器，过程跟找出应用程序初始化器一致。</p>
+<p>默认情况下，被加载的应用程序监听器有</p>
+<ol>
+<li>org.springframework.boot.context.config.ConfigFileApplicationListener</li>
+<li>org.springframework.boot.context.config.AnsiOutputApplicationListener</li>
+<li>org.springframework.boot.logging.LoggingApplicationListener</li>
+<li>org.springframework.boot.logging.ClasspathLoggingApplicationListener</li>
+<li>org.springframework.boot.autoconfigure.BackgroundPreinitializer</li>
+<li>org.springframework.boot.context.config.DelegatingApplicationListener</li>
+<li>org.springframework.boot.builder.ParentContextCloserApplicationListener</li>
+<li>org.springframework.boot.ClearCachesApplicationListener</li>
+<li>org.springframework.boot.context.FileEncodingApplicationListener</li>
+<li>org.springframework.boot.liquibase.LiquibaseServiceLocatorApplicationListener</li>
+</ol>
+<p>这些监听器在应用程序启动之后会回调执行对应的逻辑操作</p>
+<h3 id="SpringApplication-run"><a href="#SpringApplication-run" class="headerlink" title="SpringApplication run"></a>SpringApplication run</h3><p>&lt;!–code￼4–&gt;
+</p>
+<p>首先构造<code>StopWatch</code>来统计每个任务的运行时间。</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>获取所有的应用程序监听器,然后开始监听。构建<code>DefaultApplicationArguments</code></p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<p>准备运行环境，获取或创建环境。配置属性，这个时候<code>resources</code>里的属性被读取。配置运行环境(profile)。回调监听器告知环境已经配置完成</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p>打印<code>Banner</code></p>
+<p>&lt;!–code￼8–&gt;
+</p>
+<p>创建应用程序上下文</p>
+<p>&lt;!–code￼9–&gt;
+</p>
+<p>准备上下文
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">refreshContext</span><span class="params">(ConfigurableApplicationContext context)</span> &#123;</span><br><span class="line">    refresh(context);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">this</span>.registerShutdownHook) &#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            context.registerShutdownHook();</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">catch</span> (AccessControlException ex) &#123;</span><br><span class="line">            <span class="comment">// Not allowed in some environments.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+刷新上下文</p>
+<p>所有的这些过程都会通过<code>SpringApplicationRunListener</code>对外发送<code>SpringApplicationEvent</code>事件，这是一个订阅发布模式</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p><code>SpringBoot</code>启动时，会加载各种初始化器，监听器，然后会通过订阅发布模式对所有的监听者发送启动过程</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/12/31/2017%E5%B9%B4%E7%BB%88%E6%80%BB%E7%BB%93/" rel="prev" title="2017年终总结">
+                  <i class="fa fa-chevron-left"></i> 2017年终总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/02/25/%E8%AF%B4%E8%AF%B4Go%E4%B8%AD%E7%9A%84interface/" rel="next" title="说说Go中的interface">
+                  说说Go中的interface <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

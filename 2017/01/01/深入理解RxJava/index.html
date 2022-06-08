@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="RxJava使用观察者模式，基于事件驱动。主要包含两部分Observable和Observaber。而Rxjava最大的特色在于其灵活强大的操作符(Operators)和调度器(Scheduler) OperatorsCreating Observablescreate(OnSubscribe) 示例  &lt;!–code￼0–&gt;   这种情况下会打印subscriber。 这个时候加上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解RxJava">
+<meta property="og:url" content="http://xu6148152.github.io/2017/01/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3RxJava/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="RxJava使用观察者模式，基于事件驱动。主要包含两部分Observable和Observaber。而Rxjava最大的特色在于其灵活强大的操作符(Operators)和调度器(Scheduler) OperatorsCreating Observablescreate(OnSubscribe) 示例  &lt;!–code￼0–&gt;   这种情况下会打印subscriber。 这个时候加上">
+<meta property="og:locale">
+<meta property="og:image" content="http://xu6148152.github.io/Observable.png">
+<meta property="og:image" content="http://xu6148152.github.io/Operator.png">
+<meta property="article:published_time" content="2017-01-01T15:27:27.000Z">
+<meta property="article:modified_time" content="2017-01-02T10:24:22.000Z">
+<meta property="article:author" content="Binea">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xu6148152.github.io/Observable.png">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/01/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3RxJava/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/01/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3RxJava/","path":"2017/01/01/深入理解RxJava/","title":"深入理解RxJava"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解RxJava | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Operators"><span class="nav-number">1.</span> <span class="nav-text">Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Creating-Observables"><span class="nav-number">1.1.</span> <span class="nav-text">Creating Observables</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#create-OnSubscribe"><span class="nav-number">1.1.1.</span> <span class="nav-text">create(OnSubscribe)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#defer"><span class="nav-number">1.1.2.</span> <span class="nav-text">defer</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Empty-Never-Throw"><span class="nav-number">1.1.3.</span> <span class="nav-text">Empty Never Throw</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#From"><span class="nav-number">1.1.4.</span> <span class="nav-text">From</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Interval"><span class="nav-number">1.1.5.</span> <span class="nav-text">Interval</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Just"><span class="nav-number">1.1.6.</span> <span class="nav-text">Just</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Range"><span class="nav-number">1.1.7.</span> <span class="nav-text">Range</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Repeat"><span class="nav-number">1.1.8.</span> <span class="nav-text">Repeat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Timer"><span class="nav-number">1.1.9.</span> <span class="nav-text">Timer</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Transforming-Observables"><span class="nav-number">1.2.</span> <span class="nav-text">Transforming Observables</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Buffer"><span class="nav-number">1.2.1.</span> <span class="nav-text">Buffer</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#buffer-int-count-int-skip"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">buffer(int count, int skip)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#buffer-Func0"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">buffer(Func0)</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#buffer-long-timespan-long-timeshift-TimeUnit-unit"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">buffer(long timespan, long timeshift, TimeUnit unit)</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#FlatMap"><span class="nav-number">1.2.2.</span> <span class="nav-text">FlatMap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#GroupBy"><span class="nav-number">1.2.3.</span> <span class="nav-text">GroupBy</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Map"><span class="nav-number">1.2.4.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Scan"><span class="nav-number">1.2.5.</span> <span class="nav-text">Scan</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Window"><span class="nav-number">1.2.6.</span> <span class="nav-text">Window</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Filtering-Observables"><span class="nav-number">1.3.</span> <span class="nav-text">Filtering Observables</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Debounce"><span class="nav-number">1.3.1.</span> <span class="nav-text">Debounce</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Distinct"><span class="nav-number">1.3.2.</span> <span class="nav-text">Distinct</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ElementAt"><span class="nav-number">1.3.3.</span> <span class="nav-text">ElementAt</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Filter"><span class="nav-number">1.3.4.</span> <span class="nav-text">Filter</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#first"><span class="nav-number">1.3.5.</span> <span class="nav-text">first</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#IgnoreElements"><span class="nav-number">1.3.6.</span> <span class="nav-text">IgnoreElements</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#last"><span class="nav-number">1.3.7.</span> <span class="nav-text">last</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Sample"><span class="nav-number">1.3.8.</span> <span class="nav-text">Sample</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#skip"><span class="nav-number">1.3.9.</span> <span class="nav-text">skip</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#skipLast"><span class="nav-number">1.3.10.</span> <span class="nav-text">skipLast</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Take-TakeLast"><span class="nav-number">1.3.11.</span> <span class="nav-text">Take, TakeLast</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Combining-Observable"><span class="nav-number">1.4.</span> <span class="nav-text">Combining Observable</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#And-x2F-Then-x2F-When"><span class="nav-number">1.4.1.</span> <span class="nav-text">And&#x2F;Then&#x2F;When</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#CombineLast"><span class="nav-number">1.4.2.</span> <span class="nav-text">CombineLast</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Join"><span class="nav-number">1.4.3.</span> <span class="nav-text">Join</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Merge"><span class="nav-number">1.4.4.</span> <span class="nav-text">Merge</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#StartWith"><span class="nav-number">1.4.5.</span> <span class="nav-text">StartWith</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Switch"><span class="nav-number">1.4.6.</span> <span class="nav-text">Switch</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#zip"><span class="nav-number">1.4.7.</span> <span class="nav-text">zip</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Error-Handling-Operators"><span class="nav-number">1.5.</span> <span class="nav-text">Error Handling Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Catch"><span class="nav-number">1.5.1.</span> <span class="nav-text">Catch</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#onErrorReturn"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">onErrorReturn</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#onErrorResumeNext-onExceptionResumeNext"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">onErrorResumeNext, onExceptionResumeNext</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Retry"><span class="nav-number">1.5.2.</span> <span class="nav-text">Retry</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#retry"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">retry</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#retryWhen"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">retryWhen</span></a></li></ol></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Observable-Utility-Operators"><span class="nav-number">1.6.</span> <span class="nav-text">Observable Utility Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Delay"><span class="nav-number">1.6.1.</span> <span class="nav-text">Delay</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Do"><span class="nav-number">1.6.2.</span> <span class="nav-text">Do</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Materialize-x2F-Dematerialize"><span class="nav-number">1.6.3.</span> <span class="nav-text">Materialize&#x2F;Dematerialize</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ObserveOn"><span class="nav-number">1.6.4.</span> <span class="nav-text">ObserveOn</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Serialize"><span class="nav-number">1.6.5.</span> <span class="nav-text">Serialize</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SubscribeOn"><span class="nav-number">1.6.6.</span> <span class="nav-text">SubscribeOn</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TimeInterval"><span class="nav-number">1.6.7.</span> <span class="nav-text">TimeInterval</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#TimeOut"><span class="nav-number">1.6.8.</span> <span class="nav-text">TimeOut</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Timestamp"><span class="nav-number">1.6.9.</span> <span class="nav-text">Timestamp</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Using"><span class="nav-number">1.6.10.</span> <span class="nav-text">Using</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Conditional-and-Boolean-Operators"><span class="nav-number">1.7.</span> <span class="nav-text">Conditional and Boolean Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#All"><span class="nav-number">1.7.1.</span> <span class="nav-text">All</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Amb"><span class="nav-number">1.7.2.</span> <span class="nav-text">Amb</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Contain"><span class="nav-number">1.7.3.</span> <span class="nav-text">Contain</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#DefaultIfEmpty"><span class="nav-number">1.7.4.</span> <span class="nav-text">DefaultIfEmpty</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SequenceEqual"><span class="nav-number">1.7.5.</span> <span class="nav-text">SequenceEqual</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SkipUntil-TakeUntil"><span class="nav-number">1.7.6.</span> <span class="nav-text">SkipUntil, TakeUntil</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#SkipWhile-TakeWhile"><span class="nav-number">1.7.7.</span> <span class="nav-text">SkipWhile, TakeWhile</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mathematical-and-Aggregate-Operators"><span class="nav-number">1.8.</span> <span class="nav-text">Mathematical and Aggregate Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Average"><span class="nav-number">1.8.1.</span> <span class="nav-text">Average</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Concat"><span class="nav-number">1.8.2.</span> <span class="nav-text">Concat</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Count"><span class="nav-number">1.8.3.</span> <span class="nav-text">Count</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Max-x2F-Min"><span class="nav-number">1.8.4.</span> <span class="nav-text">Max&#x2F;Min</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Reduce-Sum"><span class="nav-number">1.8.5.</span> <span class="nav-text">Reduce, Sum</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Backpressure-Operators"><span class="nav-number">1.9.</span> <span class="nav-text">Backpressure Operators</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Connectable-Observable-Operators"><span class="nav-number">1.10.</span> <span class="nav-text">Connectable Observable Operators</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Connect"><span class="nav-number">1.10.1.</span> <span class="nav-text">Connect</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Publish"><span class="nav-number">1.10.2.</span> <span class="nav-text">Publish</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#RefCount"><span class="nav-number">1.10.3.</span> <span class="nav-text">RefCount</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Replay-Cache"><span class="nav-number">1.10.4.</span> <span class="nav-text">Replay, Cache</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Custom-Operator"><span class="nav-number">1.11.</span> <span class="nav-text">Custom Operator)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%81%E7%A8%8B"><span class="nav-number">1.12.</span> <span class="nav-text">流程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.12.1.</span> <span class="nav-text">基本流程图</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%B5%81%E7%A8%8B%E5%9B%BE"><span class="nav-number">1.12.2.</span> <span class="nav-text">通用流程图</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Subject"><span class="nav-number">2.</span> <span class="nav-text">Subject</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AsyncSubject"><span class="nav-number">2.1.</span> <span class="nav-text">AsyncSubject</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#BehaviorSubject"><span class="nav-number">2.2.</span> <span class="nav-text">BehaviorSubject</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#PublishSubject"><span class="nav-number">2.3.</span> <span class="nav-text">PublishSubject</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReplaySubject"><span class="nav-number">2.4.</span> <span class="nav-text">ReplaySubject</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rxjava2-0"><span class="nav-number">3.</span> <span class="nav-text">Rxjava2.0</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/01/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3RxJava/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解RxJava | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解RxJava
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-01-01 23:27:27" itemprop="dateCreated datePublished" datetime="2017-01-01T23:27:27+08:00">2017-01-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2017-01-02 18:24:22" itemprop="dateModified" datetime="2017-01-02T18:24:22+08:00">2017-01-02</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><code>RxJava</code>使用观察者模式，基于事件驱动。主要包含两部分<code>Observable</code>和<code>Observaber</code>。而<code>Rxjava</code>最大的特色在于其灵活强大的操作符(<code>Operators</code>)和调度器(<code>Scheduler</code>)</p>
+<h3 id="Operators"><a href="#Operators" class="headerlink" title="Operators"></a>Operators</h3><h4 id="Creating-Observables"><a href="#Creating-Observables" class="headerlink" title="Creating Observables"></a>Creating Observables</h4><h5 id="create-OnSubscribe"><a href="#create-OnSubscribe" class="headerlink" title="create(OnSubscribe)"></a>create(OnSubscribe)</h5><blockquote>
+<p>示例</p>
+</blockquote>
+<p>&lt;!–code￼0–&gt;
+</p>
+<ul>
+<li>这种情况下会打印<code>subscriber</code>。</li>
+<li>这个时候加上</li>
+</ul>
+<p>&lt;!–code￼1–&gt;
+</p>
+<ul>
+<li>那么会打印</li>
+</ul>
+<p>&lt;!–code￼2–&gt;
+</p>
+<ul>
+<li>源码分析:</li>
+</ul>
+<p>&lt;!–code￼3–&gt;
+</p>
+<ul>
+<li>通过<code>RxJavaHooks</code>创建<code>OnSubscribe</code></li>
+</ul>
+<p>&lt;!–code￼4–&gt;
+</p>
+<ul>
+<li><code>RxJavaHooks</code>会在首次使用的时候初始化。</li>
+</ul>
+<p>之后还需要订阅</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<ul>
+<li><p>判断订阅者是否为空,之后直接交给<code>RxJavaHooks</code>执行<code>onObservableStart</code>，这里的参数<code>observable.onSubscribe</code>正是<code>Create</code>传入的，而在<code>RxJavaHooks</code>中<code>onObservableStart</code>调用了<code>RxJavaPlugin</code>中的<code>onSubscribeStart</code>。这个方法直接返回原来的<code>OnSubscribe</code>也就是<code>Create</code>传入的。这个时候会回调<code>call</code>。</p>
+</li>
+<li><p><code>create()</code>有另外两种参数专门用于处理<code>backPressure(反向压力，生产者生产速度远大于消费者消费速度)</code>。</p>
+</li>
+</ul>
+<p><code>SyncOnSubscribe</code>里面需要关注的是<code>SubscriptionProducer</code>，而<code>AsyncOnSubscribe</code>需要关注<code>AsyncOuterManager</code>。这两个东西之后再讨论(TODO)</p>
+<h5 id="defer"><a href="#defer" class="headerlink" title="defer"></a>defer</h5><blockquote>
+<p>直到观察者订阅之后才创建可观察对象，示例</p>
+</blockquote>
+<p>&lt;!–code￼6–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼7–&gt;
+</p>
+<ul>
+<li>1.2.4采用<code>OnSubscribeDefer</code>,2.0.3采用<code>ObservableDefer</code>。</li>
+</ul>
+<p>&lt;!–code￼8–&gt;
+</p>
+<h5 id="Empty-Never-Throw"><a href="#Empty-Never-Throw" class="headerlink" title="Empty Never Throw"></a>Empty Never Throw</h5><blockquote>
+<p>Empty</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼9–&gt;
+</p>
+<ul>
+<li>直接调用<code>onCompleted</code>，这是一个枚举单例</li>
+</ul>
+<blockquote>
+<p>Never</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼10–&gt;
+</p>
+<ul>
+<li>什么都不做，主要用于做测试,这是一个枚举单例</li>
+</ul>
+<blockquote>
+<p>Throw</p>
+</blockquote>
+<ul>
+<li>源码分析:</li>
+</ul>
+<p>&lt;!–code￼11–&gt;
+</p>
+<h5 id="From"><a href="#From" class="headerlink" title="From"></a>From</h5><blockquote>
+<p>将<code>Future</code>转化成<code>Observable</code>，示例</p>
+</blockquote>
+<p>&lt;!–code￼12–&gt;
+</p>
+<ul>
+<li>打印结果</li>
+</ul>
+<p>&lt;!–code￼13–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼14–&gt;
+</p>
+<p>&lt;!–code￼15–&gt;
+</p>
+<ul>
+<li>等待<code>future</code>结果。将结果作为生产者发出消息.<code>push data</code></li>
+</ul>
+<blockquote>
+<p>将数组转换成Observable</p>
+</blockquote>
+<ul>
+<li>源码</li>
+</ul>
+<p>&lt;!–code￼16–&gt;
+</p>
+<ul>
+<li>这里面依然涉及到反向压力的处理，当请求id等于阈值时采用<code>fastPath</code>处理。反之采用<code>slowPath</code>。正常情况下请求id都是<code>Long.MaxValue</code>，当<code>producer</code>为空时，id会发生改变</li>
+</ul>
+<h5 id="Interval"><a href="#Interval" class="headerlink" title="Interval"></a>Interval</h5><blockquote>
+<p>定时发出事件,示例</p>
+</blockquote>
+<p>&lt;!–code￼17–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼18–&gt;
+</p>
+<ul>
+<li>创建工作器。工作器串行执行。</li>
+</ul>
+<h5 id="Just"><a href="#Just" class="headerlink" title="Just"></a>Just</h5><blockquote>
+<p>发送特定的消息，有多个重载方法，区分在于单个参数和多个参数，单个参数使用ScalarSynchronousObservable,而多个参数使用from</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼19–&gt;
+</p>
+<ul>
+<li><ul>
+<li>创建生产者时区分单生产者和弱单生产者</li>
+</ul>
+</li>
+</ul>
+<p>&lt;!–code￼20–&gt;
+</p>
+<ul>
+<li>弱单生产者不考虑并发问题，仅仅只使用<code>once</code>来记录此次请求已经发出</li>
+</ul>
+<p>&lt;!–code￼21–&gt;
+</p>
+<ul>
+<li>单生产者考虑并发问题，继承<code>AtomicBoolean</code>，通过<code>compareAndSet</code>来确保线程安全</li>
+</ul>
+<h5 id="Range"><a href="#Range" class="headerlink" title="Range"></a>Range</h5><blockquote>
+<p>串行发出某一范围的消息</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼22–&gt;
+</p>
+<ul>
+<li>策略依然跟大部分<code>producer</code>一样,正常情况下使用<code>fastPath</code>，<code>slowPath</code>则会考虑线程安全</li>
+</ul>
+<h5 id="Repeat"><a href="#Repeat" class="headerlink" title="Repeat"></a>Repeat</h5><blockquote>
+<p>重复发出消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼23–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼24–&gt;
+</p>
+<ul>
+<li>流程<ol>
+<li>订阅源消息</li>
+<li>重复发送源消息</li>
+<li>订阅重复发送的源消息</li>
+</ol>
+</li>
+</ul>
+<h5 id="Timer"><a href="#Timer" class="headerlink" title="Timer"></a>Timer</h5><blockquote>
+<p>延时特定时间后发出一个消息，默认使用computation作为线程调度器</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼25–&gt;
+</p>
+<h4 id="Transforming-Observables"><a href="#Transforming-Observables" class="headerlink" title="Transforming Observables"></a>Transforming Observables</h4><h5 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h5><blockquote>
+<p>缓存源数据发出的消息，再一起发出。示例</p>
+</blockquote>
+<p>&lt;!–code￼26–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<h6 id="buffer-int-count-int-skip"><a href="#buffer-int-count-int-skip" class="headerlink" title="buffer(int count, int skip)"></a><code>buffer(int count, int skip)</code></h6><p>&lt;!–code￼27–&gt;
+</p>
+<ul>
+<li>当<code>skip</code>等于<code>count</code>(默认情况)</li>
+</ul>
+<p>&lt;!–code￼28–&gt;
+</p>
+<ul>
+<li><p>创建大小为<code>count</code>的数组，将接收到的数组添加到数组中，数组满，将数组作为数据发出</p>
+</li>
+<li><p><code>skip</code>大于<code>count</code></p>
+</li>
+</ul>
+<p>&lt;!–code￼29–&gt;
+</p>
+<ul>
+<li><p>每组<code>count</code>个，接收<code>skip</code>个数据，填满<code>count</code>个，剩余丢弃</p>
+</li>
+<li><p><code>count</code>大于<code>skip</code></p>
+</li>
+</ul>
+<p>&lt;!–code￼30–&gt;
+</p>
+<ul>
+<li>使用<code>ArrayDeque</code>存储每组数据。<code>ArrayDeque</code>会储存之前的数据。</li>
+</ul>
+<h6 id="buffer-Func0"><a href="#buffer-Func0" class="headerlink" title="buffer(Func0)"></a>buffer(Func0)</h6><ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼31–&gt;
+</p>
+<ul>
+<li><code>bufferClosingSelector</code>产生的<code>Observable</code>订阅<code>BufferingSubscriber</code>其内部使用<code>chunk</code>收集数据，当<code>closingSubscriber</code>被订阅，将<code>chunk</code>数据发出</li>
+</ul>
+<h6 id="buffer-long-timespan-long-timeshift-TimeUnit-unit"><a href="#buffer-long-timespan-long-timeshift-TimeUnit-unit" class="headerlink" title="buffer(long timespan, long timeshift, TimeUnit unit)"></a>buffer(long timespan, long timeshift, TimeUnit unit)</h6><ul>
+<li>源码分析<blockquote>
+<p>默认使用computation线程调度</p>
+</blockquote>
+</li>
+</ul>
+<p>&lt;!–code￼32–&gt;
+</p>
+<ul>
+<li>数据刷新时间和数据块创建时间一样时使用<code>ExactSubscriber</code></li>
+</ul>
+<p>&lt;!–code￼33–&gt;
+</p>
+<ul>
+<li>反之使用<code>InexactSubscriber</code>，其使用<code>LinkedList</code>作为<code>chunk</code>数据结构。用于存储多余的数据。数据生成的速度大于处理速度</li>
+</ul>
+<h5 id="FlatMap"><a href="#FlatMap" class="headerlink" title="FlatMap"></a>FlatMap</h5><blockquote>
+<p>转换消息成被观察对象，对map(func)的结果做merge</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼34–&gt;
+</p>
+<ul>
+<li>创建<code>InnerSubscriber</code>，其内部会调用<code>tryEmit</code>。之后调用<code>emitLoop</code>，循环从唤醒队列中取出消息发出</li>
+</ul>
+<h5 id="GroupBy"><a href="#GroupBy" class="headerlink" title="GroupBy"></a>GroupBy</h5><blockquote>
+<p>将源数据按特征分组，示例</p>
+</blockquote>
+<p>&lt;!–code￼35–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼36–&gt;
+</p>
+<ul>
+<li>使用键选择器生成<code>key</code>，使用<code>key</code>创建<code>GroupedUnicast</code>存储起来。通过值选择器生成值并发出。</li>
+</ul>
+<h5 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h5><blockquote>
+<p>与flatmap类似，flatmap多了merge步骤</p>
+</blockquote>
+<h5 id="Scan"><a href="#Scan" class="headerlink" title="Scan"></a>Scan</h5><blockquote>
+<p>对新发出的信息与之前发出的消息一起做某种处理。示例</p>
+</blockquote>
+<p>&lt;!–code￼37–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼38–&gt;
+</p>
+<ul>
+<li>接收到消息，使用之前计算的结果和当前值做计算并存储</li>
+</ul>
+<h5 id="Window"><a href="#Window" class="headerlink" title="Window"></a>Window</h5><blockquote>
+<p>与buffer类似，但其缓存后是以新的对象作为消息发出(Subject)</p>
+</blockquote>
+<h4 id="Filtering-Observables"><a href="#Filtering-Observables" class="headerlink" title="Filtering Observables"></a>Filtering Observables</h4><h5 id="Debounce"><a href="#Debounce" class="headerlink" title="Debounce"></a>Debounce</h5><blockquote>
+<p>只发出经过特定时间从源消息接收到的消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼39–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼40–&gt;
+</p>
+<ul>
+<li>接收源消息自增。定时调用<code>emit</code>发送消息，如果源消息的发送速度快于当前调度时间，则这些事件会丢弃。事件发送结束时会发送最后一个消息</li>
+</ul>
+<h5 id="Distinct"><a href="#Distinct" class="headerlink" title="Distinct"></a>Distinct</h5><blockquote>
+<p>过滤重复的消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼41–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼42–&gt;
+</p>
+<ul>
+<li>使用一个<code>Set</code>来存储消息</li>
+</ul>
+<h5 id="ElementAt"><a href="#ElementAt" class="headerlink" title="ElementAt"></a>ElementAt</h5><blockquote>
+<p>只发送第n个消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼43–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼44–&gt;
+</p>
+<ul>
+<li>只有当第n个消息才发送</li>
+</ul>
+<h5 id="Filter"><a href="#Filter" class="headerlink" title="Filter"></a>Filter</h5><blockquote>
+<p>按特定条件过滤消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼45–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼46–&gt;
+</p>
+<ul>
+<li>使用选择器过滤消息</li>
+</ul>
+<h5 id="first"><a href="#first" class="headerlink" title="first"></a>first</h5><blockquote>
+<p>发出第一个消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼47–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼48–&gt;
+</p>
+<ul>
+<li>只发出指定数量的消息</li>
+</ul>
+<h5 id="IgnoreElements"><a href="#IgnoreElements" class="headerlink" title="IgnoreElements"></a>IgnoreElements</h5><blockquote>
+<p>不发出任何消息，但发出结束的通知，示例</p>
+</blockquote>
+<p>&lt;!–code￼49–&gt;
+</p>
+<h5 id="last"><a href="#last" class="headerlink" title="last"></a>last</h5><blockquote>
+<p>只发出最后一个消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼50–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼51–&gt;
+</p>
+<ul>
+<li>结束时，发出最后的消息</li>
+</ul>
+<h5 id="Sample"><a href="#Sample" class="headerlink" title="Sample"></a>Sample</h5><blockquote>
+<p>发出一段时间内最近的消息</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼52–&gt;
+</p>
+<ul>
+<li>存储最新的值，结束时发出最新的值</li>
+</ul>
+<h5 id="skip"><a href="#skip" class="headerlink" title="skip"></a>skip</h5><blockquote>
+<p>跳过n个消息不发送，示例</p>
+</blockquote>
+<p>&lt;!–code￼53–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼54–&gt;
+</p>
+<ul>
+<li>跳过n个消息</li>
+</ul>
+<h5 id="skipLast"><a href="#skipLast" class="headerlink" title="skipLast"></a>skipLast</h5><blockquote>
+<p>跳过后n个消息不发送，示例</p>
+</blockquote>
+<p>&lt;!–code￼55–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼56–&gt;
+</p>
+<ul>
+<li>使用双端队列存储消息，将前面的消息存入，当数量达到要求，从双端队列中取数据发送</li>
+</ul>
+<h5 id="Take-TakeLast"><a href="#Take-TakeLast" class="headerlink" title="Take, TakeLast"></a>Take, TakeLast</h5><blockquote>
+<p>发送前n个消息</p>
+</blockquote>
+<ul>
+<li>源码分析，前面已有</li>
+</ul>
+<h4 id="Combining-Observable"><a href="#Combining-Observable" class="headerlink" title="Combining Observable"></a>Combining Observable</h4><h5 id="And-x2F-Then-x2F-When"><a href="#And-x2F-Then-x2F-When" class="headerlink" title="And&#x2F;Then&#x2F;When"></a>And&#x2F;Then&#x2F;When</h5><blockquote>
+<p>通过patter和plan合并多个消息源发出的数据集,不是rxjava核心库的一部分</p>
+</blockquote>
+<h5 id="CombineLast"><a href="#CombineLast" class="headerlink" title="CombineLast"></a>CombineLast</h5><blockquote>
+<p>使用特定方法合并两个消息源最近的数据，示例</p>
+</blockquote>
+<p>&lt;!–code￼57–&gt;
+</p>
+<ul>
+<li><p>第一个消息源一秒钟发出一个消息，第二个消息源一次性发完，因此合并消息会合并最后一个消息</p>
+</li>
+<li><p>源码分析</p>
+</li>
+</ul>
+<p>&lt;!–code￼58–&gt;
+</p>
+<ul>
+<li>创建多个<code>CombinerSubscriber</code>对应多个消息源。</li>
+</ul>
+<p>&lt;!–code￼59–&gt;
+</p>
+<ul>
+<li>收集最近的数据到<code>SpscLinkedArrayQueue</code>中</li>
+</ul>
+<h5 id="Join"><a href="#Join" class="headerlink" title="Join"></a>Join</h5><blockquote>
+<p>只要一个数据在另一个数据定义的时间窗口内发出，合并两个数据源发出的数据</p>
+</blockquote>
+<h5 id="Merge"><a href="#Merge" class="headerlink" title="Merge"></a>Merge</h5><blockquote>
+<p>根据时间轴合并多个数据源成一个，示例</p>
+</blockquote>
+<p>&lt;!–code￼60–&gt;
+</p>
+<h5 id="StartWith"><a href="#StartWith" class="headerlink" title="StartWith"></a>StartWith</h5><blockquote>
+<p>开始发送数据前发送一系列指定的数据，示例</p>
+</blockquote>
+<p>&lt;!–code￼61–&gt;
+</p>
+<ul>
+<li>源码分析，其使用的是<code>concat</code></li>
+</ul>
+<p>&lt;!–code￼62–&gt;
+</p>
+<ul>
+<li>队列未满时，往队列里插入数据，之后调用<code>drain</code>消费数据</li>
+</ul>
+<h5 id="Switch"><a href="#Switch" class="headerlink" title="Switch"></a>Switch</h5><blockquote>
+<p>转换多个数据源为单个数据源，使用最近数据转换，示例</p>
+</blockquote>
+<p>&lt;!–code￼63–&gt;
+</p>
+<h5 id="zip"><a href="#zip" class="headerlink" title="zip"></a>zip</h5><blockquote>
+<p>按数据合并两个数据源，示例</p>
+</blockquote>
+<p>&lt;!–code￼64–&gt;
+</p>
+<h4 id="Error-Handling-Operators"><a href="#Error-Handling-Operators" class="headerlink" title="Error Handling Operators"></a>Error Handling Operators</h4><h5 id="Catch"><a href="#Catch" class="headerlink" title="Catch"></a>Catch</h5><blockquote>
+<p>从错误中恢复，继续执行，示例</p>
+</blockquote>
+<h6 id="onErrorReturn"><a href="#onErrorReturn" class="headerlink" title="onErrorReturn"></a>onErrorReturn</h6><blockquote>
+<p>出现错误时，返回一个特定的值，示例</p>
+</blockquote>
+<p>&lt;!–code￼65–&gt;
+</p>
+<h6 id="onErrorResumeNext-onExceptionResumeNext"><a href="#onErrorResumeNext-onExceptionResumeNext" class="headerlink" title="onErrorResumeNext, onExceptionResumeNext"></a>onErrorResumeNext, onExceptionResumeNext</h6><blockquote>
+<p>出现错误，构建另一个消息源，示例</p>
+</blockquote>
+<p>&lt;!–code￼66–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼67–&gt;
+</p>
+<ul>
+<li>出现错误，使用外部提供的方式产生新的消息源并发出</li>
+</ul>
+<h5 id="Retry"><a href="#Retry" class="headerlink" title="Retry"></a>Retry</h5><h6 id="retry"><a href="#retry" class="headerlink" title="retry"></a>retry</h6><blockquote>
+<p>出现错误，重新订阅并重试，示例</p>
+</blockquote>
+<p>&lt;!–code￼68–&gt;
+</p>
+<ul>
+<li><code>retry</code>也可以提供选择器来决定是否重试</li>
+</ul>
+<h6 id="retryWhen"><a href="#retryWhen" class="headerlink" title="retryWhen"></a>retryWhen</h6><blockquote>
+<p>捕获错误，生成第二个消息源,并监听此消息源，如果此消息源发出消息，则重新订阅源消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼69–&gt;
+</p>
+<h4 id="Observable-Utility-Operators"><a href="#Observable-Utility-Operators" class="headerlink" title="Observable Utility Operators"></a>Observable Utility Operators</h4><h5 id="Delay"><a href="#Delay" class="headerlink" title="Delay"></a>Delay</h5><blockquote>
+<p>延迟发出消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼70–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼71–&gt;
+</p>
+<ul>
+<li>线程调度延时</li>
+</ul>
+<h5 id="Do"><a href="#Do" class="headerlink" title="Do"></a>Do</h5><blockquote>
+<p>在可观察对象生命周期发生之前调用，示例</p>
+</blockquote>
+<p>&lt;!–code￼72–&gt;
+</p>
+<h5 id="Materialize-x2F-Dematerialize"><a href="#Materialize-x2F-Dematerialize" class="headerlink" title="Materialize&#x2F;Dematerialize"></a>Materialize&#x2F;Dematerialize</h5><blockquote>
+<p>对于发出的每个消息进行包装与拆包装</p>
+</blockquote>
+<p>&lt;!–code￼73–&gt;
+</p>
+<h5 id="ObserveOn"><a href="#ObserveOn" class="headerlink" title="ObserveOn"></a>ObserveOn</h5><blockquote>
+<p>指定观察者在哪个线程观察结果</p>
+</blockquote>
+<ul>
+<li>源码</li>
+</ul>
+<p>&lt;!–code￼74–&gt;
+</p>
+<ul>
+<li>区分<code>EventLoopsScheduler</code>和其他调度器。如果是<code>EventLoopsScheduler</code>直接调度，否则创建调度器,由调度器运行接收到的消息。解除调度器订阅</li>
+</ul>
+<p>&lt;!–code￼75–&gt;
+</p>
+<ul>
+<li>如果调度器是<code>ImmediateScheduler(即时调度器)</code>或者<code>TrampolineScheduler(串行调度器)</code>则立即执行。否则创建<code>ObserveOnSubscriber</code></li>
+</ul>
+<p>&lt;!–code￼76–&gt;
+</p>
+<ul>
+<li>其中有个队列(<code>SpscAtomicArrayQueue</code>)，用于接收消息，开始循环从队列中取出消息，如果发送的消息数量和请求消息的数量一致，表示此次事件发送结束</li>
+</ul>
+<h5 id="Serialize"><a href="#Serialize" class="headerlink" title="Serialize"></a>Serialize</h5><blockquote>
+<p>强制串行发送消息</p>
+</blockquote>
+<h5 id="SubscribeOn"><a href="#SubscribeOn" class="headerlink" title="SubscribeOn"></a>SubscribeOn</h5><blockquote>
+<p>指定可观察对象在哪个线程上执行</p>
+</blockquote>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼77–&gt;
+</p>
+<ul>
+<li>开启线程调度，从当前线程中发出消息到下一级订阅者</li>
+</ul>
+<h5 id="TimeInterval"><a href="#TimeInterval" class="headerlink" title="TimeInterval"></a>TimeInterval</h5><blockquote>
+<p>将源消息源发出的消息转换成表示消息与消息直接的时间间隔,示例</p>
+</blockquote>
+<p>&lt;!–code￼78–&gt;
+</p>
+<ul>
+<li>源码分析</li>
+</ul>
+<p>&lt;!–code￼79–&gt;
+</p>
+<ul>
+<li>当前时间减去上次接收到消息的时间，封装成<code>TimeIntegerval</code></li>
+</ul>
+<h5 id="TimeOut"><a href="#TimeOut" class="headerlink" title="TimeOut"></a>TimeOut</h5><blockquote>
+<p>如果在一定时间内没有发出消息，发出<code>error</code>通知</p>
+</blockquote>
+<h5 id="Timestamp"><a href="#Timestamp" class="headerlink" title="Timestamp"></a>Timestamp</h5><blockquote>
+<p>给每个发出的消息带上时间戳,示例</p>
+</blockquote>
+<p>&lt;!–code￼80–&gt;
+</p>
+<h5 id="Using"><a href="#Using" class="headerlink" title="Using"></a>Using</h5><blockquote>
+<p>创建可分配的资源，其与可观察对象具有一样的生命周期</p>
+</blockquote>
+<h4 id="Conditional-and-Boolean-Operators"><a href="#Conditional-and-Boolean-Operators" class="headerlink" title="Conditional and Boolean Operators"></a>Conditional and Boolean Operators</h4><h5 id="All"><a href="#All" class="headerlink" title="All"></a>All</h5><blockquote>
+<p>规定是否所有的消息发出，示例</p>
+</blockquote>
+<p>&lt;!–code￼81–&gt;
+</p>
+<h5 id="Amb"><a href="#Amb" class="headerlink" title="Amb"></a>Amb</h5><blockquote>
+<p>只发送多个消息源中最先产生消息的消息源，示例</p>
+</blockquote>
+<p>&lt;!–code￼82–&gt;
+</p>
+<h5 id="Contain"><a href="#Contain" class="headerlink" title="Contain"></a>Contain</h5><blockquote>
+<p>发出的消息是否包含某消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼83–&gt;
+</p>
+<h5 id="DefaultIfEmpty"><a href="#DefaultIfEmpty" class="headerlink" title="DefaultIfEmpty"></a>DefaultIfEmpty</h5><blockquote>
+<p>如果没有发出任何消息，发出默认消息,示例</p>
+</blockquote>
+<p>&lt;!–code￼84–&gt;
+</p>
+<h5 id="SequenceEqual"><a href="#SequenceEqual" class="headerlink" title="SequenceEqual"></a>SequenceEqual</h5><blockquote>
+<p>两个消息源是否发出相同的消息,示例</p>
+</blockquote>
+<p>&lt;!–code￼85–&gt;
+</p>
+<h5 id="SkipUntil-TakeUntil"><a href="#SkipUntil-TakeUntil" class="headerlink" title="SkipUntil, TakeUntil"></a>SkipUntil, TakeUntil</h5><blockquote>
+<p>丢弃&#x2F;发送第一个消息源在第二个消息源发出消息之前发出的消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼86–&gt;
+</p>
+<h5 id="SkipWhile-TakeWhile"><a href="#SkipWhile-TakeWhile" class="headerlink" title="SkipWhile, TakeWhile"></a>SkipWhile, TakeWhile</h5><blockquote>
+<p>丢弃&#x2F;发送消息直到某个条件变成false，示例</p>
+</blockquote>
+<p>&lt;!–code￼87–&gt;
+</p>
+<h4 id="Mathematical-and-Aggregate-Operators"><a href="#Mathematical-and-Aggregate-Operators" class="headerlink" title="Mathematical and Aggregate Operators"></a>Mathematical and Aggregate Operators</h4><h5 id="Average"><a href="#Average" class="headerlink" title="Average"></a>Average</h5><blockquote>
+<p>发出消息的平均值，示例</p>
+</blockquote>
+<p>&lt;!–code￼88–&gt;
+</p>
+<h5 id="Concat"><a href="#Concat" class="headerlink" title="Concat"></a>Concat</h5><blockquote>
+<p>拼接多个消息源，按顺序发送消息，示例</p>
+</blockquote>
+<p>&lt;!–code￼89–&gt;
+</p>
+<h5 id="Count"><a href="#Count" class="headerlink" title="Count"></a>Count</h5><blockquote>
+<p>统计发出消息的数量，示例</p>
+</blockquote>
+<p>&lt;!–code￼90–&gt;
+</p>
+<h5 id="Max-x2F-Min"><a href="#Max-x2F-Min" class="headerlink" title="Max&#x2F;Min"></a>Max&#x2F;Min</h5><blockquote>
+<p>获取消息中最大&#x2F;最小值，示例</p>
+</blockquote>
+<p>&lt;!–code￼91–&gt;
+</p>
+<h5 id="Reduce-Sum"><a href="#Reduce-Sum" class="headerlink" title="Reduce, Sum"></a>Reduce, Sum</h5><blockquote>
+<p>对每个发出的消息做操作，发送最终的值，示例</p>
+</blockquote>
+<p>&lt;!–code￼92–&gt;
+</p>
+<h4 id="Backpressure-Operators"><a href="#Backpressure-Operators" class="headerlink" title="Backpressure Operators"></a>Backpressure Operators</h4><ul>
+<li>Buffer, Sample, Debounce, Window</li>
+</ul>
+<h4 id="Connectable-Observable-Operators"><a href="#Connectable-Observable-Operators" class="headerlink" title="Connectable Observable Operators"></a>Connectable Observable Operators</h4><h5 id="Connect"><a href="#Connect" class="headerlink" title="Connect"></a>Connect</h5><blockquote>
+<p>连接<code>Observable</code>和<code>Subscribers</code>。可以指定连接几个<code>Subscriber</code>。只有当所有的<code>Subscriber</code>都订阅了才开始发送消息。示例</p>
+</blockquote>
+<p>&lt;!–code￼93–&gt;
+</p>
+<h5 id="Publish"><a href="#Publish" class="headerlink" title="Publish"></a>Publish</h5><blockquote>
+<p>将普通<code>Observable</code>转换成<code>ConnectableObservable</code>，示例</p>
+</blockquote>
+<p>&lt;!–code￼94–&gt;
+</p>
+<h5 id="RefCount"><a href="#RefCount" class="headerlink" title="RefCount"></a>RefCount</h5><blockquote>
+<p>让<code>ConnectTableObservable</code>表现像普通<code>Observable</code>。示例</p>
+</blockquote>
+<p>&lt;!–code￼95–&gt;
+</p>
+<ul>
+<li>普通<code>Observable</code>和<code>ConnectTableObservable</code>区别在于，普通的<code>Observable</code>只要订阅，就会发送消息，而<code>ConnectTableObservable</code>会连接几个订阅者，如连接1各订阅者，但是订阅了两次，那么后面一次是不会执行的。</li>
+</ul>
+<h5 id="Replay-Cache"><a href="#Replay-Cache" class="headerlink" title="Replay, Cache"></a>Replay, Cache</h5><blockquote>
+<p>确保所有的观察者看到相同的消息时序，虽然它们订阅的时候，消息源可能已经开始发送消息了。示例</p>
+</blockquote>
+<p>&lt;!–code￼96–&gt;
+</p>
+<p><a target="_blank" rel="noopener" href="http://reactivex.io/documentation/operators.html">ref</a></p>
+<h4 id="Custom-Operator"><a href="#Custom-Operator" class="headerlink" title="Custom Operator)"></a><a target="_blank" rel="noopener" href="https://github.com/ReactiveX/RxJava/wiki/Implementing-custom-operators-(draft">Custom Operator</a>)</h4><h4 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h4><h5 id="基本流程图"><a href="#基本流程图" class="headerlink" title="基本流程图"></a>基本流程图</h5><p><img data-src="/./Observable.png" alt="Observable"></p>
+<ul>
+<li>流程分析:<ol>
+<li>通过类方法<code>create</code>构造<code>Observable</code>对象。<code>create</code>内部使用<code>RxJavaHook</code>方法来创建<code>OnSubscribe</code>。</li>
+<li>调用<code>subscribe(Subscriber)</code>方法，内部会将<code>Subscriber</code>转换成<code>SafeSubscriber</code>。然后调用<code>RxJavaHooks.onObservableStart(Observable, OnSubscribe).call(subscriber)</code>。这其实就是使用第一步设置的<code>OnSubscribe</code>调用<code>call</code>。上诉流程中<code>RxJavaHooks</code>其实就是对整个流程的一些关键步骤做<code>hook</code>以便可以由后续操作。这是最基本的<code>RxJava</code>流程</li>
+</ol>
+</li>
+</ul>
+<h5 id="通用流程图"><a href="#通用流程图" class="headerlink" title="通用流程图"></a>通用流程图</h5><p><img data-src="/./Operator.png" alt="Operator"></p>
+<ul>
+<li>流程分析<ol>
+<li>当调用<code>subscribe</code>时会调用离它最近的<code>OnSubscribe</code>，如果是<code>Operator</code>的话。那就会调用最近的<code>OnSubscribeLift</code>的<code>call</code>。这时<code>RxJavaHooks</code>会调用<code>onObserveLift</code>的<code>call</code>产生新的订阅者。父类<code>OnSubscribe</code>会调用这个新的订阅者，并通过<code>call</code>将这个订阅者传给父类<code>OnSubscribe</code>中，在其中给子订阅者设置生产者<code>setProducer</code>，这时生产者会调用<code>request</code>。然后会在这里将消息发给子订阅者。</li>
+<li>线程调度: <code>OperatorSubscribeOn</code>,将每个生产者产生的所有的数据单独放到一个<code>Runnable</code>当中运行。 <code>OperatorObserveOn</code>则是使用队列。来一个消息往队列里面插入，并要求队列开始执行。典型的多生产者但但消费者模型。<code>事件产生</code>使用<code>subscribeOn</code>来切换线程。而且只有第一个<code>subscribeOn</code>会生效。而事件加工和消费使用<code>observeonOn</code>来切换线程。影响的是后续的<code>Subscriber</code>。</li>
+</ol>
+</li>
+</ul>
+<h3 id="Subject"><a href="#Subject" class="headerlink" title="Subject"></a>Subject</h3><blockquote>
+<p>Subject即可做<code>Observable</code>，也可以做<code>Observer</code>.示例</p>
+</blockquote>
+<p>&lt;!–code￼97–&gt;
+</p>
+<ul>
+<li><code>subject</code>作为<code>Observable</code>发出事件</li>
+<li>默认有四种<code>Subject</code></li>
+</ul>
+<h4 id="AsyncSubject"><a href="#AsyncSubject" class="headerlink" title="AsyncSubject"></a>AsyncSubject</h4><blockquote>
+<p>发出源消息的最后一个消息。必须在源消息发出<code>complete</code>之后。示例</p>
+</blockquote>
+<p>&lt;!–code￼98–&gt;
+</p>
+<h4 id="BehaviorSubject"><a href="#BehaviorSubject" class="headerlink" title="BehaviorSubject"></a>BehaviorSubject</h4><blockquote>
+<p>发送默认值之后发送剩余的事件 示例</p>
+</blockquote>
+<p>&lt;!–code￼99–&gt;
+</p>
+<ul>
+<li><code>default</code>事件会先于其他事件被发出</li>
+</ul>
+<h4 id="PublishSubject"><a href="#PublishSubject" class="headerlink" title="PublishSubject"></a>PublishSubject</h4><blockquote>
+<p>发送从订阅时刻起的数据。示例</p>
+</blockquote>
+<p>&lt;!–code￼100–&gt;
+</p>
+<h4 id="ReplaySubject"><a href="#ReplaySubject" class="headerlink" title="ReplaySubject"></a>ReplaySubject</h4><blockquote>
+<p>发送所有的事件，不管什么时候订阅，与PublishSubject相反。示例</p>
+</blockquote>
+<p>&lt;!–code￼101–&gt;
+</p>
+<h3 id="Rxjava2-0"><a href="#Rxjava2-0" class="headerlink" title="Rxjava2.0"></a>Rxjava2.0</h3><blockquote>
+<p>待续</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/12/31/2016%E6%80%BB%E7%BB%93/" rel="prev" title="2016总结">
+                  <i class="fa fa-chevron-left"></i> 2016总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/03/04/Ionic%E8%87%AA%E5%8A%A8%E5%8C%96%E6%9E%84%E5%BB%BA%E4%B9%8B%E8%B7%AF/" rel="next" title="Ionic自动化构建之路">
+                  Ionic自动化构建之路 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

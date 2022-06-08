@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言面向对象语言都会有接口这个概念。go中的接口就是interface。它跟很多别的面向对象的接口很不一样。如java的接口需要使用implement来实现接口 interface定义&lt;!–code￼0–&gt;  上述代码就定义了一个go的接口，包含了一个方法。当然也可以不包含方法。go的interface是一种具有一组方法的类型。如果一个类型实现了一个interface的所有方法，我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="说说Go中的interface">
+<meta property="og:url" content="http://xu6148152.github.io/2018/02/25/%E8%AF%B4%E8%AF%B4Go%E4%B8%AD%E7%9A%84interface/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="前言面向对象语言都会有接口这个概念。go中的接口就是interface。它跟很多别的面向对象的接口很不一样。如java的接口需要使用implement来实现接口 interface定义&lt;!–code￼0–&gt;  上述代码就定义了一个go的接口，包含了一个方法。当然也可以不包含方法。go的interface是一种具有一组方法的类型。如果一个类型实现了一个interface的所有方法，我们">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-02-25T09:01:30.000Z">
+<meta property="article:modified_time" content="2018-02-25T09:05:51.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Golang">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2018/02/25/%E8%AF%B4%E8%AF%B4Go%E4%B8%AD%E7%9A%84interface/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2018/02/25/%E8%AF%B4%E8%AF%B4Go%E4%B8%AD%E7%9A%84interface/","path":"2018/02/25/说说Go中的interface/","title":"说说Go中的interface"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>说说Go中的interface | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface%E5%AE%9A%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">interface定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface%E5%A4%9A%E6%80%81"><span class="nav-number">3.</span> <span class="nav-text">interface多态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A4%E6%96%ADinterface%E7%B1%BB%E5%9E%8B"><span class="nav-number">4.</span> <span class="nav-text">判断interface类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#empty-interface"><span class="nav-number">5.</span> <span class="nav-text">empty interface</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#interface-receiver"><span class="nav-number">6.</span> <span class="nav-text">interface receiver</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2018/02/25/%E8%AF%B4%E8%AF%B4Go%E4%B8%AD%E7%9A%84interface/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="说说Go中的interface | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          说说Go中的interface
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2018-02-25 17:01:30 / Modified: 17:05:51" itemprop="dateCreated datePublished" datetime="2018-02-25T17:01:30+08:00">2018-02-25</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>面向对象语言都会有接口这个概念。<code>go</code>中的接口就是<code>interface</code>。它跟很多别的面向对象的接口很不一样。如<code>java</code>的接口需要使用<code>implement</code>来实现接口</p>
+<h3 id="interface定义"><a href="#interface定义" class="headerlink" title="interface定义"></a>interface定义</h3><p>&lt;!–code￼0–&gt;
+</p>
+<p>上述代码就定义了一个<code>go</code>的接口，包含了一个方法。当然也可以不包含方法。<code>go</code>的<code>interface</code>是一种具有一组方法的类型。如果一个类型实现了一个<code>interface</code>的所有方法，我们就说该类型实现了该接口。其实<code>go</code>中所有的类型都实现了<code>empty interface</code>。<code>go</code>不需要使用关键字来实现<code>interface</code>,只需要实现<code>interface</code>包含的方法即可。上述代码<code>struct S</code>实现了<code>interface I</code></p>
+<h3 id="interface多态"><a href="#interface多态" class="headerlink" title="interface多态"></a>interface多态</h3><p>&lt;!–code￼1–&gt;
+</p>
+<p><code>interface</code>的一个重要用途就是体现在函数的参数上。函数的参数如果是<code>interface</code>，那么可以传入任意实现了该<code>interface</code>的类型。这就是多态</p>
+<h3 id="判断interface类型"><a href="#判断interface类型" class="headerlink" title="判断interface类型"></a>判断<code>interface</code>类型</h3><p><code>go</code>可以使用<code>value, ok := em.(T)</code>来检查类型</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>上述代码用来检查<code>i</code>是否是<code>*S</code>类型，如果是，那么<code>ok</code>是<code>true</code>。如果需要区分多种类型那么可以使用<code>switch</code></p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<h3 id="empty-interface"><a href="#empty-interface" class="headerlink" title="empty interface"></a>empty interface</h3><p>如果定义一个函数，其参数是<code>empty interface</code>。那么这个函数可以接受任何类型作为它的参数</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>运行时<code>v</code>并不是任意类型，<code>v</code>只是一个<code>interface</code>。之所以可以接受任何类型是<code>go</code>执行时传递到函数的任何类型都被自动转换成<code>interface&#123;&#125;</code>。至于运行中是如何转换的，可以<a target="_blank" rel="noopener" href="https://research.swtch.com/interfaces">参考</a>。<code>interface&#123;&#125;</code>类型的<code>slice</code>是无法接受任何类型的</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>上述代码执行会出错，因为<code>go</code>不会为<code>interface&#123;&#125;</code>的slice做自动转换。至于为什么，可以<a target="_blank" rel="noopener" href="https://github.com/golang/go/wiki/InterfaceSlice">参考</a></p>
+<blockquote>
+<p><code>interface&#123;&#125;</code> 会占用两个字长的存储空间，一个是自身的<code>methods</code>数据，一个是指向其存储值的指针，也就是<code>interface</code>变量存储的值，因而<code>slice[]interface&#123;&#125;</code>其长度是固定的N<em>2, 但是[]T的长度是N</em>sizeof(T)，两种 slice 实际存储值的大小是有区别的。</p>
+</blockquote>
+<p>虽然<code>go</code>不能帮我们自动转换，但我们可以手动转换</p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<h3 id="interface-receiver"><a href="#interface-receiver" class="headerlink" title="interface receiver"></a>interface receiver</h3><p><code>interface</code>定义时并没有严格规定实现者的方法<code>receiver</code>是个<code>value receiver</code>或者<code>pointer receiver</code>。上述代码<code>S</code>的<code>Set Receiver</code>是<code>pointer</code>，也就是实现<code>I</code>的两个方法的<code>receiver</code>一个是<code>value</code>一个是<code>pointer</code>。如果使用<code>f(s)</code>，那么传递给<code>f</code>是<code>s</code>的一个拷贝。<code>go</code>中的函数都是按值传递</p>
+<p>如果是按<code>pointer</code>调用,<code>go</code>会自动进行转换，因为有了指针，那么总是能够得到指针指向的值，如果是值调用，那么无法得知原始值是什么</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p>上述代码<code>Pig</code>使用的是指针，如果使用值会无法运行。按值传递，函数内部对于值的任何改变都不会影响到原始值</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Golang/" rel="tag"># Golang</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2018/01/01/SpringBoot%E5%90%AF%E5%8A%A8%E6%B5%81%E7%A8%8B/" rel="prev" title="SpringBoot启动流程">
+                  <i class="fa fa-chevron-left"></i> SpringBoot启动流程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2018/03/03/%E8%81%8A%E8%81%8AGo-Channel/" rel="next" title="聊聊Go Channel">
+                  聊聊Go Channel <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

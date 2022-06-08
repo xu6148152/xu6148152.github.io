@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Binder是Android系统的通讯桥梁。因此Hook Binder就能够改变通讯行为.分析Hook过程有利于理解Binder机制 系统服务获取&lt;!–code￼0–&gt;  通过以上代码能够获取系统服务。我们来看看内部是如何获取的 &lt;!–code￼1–&gt;  ContextImpl中通过SystemServiceRegistry获取服务 &lt;!–code￼2–&gt;  通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="插件化原理解析Binder Hook">
+<meta property="og:url" content="http://xu6148152.github.io/2017/10/03/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Binder-Hook/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="Binder是Android系统的通讯桥梁。因此Hook Binder就能够改变通讯行为.分析Hook过程有利于理解Binder机制 系统服务获取&lt;!–code￼0–&gt;  通过以上代码能够获取系统服务。我们来看看内部是如何获取的 &lt;!–code￼1–&gt;  ContextImpl中通过SystemServiceRegistry获取服务 &lt;!–code￼2–&gt;  通">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-10-03T13:49:13.000Z">
+<meta property="article:modified_time" content="2017-10-03T13:49:14.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Binder Hook Android Framework">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/10/03/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Binder-Hook/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/10/03/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Binder-Hook/","path":"2017/10/03/插件化原理解析Binder-Hook/","title":"插件化原理解析Binder Hook"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>插件化原理解析Binder Hook | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E8%8E%B7%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">系统服务获取</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Hook-IBinder"><span class="nav-number">2.</span> <span class="nav-text">Hook IBinder</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/10/03/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Binder-Hook/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="插件化原理解析Binder Hook | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          插件化原理解析Binder Hook
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2017-10-03 21:49:13 / Modified: 21:49:14" itemprop="dateCreated datePublished" datetime="2017-10-03T21:49:13+08:00">2017-10-03</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><code>Binder</code>是<code>Android</code>系统的通讯桥梁。因此<code>Hook Binder</code>就能够改变通讯行为.分析<code>Hook</code>过程有利于理解<code>Binder</code>机制</p>
+<h3 id="系统服务获取"><a href="#系统服务获取" class="headerlink" title="系统服务获取"></a>系统服务获取</h3><p>&lt;!–code￼0–&gt;
+</p>
+<p>通过以上代码能够获取系统服务。我们来看看内部是如何获取的</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p><code>ContextImpl</code>中通过<code>SystemServiceRegistry</code>获取服务</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>通过<code>Class</code>或者类限定名都可以获取对应的服务</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<p>这里有两个<code>HashMap</code>，一个用于缓存服务名称，一个用于缓存服务获取器</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>服务在首次使用的时候已经被初始化了。并且初始化时候会被缓存</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>每次<code>CacheServiceFetcher</code>创建时，全局的服务缓存空间会增大，并将新的服务放到数组末端。每次需要获取服务的时候，先寻找缓存中的服务，如果不存在创建并缓存</p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<p>在<code>ActivityManager</code>中可以看到<code>ActivityManagerService</code>服务的获取方式，从<code>ServiceManager</code>中获取。在<code>ServiceManager</code>中，会先从缓冲中获取。</p>
+<h3 id="Hook-IBinder"><a href="#Hook-IBinder" class="headerlink" title="Hook IBinder"></a>Hook IBinder</h3><p>从上述流程中可以了解系统服务的获取过程，那么我们需要怎么去<code>Hook</code>这些服务呢？我们可以将<code>asInterface</code>返回的结果修改成我们<code>Hook</code>过的对象。下面我们以<code>ClipboardService</code>为例来实践<code>Hook</code>过程</p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p><code>ClipboardManager</code>在初始化的时候，从<code>ServiceManager</code>获取<code>ClipboardService</code>。从这里可以看出<code>asInterface</code>需要一个<code>IBinder</code>参数，这个参数从<code>ServiceManager</code>获取。而在<code>ServiceManager</code>中会首先从缓存中查找。因此我们可以提前往缓存冲插入我们<code>Hook</code>的对象</p>
+<p>&lt;!–code￼8–&gt;
+</p>
+<p>获取<code>ServiceManager</code>的<code>getService</code>方法，返回一个<code>IBinder</code>对象。然后通过动态代理，代理此<code>IBinder</code>对象。然后将插入<code>ServiceManager</code>的缓存中。这样下次使用时就能够直接拿到这个代理对象</p>
+<p>&lt;!–code￼9–&gt;
+</p>
+<p>如果<code>IBinder</code>的<code>queryLocalInterface</code>触发，那么通过动态代理，代理<code>IClipboard</code></p>
+<p>&lt;!–code￼10–&gt;
+</p>
+<p>获取<code>IClipboard$Stub</code>的<code>asInterface</code>方法，返回<code>BinderProxy</code>。当<code>getPrimaryClip</code>方法触发时，返回固定值。当<code>hasPrimaryClip</code>触发时，总是返回<code>true</code>表示粘贴板有内容。这样就成功的<code>hook ClipboardService</code></p>
+<p>运行程序之后，使用粘贴功能，会发现永远只能粘贴我们自己返回的内容</p>
+<p>整个过程的思路是:
+<code>ServiceManager</code>内部一张表管理着很多的<code>Binder</code>对象。我们需要<code>Hook</code>某个<code>Binder</code>对象的<code>queryLocalInterface</code>，并将其缓存。由于<code>ServiceManager</code>的缓存表里的<code>IBinder</code>大部分都是<code>BinderProxy</code>对象。当使用时会调用<code>asInterface</code>转换成需要的接口。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Binder-Hook-Android-Framework/" rel="tag"># Binder Hook Android Framework</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/10/02/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Hook%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" rel="prev" title="插件化原理解析Hook动态代理">
+                  <i class="fa fa-chevron-left"></i> 插件化原理解析Hook动态代理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/10/04/%E6%8F%92%E4%BB%B6%E5%8C%96%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90Hook-AMS-PMS/" rel="next" title="插件化原理解析Hook AMS&PMS">
+                  插件化原理解析Hook AMS&PMS <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原文 写这篇文章的目的是为了描述我建议的Android app架构。我一步步的通过下面的原因来选择不同的组件。 模板应用的目的很简单：它是master&#x2F;detail结构，用来展示指定用户的Github仓库。虽然它简单，但它集合了一些通用的东西：  使用RESTAPI   本地数据存储 本地数据加载 架构逻辑层以及页面导航    让我们来看看这背后都有什么! Consuming REST API R">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Little stories about an Android application architecture">
+<meta property="og:url" content="http://xu6148152.github.io/2016/06/11/Little-stories-about-an-Android-application-architecture/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="原文 写这篇文章的目的是为了描述我建议的Android app架构。我一步步的通过下面的原因来选择不同的组件。 模板应用的目的很简单：它是master&#x2F;detail结构，用来展示指定用户的Github仓库。虽然它简单，但它集合了一些通用的东西：  使用RESTAPI   本地数据存储 本地数据加载 架构逻辑层以及页面导航    让我们来看看这背后都有什么! Consuming REST API R">
+<meta property="og:locale">
+<meta property="article:published_time" content="2016-06-11T07:59:27.000Z">
+<meta property="article:modified_time" content="2016-06-11T07:59:27.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Android">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2016/06/11/Little-stories-about-an-Android-application-architecture/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2016/06/11/Little-stories-about-an-Android-application-architecture/","path":"2016/06/11/Little-stories-about-an-Android-application-architecture/","title":"Little stories about an Android application architecture"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Little stories about an Android application architecture | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Consuming-REST-API"><span class="nav-number">1.</span> <span class="nav-text">Consuming REST API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90%E6%95%B0%E6%8D%AE"><span class="nav-number">2.</span> <span class="nav-text">解析数据</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E9%80%9A%E8%AE%AF%E5%92%8C%E6%95%B0%E6%8D%AE%E4%BC%A0%E9%80%92"><span class="nav-number">2.1.</span> <span class="nav-text">组件之间的通讯和数据传递</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">线程管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">2.3.</span> <span class="nav-text">任务管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Job-Manager-android-priority-jobqueue"><span class="nav-number">2.4.</span> <span class="nav-text">Job Manager(android-priority-jobqueue)</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Job-Manager-Configuration"><span class="nav-number">2.4.1.</span> <span class="nav-text">Job Manager Configuration</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Job-Configuration"><span class="nav-number">2.4.2.</span> <span class="nav-text">Job Configuration</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8C%81%E4%B9%85%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">数据持久化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ORM-%E6%96%B9%E5%BC%8F"><span class="nav-number">3.1.</span> <span class="nav-text">ORM 方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OrmLite"><span class="nav-number">3.2.</span> <span class="nav-text">OrmLite</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ContentProvider%E6%96%B9%E5%BC%8F"><span class="nav-number">3.3.</span> <span class="nav-text">ContentProvider方式</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E6%B3%A8%E5%85%A5"><span class="nav-number">4.</span> <span class="nav-text">依赖注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP%E6%9E%B6%E6%9E%84"><span class="nav-number">5.</span> <span class="nav-text">MVP架构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E6%9B%B4%E8%BD%BB%E9%87%8F%E7%9A%84%E7%B1%BB"><span class="nav-number">6.</span> <span class="nav-text">写更轻量的类</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E8%A7%A3%E5%92%8C%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%A5%BD%E5%A4%84"><span class="nav-number">6.1.</span> <span class="nav-text">注解和注解处理器的好处</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Butter-Knife"><span class="nav-number">6.2.</span> <span class="nav-text">Butter Knife</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FragmentArgs"><span class="nav-number">6.3.</span> <span class="nav-text">FragmentArgs</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IntentBuilder"><span class="nav-number">6.4.</span> <span class="nav-text">IntentBuilder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Icepick"><span class="nav-number">6.5.</span> <span class="nav-text">Icepick</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OnActivityResult"><span class="nav-number">6.6.</span> <span class="nav-text">OnActivityResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Project-Lombok"><span class="nav-number">6.7.</span> <span class="nav-text">Project Lombok</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Switcher"><span class="nav-number">6.8.</span> <span class="nav-text">Switcher</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Testing"><span class="nav-number">7.</span> <span class="nav-text">Testing</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Fluent-assertions"><span class="nav-number">7.1.</span> <span class="nav-text">Fluent assertions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Mocking"><span class="nav-number">7.2.</span> <span class="nav-text">Mocking</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UI-testing"><span class="nav-number">7.3.</span> <span class="nav-text">UI testing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Code-coverage"><span class="nav-number">7.4.</span> <span class="nav-text">Code coverage</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Code-quality"><span class="nav-number">8.</span> <span class="nav-text">Code quality</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Relevant-libraries"><span class="nav-number">9.</span> <span class="nav-text">Relevant libraries</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/06/11/Little-stories-about-an-Android-application-architecture/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Little stories about an Android application architecture | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Little stories about an Android application architecture
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2016-06-11 15:59:27" itemprop="dateCreated datePublished" datetime="2016-06-11T15:59:27+08:00">2016-06-11</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p><a target="_blank" rel="noopener" href="http://roroche.github.io/AndroidStarter/">原文</a></p>
+<p>写这篇文章的目的是为了描述我建议的<code>Android app</code>架构。我一步步的通过下面的原因来选择不同的组件。</p>
+<p>模板应用的目的很简单：它是<code>master/detail</code>结构，用来展示指定用户的<code>Github</code>仓库。虽然它简单，但它集合了一些通用的东西：</p>
+<ul>
+<li>使用<code>REST</code>API  <ul>
+<li>本地数据存储</li>
+<li>本地数据加载</li>
+<li>架构逻辑层以及页面导航</li>
+</ul>
+</li>
+</ul>
+<p>让我们来看看这背后都有什么!</p>
+<h3 id="Consuming-REST-API"><a href="#Consuming-REST-API" class="headerlink" title="Consuming REST API"></a>Consuming REST API</h3><blockquote>
+<p>REST Representational State Transfer表述性状态传递</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="http://square.github.io/retrofit/">Retrofit</a>是开发者必备的知名网络库<br>我将解释为何我认为它是必备的库：  </p>
+<ul>
+<li>类型安全</li>
+<li>接口可读性好，采用注解<code>API</code>地址</li>
+<li>对如何工作采用完全抽象层</li>
+<li>支持多部分请求体(上传文件)</li>
+<li>使用注解直接管理头部信息</li>
+<li>能够使用多种序列化类型(<code>JSON, XML, protobuf, etc</code>)的转换器</li>
+<li>能够添加全局的请求拦截器</li>
+<li>方便的进行<code>MOCK</code>测试</li>
+</ul>
+<p>使用时仅需在<code>build.gradle</code>文件中添加</p>
+<p>&lt;!–code￼0–&gt;
+</p>
+<p>然后我能够声明<code>GitHubService</code>接口和我们需要使用这个接口的方法</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p>下一步通过<code>RestAdapter</code>去实现这个接口</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<p>我使用<a target="_blank" rel="noopener" href="https://github.com/novoda/merlin">Merlin</a>。它能够观察网络的连接状态以及改变。它提供流畅<code>API</code>，设置简单。</p>
+<p>&lt;!–code￼3–&gt;
+</p>
+<p>调用</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>来检查网络是否可用。</p>
+<h3 id="解析数据"><a href="#解析数据" class="headerlink" title="解析数据"></a>解析数据</h3><p>现在我们已经能够从服务器拿到数据了，我们需要将这些数据转换成<code>POJO</code>对象。通常的格式是<code>JSON</code>,我们使用<a target="_blank" rel="noopener" href="https://github.com/FasterXML/jackson">Jackson</a>来作为转换器。</p>
+<p>当然，我将会说明一下为什么我选择<code>Jackson</code>。首先，我很满意它流畅的注解<code>API</code>。能够获取或存储那些没有通过<code>@JsonProperty</code>注解声明的属性</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<p>与<code>Retrofit</code>组合</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/square/retrofit/tree/master/retrofit-converters/jackson.">https:&#x2F;&#x2F;github.com&#x2F;square&#x2F;retrofit&#x2F;tree&#x2F;master&#x2F;retrofit-converters&#x2F;jackson.</a></p>
+<p>&lt;!–code￼6–&gt;
+</p>
+<p>然后我们将其设置到我们之前的<code>RestAdapter</code></p>
+<p>&lt;!–code￼7–&gt;
+</p>
+<p>福利
+我通常使用<a target="_blank" rel="noopener" href="http://www.jsonschema2pojo.org/">jsonchema2pojo</a>  </p>
+<blockquote>
+<p>Generate Plain Old Java Objects from JSON or JSON-Schema.</p>
+</blockquote>
+<p>也可以使用<a target="_blank" rel="noopener" href="https://github.com/square/moshi">moshi</a>或者<a target="_blank" rel="noopener" href="https://github.com/bluelinelabs/LoganSquare">LoganSquare</a>  </p>
+<h4 id="组件之间的通讯和数据传递"><a href="#组件之间的通讯和数据传递" class="headerlink" title="组件之间的通讯和数据传递"></a>组件之间的通讯和数据传递</h4><p>通常的做法是使用事件总线</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="http://square.github.io/otto/">Otto</a>  </li>
+<li><a target="_blank" rel="noopener" href="http://greenrobot.github.io/EventBus/">EventBus</a> </li>
+<li><a target="_blank" rel="noopener" href="https://github.com/beworker/tinybus">TinyBus</a></li>
+</ul>
+<blockquote>
+<p>Now can using RxJava to replace above all  </p>
+</blockquote>
+<h4 id="线程管理"><a href="#线程管理" class="headerlink" title="线程管理"></a>线程管理</h4><blockquote>
+<p>RxAndroid thread</p>
+</blockquote>
+<h4 id="任务管理"><a href="#任务管理" class="headerlink" title="任务管理"></a>任务管理</h4><p>多线程和并发是开发者经常要考虑的问题。我罗列出一些不能再主线程操作的任务</p>
+<ul>
+<li>调用远程API</li>
+<li>数据库CURD操作</li>
+<li>读取本地文件</li>
+</ul>
+<p>建议采取:</p>
+<ul>
+<li>使用<code>Service</code></li>
+<li>设置<code>ServiceHelper</code>来进行网络请求</li>
+<li>使用专门的类来处理查询操作</li>
+</ul>
+<p>但需要注意的是<code>Service</code>是运行在主线程中，因此可以使用<code>IntentService</code>或者使用<a target="_blank" rel="noopener" href="https://github.com/yigit/android-priority-jobqueue">Android Priority Job Queue</a>或者是官方的<a target="_blank" rel="noopener" href="https://developer.android.com/reference/android/app/job/JobScheduler.html">JobScheduler</a></p>
+<h4 id="Job-Manager-android-priority-jobqueue"><a href="#Job-Manager-android-priority-jobqueue" class="headerlink" title="Job Manager(android-priority-jobqueue)"></a>Job Manager(android-priority-jobqueue)</h4><h5 id="Job-Manager-Configuration"><a href="#Job-Manager-Configuration" class="headerlink" title="Job Manager Configuration"></a>Job Manager Configuration</h5><p>&lt;!–code￼8–&gt;
+</p>
+<h5 id="Job-Configuration"><a href="#Job-Configuration" class="headerlink" title="Job Configuration"></a>Job Configuration</h5><p>我们可以给一个任务设置一些有用的参数，例如</p>
+<ul>
+<li>它的优先级</li>
+<li>它是否需要网络</li>
+<li>如果不执行，是否需要持久化</li>
+<li>延时运行</li>
+<li>重试机制</li>
+</ul>
+<p>这个库的持久化引擎非常强大。例如，网络不可用时，任务会被持久化到设备上。一旦网络可用<code>JobManager</code>获取持久化的任务并执行它们</p>
+<p>&lt;!–code￼9–&gt;
+</p>
+<ul>
+<li><p>枚举描述了我需要的优先级</p>
+<ul>
+<li>提供两个构造函数</li>
+<li>异常处理</li>
+<li>默认重试次数</li>
+</ul>
+<p>有三个方法被实现</p>
+<ul>
+<li><code>execute</code>: 执行特定的代码</li>
+<li><code>postEventQueryFinished </code>: 通知任务结果</li>
+<li><code>postEventQueryFinishedNoNetwork </code>: 通知网络不可用</li>
+</ul>
+<p>后两个通常基于总线</p>
+<p>下面是我定义的抽象事件</p>
+<p>&lt;!–code￼10–&gt;
+</p>
+<ul>
+<li>查询刚完成</li>
+<li>终端状态</li>
+<li>异常处理</li>
+</ul>
+<p>下面是我的查询用户仓库的代码</p>
+<p>&lt;!–code￼11–&gt;</p>
+</li>
+</ul>
+<p>现在，通过<code>QueryFactor</code>这个简单的代理类来进行请求</p>
+<p>&lt;!–code￼12–&gt;
+</p>
+<p><code>Service</code>处理如下声明的查询:</p>
+<p>&lt;!–code￼13–&gt;
+</p>
+<h3 id="数据持久化"><a href="#数据持久化" class="headerlink" title="数据持久化"></a>数据持久化</h3><h4 id="ORM-方式"><a href="#ORM-方式" class="headerlink" title="ORM 方式"></a>ORM 方式</h4><p>对象关系映射是软件开发中经常使用的技术</p>
+<h4 id="OrmLite"><a href="#OrmLite" class="headerlink" title="OrmLite"></a><a target="_blank" rel="noopener" href="http://ormlite.com/sqlite_java_android_orm.shtml">OrmLite</a></h4><p>第一步设置要被映射的<code>POJO</code>
+我创建抽象类来匹配<code>_id</code>列</p>
+<p>&lt;!–code￼14–&gt;
+</p>
+<p>现在创建一个<code>POJO</code>类</p>
+<p>&lt;!–code￼15–&gt;
+</p>
+<p>我们来看一下DAO。这个设计目的在于通过抽象的接口来访问具体的数据。</p>
+<p><code>OrmLite</code>提供了<code>Dao</code>接口以及其实现<code>BaseDaoImpl</code>。CURD所需的操作都具备。</p>
+<p>然而，这些都是同步执行的。使用<code>RxJava</code>来异步执行这些操作。</p>
+<p>因此我使用<code>RxJava</code>重写了所有的方法
+我创建了如下接口</p>
+<p>&lt;!–code￼16–&gt;
+</p>
+<p>所有的方法名以”rx”为前缀。返回一个特定类型的<code>Observable</code>对象</p>
+<p>&lt;!–code￼17–&gt;
+</p>
+<p>使用<code>long</code>作为ID类型</p>
+<p>&lt;!–code￼18–&gt;
+</p>
+<p>抽象类</p>
+<p>&lt;!–code￼19–&gt;
+</p>
+<p><code>DAORepo</code>变成</p>
+<p>&lt;!–code￼20–&gt;
+</p>
+<p><code>ORMLite</code>提供<code>SQLiteOpenHelper</code>的抽象子类<code>OrmLiteSQLiteOpenHelper</code>。</p>
+<p>&lt;!–code￼21–&gt;
+</p>
+<p><code>ORMLite</code>提供<code>TableUtils</code>，其可以根据映射的类文件创建或者删除表</p>
+<p>现在，我们需要一个<code>DatabaseHelperAndroidStarter</code>来处理数据</p>
+<p>&lt;!–code￼22–&gt;
+</p>
+<p>我们能通过下面的方式获得一个<code>DAORepo</code>实例</p>
+<p>&lt;!–code￼23–&gt;
+</p>
+<p>在<code>Fragment</code>中，通过以下方式获取仓库</p>
+<p>&lt;!–code￼24–&gt;
+</p>
+<p>但仍然有个问题：如何从网络上获取一个仓库并把它解析然后存储到本地?</p>
+<p>我的目标是使用<code>DTORepo</code>来与网络通讯,<code>RepoEntity</code>映射到数据库。它们有相同名字的相同的字段。因此我需要一个工具用来把DTO转换成实体。这时候，我们会用到<a target="_blank" rel="noopener" href="https://github.com/txusballesteros/android-transformer">Android Transformer</a></p>
+<p>它提供两个主要的注解</p>
+<ul>
+<li><code>@Mappable</code>来代表要映射的类<ul>
+<li><code>@Mapped</code>代表要映射的成员</li>
+</ul>
+</li>
+</ul>
+<p>因此，<code>RepoEntity</code>变成:</p>
+<p>&lt;!–code￼25–&gt;
+</p>
+<p>现在我们能通过以下方式将DTO转换成实体</p>
+<p>&lt;!–code￼26–&gt;
+</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/stephanenicolas/ormlite-android-gradle-plugin">ormgap</a>插件</p>
+<h4 id="ContentProvider方式"><a href="#ContentProvider方式" class="headerlink" title="ContentProvider方式"></a>ContentProvider方式</h4><p><code>ContentProvider</code>和<code>Cursor</code>及其派生配合使用异常强大。  </p>
+<p>使用<a target="_blank" rel="noopener" href="https://github.com/TimotheeJeannin/ProviGen">ProviGen</a>有以下优势：</p>
+<ul>
+<li>声明<code>ContentProvider</code>相关类方便<ul>
+<li>使用<code>ProviGenProvider</code>，其是<code>ContentProvider</code>的一个子类</li>
+<li>提供<code>SQLiteOpenHelper</code>默认实现</li>
+<li>能够自定义<code>SQLiteOpenHelper</code>的实现</li>
+<li><code>TableBuilder</code>能够使用流畅的API创建<code>SQL</code>表</li>
+</ul>
+</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://github.com/chalup/microorm">MicroOrm</a></p>
+<h3 id="依赖注入"><a href="#依赖注入" class="headerlink" title="依赖注入"></a>依赖注入</h3><p>依赖注入优点：</p>
+<ul>
+<li><p>便于阅读</p>
+<ul>
+<li>便于维护</li>
+<li>便于测试</li>
+</ul>
+<p>…</p>
+</li>
+</ul>
+<h3 id="MVP架构"><a href="#MVP架构" class="headerlink" title="MVP架构"></a>MVP架构</h3><p><a target="_blank" rel="noopener" href="http://hannesdorfmann.com/mosby/">文章</a><br>你能在这了解到MVP基础，VIEW状态和Loading-Content-Error</p>
+<p>另一个有用的工具是<a target="_blank" rel="noopener" href="http://developer.android.com/tools/data-binding/guide.html">DataBinding</a>。它能使<code>View</code>和<code>Model</code>紧密耦合，双向绑定。</p>
+<p>使用<code>Mosby</code>来解释MVP</p>
+<p>首先设计我们要展示内容的模型类</p>
+<p>&lt;!–code￼27–&gt;
+</p>
+<p>现在我们定义了对应的<code>View</code>接口</p>
+<p>&lt;!–code￼28–&gt;
+</p>
+<p>下一步是定义<code>Presenter</code></p>
+<p>&lt;!–code￼29–&gt;
+</p>
+<p>主要代码放在<code>rxGetRepo</code>方法中。它从数据库加载数据,然后刷新UI</p>
+<p>我们来看一下<code>FragmentRepoDetail</code></p>
+<p>&lt;!–code￼30–&gt;
+</p>
+<p>当中的一些注解会在下一节中解释</p>
+<p>我们来看一下对应的布局</p>
+<p>&lt;!–code￼31–&gt;
+</p>
+<p>多亏了MVP架构，我们收获良多
+ * 独立的类来加载和展示对应的数据：<code>Presenter</code>
+ * 要展示的数据: <code>Model</code>
+ * 展示的方式: <code>View</code></p>
+<h3 id="写更轻量的类"><a href="#写更轻量的类" class="headerlink" title="写更轻量的类"></a>写更轻量的类</h3><h4 id="注解和注解处理器的好处"><a href="#注解和注解处理器的好处" class="headerlink" title="注解和注解处理器的好处"></a>注解和注解处理器的好处</h4><p><code>android-apt</code>是<code>Android</code> 开发的一大进步。</p>
+<p>它允许开发者在<code>gradle</code>文件中配置编译时的注解处理。很多库用它来生成模板代码。</p>
+<h4 id="Butter-Knife"><a href="#Butter-Knife" class="headerlink" title="Butter Knife"></a>Butter Knife</h4><h4 id="FragmentArgs"><a href="#FragmentArgs" class="headerlink" title="FragmentArgs"></a>FragmentArgs</h4><h4 id="IntentBuilder"><a href="#IntentBuilder" class="headerlink" title="IntentBuilder"></a>IntentBuilder</h4><h4 id="Icepick"><a href="#Icepick" class="headerlink" title="Icepick"></a>Icepick</h4><h4 id="OnActivityResult"><a href="#OnActivityResult" class="headerlink" title="OnActivityResult"></a>OnActivityResult</h4><h4 id="Project-Lombok"><a href="#Project-Lombok" class="headerlink" title="Project Lombok"></a>Project Lombok</h4><h4 id="Switcher"><a href="#Switcher" class="headerlink" title="Switcher"></a>Switcher</h4><h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><p><a target="_blank" rel="noopener" href="https://github.com/ignaciotcrespo/frutilla">frutilla</a>  </p>
+<h4 id="Fluent-assertions"><a href="#Fluent-assertions" class="headerlink" title="Fluent assertions"></a>Fluent assertions</h4><ul>
+<li>truth<ul>
+<li>AssertJ</li>
+<li>AssertJ Android</li>
+</ul>
+</li>
+</ul>
+<h4 id="Mocking"><a href="#Mocking" class="headerlink" title="Mocking"></a>Mocking</h4><h4 id="UI-testing"><a href="#UI-testing" class="headerlink" title="UI testing"></a>UI testing</h4><h4 id="Code-coverage"><a href="#Code-coverage" class="headerlink" title="Code coverage"></a>Code coverage</h4><p>&lt;!–code￼32–&gt;
+</p>
+<h3 id="Code-quality"><a href="#Code-quality" class="headerlink" title="Code quality"></a>Code quality</h3><ul>
+<li><a target="_blank" rel="noopener" href="http://checkstyle.sourceforge.net/">CheckStyle</a><ul>
+<li><a target="_blank" rel="noopener" href="http://findbugs.sourceforge.net/">FindBugs</a></li>
+<li><a target="_blank" rel="noopener" href="http://pmd.github.io/">PMD</a></li>
+<li><a target="_blank" rel="noopener" href="http://tools.android.com/tips/lint">Android Lint</a></li>
+</ul>
+</li>
+</ul>
+<h3 id="Relevant-libraries"><a href="#Relevant-libraries" class="headerlink" title="Relevant libraries"></a>Relevant libraries</h3>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Android/" rel="tag"># Android</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2016/06/04/analysis-recyclerview/" rel="prev" title="recyclerview-structure">
+                  <i class="fa fa-chevron-left"></i> recyclerview-structure
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2016/07/24/Design_pattern/" rel="next" title="设计模式">
+                  设计模式 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

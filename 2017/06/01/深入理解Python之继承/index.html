@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="继承内置类型的技巧Python2.2之前，不能够继承内置类型 &lt;!–code￼0–&gt;  DoppelDict当排序时，复制值.__init__忽略__setitem__被重写，因此one没有被复制。[]操作符调用__setitem__，因此two被复制。update方法没有使用重写的__setitem__方法。因此three没有复制 方法的寻找总是从目标对象开始，然后向上寻找 &amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Python之继承">
+<meta property="og:url" content="http://xu6148152.github.io/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="继承内置类型的技巧Python2.2之前，不能够继承内置类型 &lt;!–code￼0–&gt;  DoppelDict当排序时，复制值.__init__忽略__setitem__被重写，因此one没有被复制。[]操作符调用__setitem__，因此two被复制。update方法没有使用重写的__setitem__方法。因此three没有复制 方法的寻找总是从目标对象开始，然后向上寻找 &amp;lt">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-06-01T08:56:55.000Z">
+<meta property="article:modified_time" content="2017-06-01T08:56:55.000Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/","path":"2017/06/01/深入理解Python之继承/","title":"深入理解Python之继承"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>深入理解Python之继承 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF%E5%86%85%E7%BD%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E6%8A%80%E5%B7%A7"><span class="nav-number">1.</span> <span class="nav-text">继承内置类型的技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E7%BB%A7%E6%89%BF"><span class="nav-number">2.</span> <span class="nav-text">多继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9C%9F%E5%AE%9E%E7%9A%84%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF%E6%A1%88%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">真实的多重继承案例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E5%AF%B9%E5%A4%9A%E9%87%8D%E7%BB%A7%E6%89%BF"><span class="nav-number">4.</span> <span class="nav-text">应对多重继承</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/06/01/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E7%BB%A7%E6%89%BF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="深入理解Python之继承 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入理解Python之继承
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2017-06-01 16:56:55" itemprop="dateCreated datePublished" datetime="2017-06-01T16:56:55+08:00">2017-06-01</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="继承内置类型的技巧"><a href="#继承内置类型的技巧" class="headerlink" title="继承内置类型的技巧"></a>继承内置类型的技巧</h3><p><code>Python2.2</code>之前，不能够继承内置类型</p>
+<p>&lt;!–code￼0–&gt;
+</p>
+<p><code>DoppelDict</code>当排序时，复制值.<code>__init__</code>忽略<code>__setitem__</code>被重写，因此<code>one</code>没有被复制。<code>[]</code>操作符调用<code>__setitem__</code>，因此<code>two</code>被复制。<code>update</code>方法没有使用重写的<code>__setitem__</code>方法。因此<code>three</code>没有复制</p>
+<p>方法的寻找总是从目标对象开始，然后向上寻找</p>
+<p>&lt;!–code￼1–&gt;
+</p>
+<p><code>AnswerDict.__getitem__()</code>总是返回42.<code>d</code>是个<code>dict</code>，使用<code>ad</code>更新它，忽略了<code>AnswerDict.__getitem__()</code></p>
+<p>直接继承内置类型如<code>dict</code>或者<code>list</code>容易出错，因为内置的方法大多数会忽略用户自定的方法。因此从<code>collections</code>模块中使用<code>UserDict</code>,<code>UserLisat</code>,<code>UserString</code>来派生类</p>
+<p>&lt;!–code￼2–&gt;
+</p>
+<h3 id="多继承"><a href="#多继承" class="headerlink" title="多继承"></a>多继承</h3><p>&lt;!–code￼3–&gt;
+</p>
+<p>当在一个类上直接调用方法时，需要显式传入<code>self</code>。调用方法的顺序依据<code>MRO(__mro__)</code>采用<code>C3</code>算法</p>
+<p>&lt;!–code￼4–&gt;
+</p>
+<p>其搜索路径就是按着<code>Text, Widget, BaseWidget, Misc, Pack, Place, Grid, XView, YView, object</code>从左往右搜索</p>
+<p>对于多重继承来说，继承顺序决定了搜索顺序</p>
+<h3 id="真实的多重继承案例"><a href="#真实的多重继承案例" class="headerlink" title="真实的多重继承案例"></a>真实的多重继承案例</h3><p>适配器模式就使用了多重继承.<code>Python</code>中最常见的多重继承是<code>collection.abc</code>包。标准库<code>Tkinter GUI</code>使用了大量的多重继承</p>
+<p>&lt;!–code￼5–&gt;
+</p>
+<h3 id="应对多重继承"><a href="#应对多重继承" class="headerlink" title="应对多重继承"></a>应对多重继承</h3><ol>
+<li><p>区分接口继承和实现继承</p>
+<ul>
+<li>接口继承创建子类型，实现<code>is-a</code>关系</li>
+<li>实现继承利于代码复用</li>
+</ul>
+</li>
+<li><p>使用<code>ABCs</code>来创造接口
+</p>
+</li>
+<li><p>使用<code>Mixin</code>来使代码复用</p>
+<p>如果一个类被设计成为多个不相关的类提供复用，那么请继承<code>Mixin</code>, <code>Mixin</code>不会定义新类型，只是封装方法以便复用.<code>Mixin</code>不该被实例化，任何实体类都不该仅仅只继承<code>Mixin</code>. 每个<code>Mixin</code>应该只提供一种单一特定的行为，实现几个紧密相关的方法</p>
+</li>
+<li><p>显式命名<code>Mixin</code></p>
+<p>没有标准的方式来说明一个类是<code>Mixin</code>，因此建议使用<code>Mixin</code>作为后缀</p>
+</li>
+<li><p><code>ABC</code>可能是<code>Mixin</code>，反过来不一定成立</p>
+</li>
+<li><p>不要继承多个实体类</p>
+</li>
+<li><p>提供集合类给用户</p>
+</li>
+<li><p>组合胜过继承</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Python/" rel="tag"># Python</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2017/05/30/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E6%8E%A5%E5%8F%A3/" rel="prev" title="深入理解Python之接口">
+                  <i class="fa fa-chevron-left"></i> 深入理解Python之接口
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2017/06/03/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E4%B9%8BNIO%E6%A6%82%E8%BF%B0/" rel="next" title="深入理解Java之NIO概述">
+                  深入理解Java之NIO概述 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>
