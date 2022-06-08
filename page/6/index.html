@@ -130,7 +130,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -320,7 +320,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2016-05-03 18:05:58" itemprop="dateModified" datetime="2016-05-03T18:05:58+08:00">2016-05-03</time>
+      <time title="Modified: 2022-06-08 18:12:17" itemprop="dateModified" datetime="2022-06-08T18:12:17+08:00">2022-06-08</time>
     </span>
 
   
@@ -333,93 +333,21 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h3 id="好好学习git以及git-flow"><a href="#好好学习git以及git-flow" class="headerlink" title="好好学习git以及git-flow"></a>好好学习git以及git-flow</h3><p><img data-src="/./git-model.png"></p>
+          <h3 id="好好学习git以及git-flow"><a href="#好好学习git以及git-flow" class="headerlink" title="好好学习git以及git-flow"></a>好好学习git以及git-flow</h3><img data-src="/2016/04/28/A-successful-git-branching-model/git-model.png" class="" title="git model">
+
 <h3 id="分散又集中"><a href="#分散又集中" class="headerlink" title="分散又集中"></a>分散又集中</h3><p>我们的<code>git</code>模型中有个中央仓库”truth”。注意这个仓库只能被当做中央仓库(虽然技术层面上讲，<code>git</code>里并没有中央仓库这个概念)。我们把这个仓库当做<code>origin</code>，因为所有的<code>git</code>用户都对这个名字比较熟悉。</p>
-<p><img data-src="/./centr-decentr.png"></p>
+<img data-src="/2016/04/28/A-successful-git-branching-model/centr-decentr.png" class="">
+
 <p>每个开发者从<code>origin</code>拉取或者推送代码。这种关系背后，每个开发者也可以从其他子团队的节点拉取改变的东西。对于多人协作开发时这可能非常有用。上图中有Alice和Bob, Alice和David，Clair和David多个子团队。</p>
 <p>技术层面上讲，就是Alice定义了一个远程Git，名叫bob,指向Bob的仓库。</p>
-<h3 id="主分支"><a href="#主分支" class="headerlink" title="主分支"></a>主分支</h3><p>我们的开发模型受现有模型的启发。中央库有两个一直存在的主分支：</p>
-<ul>
-<li>master</li>
-<li>develop</li>
-</ul>
-<p>每个<code>git</code>用户应该都对<code>origin</code>上的<code>master</code>主分支很熟悉。与<code>master</code>并行的另一个分支叫<code>develop</code>.</p>
-<p>我们认为<code>origin/master</code>的<code>HEAD</code>的代码总是保持着产品状态。</p>
-<p>我们认为<code>origin/develop</code>的<code>HEAD</code>总是保持着发布之前的所有功能。我们称着叫”合成分支”</p>
-<p>当<code>develop</code>的代码已经稳定并准备发布的话，这时所有的修改需要合并到<code>master</code>并打上<code>release</code>号。这会在之后更深入的讨论。</p>
-<p>因此，每次有新的修改合并到<code>master</code>时，默认就有一个新的产品发布了。</p>
-<h3 id="支援分支"><a href="#支援分支" class="headerlink" title="支援分支"></a>支援分支</h3><p>除了主分支<code>master</code>和<code>develop</code>之外，我们的开发模型使用了各种支援模型来在成员之间并行开发如,新功能分支，产品准备发布分支以及紧急修复分支。不像主分支，这些分支的生命周期都是有限的，因为它们最终都会被移除。</p>
-<p>我们使用的分支类型：</p>
-<ul>
-<li>功能分支</li>
-<li>发布分支</li>
-<li>紧急修复分支</li>
-</ul>
-<h4 id="功能分支"><a href="#功能分支" class="headerlink" title="功能分支"></a>功能分支</h4><img align="right" width = "100" height = "300" data-src="./fb.png" >
-
-<p>这个分支必须从<code>develop</code>分出，最后必须合并到<code>develop</code>，命名规则：除了<code>master,develop,release-*, 或者hotfix-*</code>之外</p>
-<p>功能分支被是用来开发新功能。当开始开发新功能时，这个功能的最终发布节点可能是不知道的。功能分支的重要性在于它与开发功能的周期一样，但最终会合并到<code>develop</code>或者会被抛弃。功能分支只存在于开发仓库，不在<code>origin</code>。</p>
-<p style="text-align: center;">创建功能分支</p>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b myfeature develop</span><br><span class="line">Switched to a new branch &quot;myfeature&quot;</span><br></pre></td></tr></table></figure>
-
-<p style="text-align: center;">合并一个完成的功能</p>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff myfeature</span><br><span class="line">Updating ea1b82a..05e9557</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git branch -d myfeature</span><br><span class="line">Deleted branch myfeature (was 05e9557).</span><br><span class="line">$ git push origin develop</span><br></pre></td></tr></table></figure>
-
-<p><code>--no-ff</code>标记合并的时候回创建新的提交，虽然合并能够使用<code>fast-forward</code>。这样做能够清晰的看到这个分支的所有提交。比较如下</p>
-<p><img data-src="/./merge-without-ff.png"></p>
-<p>通过左图可以看出，当你想把这个功能去掉时会很方便找到功能的开始节点。</p>
-<h4 id="发布分支"><a href="#发布分支" class="headerlink" title="发布分支"></a>发布分支</h4><p>从<code>develop</code>分出，合并回<code>develop</code>和<code>master</code>，命名规则:<code>release-*</code></p>
-<p>新产品要发布的话可以使用发布分支。它允许修复一下小的<code>bug</code>以及准备元数据(版本号，构建日期等)。</p>
-<p>关键点在于必须合并完所有需要的功能分支后才能开出发布分支。</p>
-<p style="text-align: center;">创建发布分支</p>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b release-1.2 develop</span><br><span class="line">Switched to a new branch &quot;release-1.2&quot;</span><br><span class="line">$ ./bump-version.sh 1.2</span><br><span class="line">Files modified successfully, version bumped to 1.2.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2&quot;</span><br><span class="line">[release-1.2 74d9424] Bumped version number to 1.2</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
-
-<p>创建分支后，写入版本号。在这,<code>bump-version.sh</code>是一个能修改版本号的脚本，然后提交写入的版本号。</p>
-<p>可以在发布分支上修改<code>bug</code>。但绝对禁止在这个分支上加大的功能。它们必须合并到<code>develop</code>，因此只能等到下一次大的发布。</p>
-<p style="text-align: center;">结束发布分支</p>
-
-<p>当发布分支已经准备好，需要做一些操作。首先把发布分支合并回<code>master</code>。下一步，这些提交需要标记一下以便后续查找。最后发布分支需要合并到<code>develop</code>以便将来的发布版本也能包含当前发布版本的<code>bug</code>修复。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff release-1.2</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
-
-<p>这可能会导致冲突，没关系，解决它就好了。现在我们可以删除发布分支了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d release-1.2</span><br><span class="line">Deleted branch release-1.2 (was ff452fe).</span><br></pre></td></tr></table></figure>
-
-<h4 id="紧急修复分支"><a href="#紧急修复分支" class="headerlink" title="紧急修复分支"></a>紧急修复分支</h4><img align="right" width = "200" height = "300" data-src="./hotfix-branches.png" >
-
-<p>可能从<code>master</code>开出，必须合并回<code>develop</code>和<code>master</code>，命名规则：<code>hotfix-*</code></p>
-<p>紧急修复分支很像发布分支，因为它是另一个即将发布的产品。它主要解决一下比较严重的<code>bug</code>。紧急分支必须从<code>master</code>相应产品的标记分出。它的作用在于其他人可以继续别的工作而不受修改<code>bug</code>人的影响。</p>
-</br>
-</br>
-</br>
-</br>
-
-</br>
-
-
-<p style="text-align: center;">创建紧急修复分支</p>
-
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout -b hotfix-1.2.1 master</span><br><span class="line">Switched to a new branch &quot;hotfix-1.2.1&quot;</span><br><span class="line">$ ./bump-version.sh 1.2.1</span><br><span class="line">Files modified successfully, version bumped to 1.2.1.</span><br><span class="line">$ git commit -a -m &quot;Bumped version number to 1.2.1&quot;</span><br><span class="line">[hotfix-1.2.1 41e61bb] Bumped version number to 1.2.1</span><br><span class="line">1 files changed, 1 insertions(+), 1 deletions(-)</span><br></pre></td></tr></table></figure>
-
-<p>别忘了写入版本号！</p>
-<h4 id="结束紧急修复分支"><a href="#结束紧急修复分支" class="headerlink" title="结束紧急修复分支"></a>结束紧急修复分支</h4><p>当分支结束时，需要合并到<code>master</code>和<code>develop</code>以便之后的版本能够包含这些修复。这跟发布分支的做法一致。</p>
-<p>首先，更新<code>master</code>并标记<code>release</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout master</span><br><span class="line">Switched to branch &#x27;master&#x27;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br><span class="line">$ git tag -a 1.2.1</span><br></pre></td></tr></table></figure>
-
-<p>然后，合并分支进入<code>develop</code></p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ git checkout develop</span><br><span class="line">Switched to branch &#x27;develop&#x27;</span><br><span class="line">$ git merge --no-ff hotfix-1.2.1</span><br><span class="line">Merge made by recursive.</span><br><span class="line">(Summary of changes)</span><br></pre></td></tr></table></figure>
-
-<p>有种情况需要知道，当发布分支当前已经存在的话，紧急修复分支需要合并到当前发布分支中，而不是<code>develop</code>。最终发布分支中的紧急修复代码能够合并到<code>develop</code>。</p>
-<p>最后，删除临时分支：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ git branch -d hotfix-1.2.1</span><br><span class="line">Deleted branch hotfix-1.2.1 (was abbe5d6).</span><br></pre></td></tr></table></figure>
-
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这个分支模型没有什么新的东西，本文中的大图在我们的项目中非常有用。它是一种优雅的开发模型，能非常简单的进行团队协作。</p>
-<p><a target="_blank" rel="noopener" href="http://nvie.com/posts/a-successful-git-branching-model/#decentralized-but-centralized">原文</a></p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2016/04/28/A-successful-git-branching-model/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

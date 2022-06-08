@@ -22,14 +22,14 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图  ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有的">
+    <meta name="description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图   ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Animator at Android">
 <meta property="og:url" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图  ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有的">
+<meta property="og:description" content="Animator其是Android3.0之后加入的作用于对象属性的动画,Animator是所有属性动画的基类，其下有ValueAnimator,AnimatorSet,由ValueAnimator再拓展出ObjectAnimator,TimeAnimator 其整体结构图   ValueAnimator为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的Handler里面以确保所有">
 <meta property="og:locale">
-<meta property="og:image" content="http://xu6148152.github.io/animator.png">
+<meta property="og:image" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/animator.png">
 <meta property="og:image" content="http://xu6148152.github.io/ValueAnimator.png">
 <meta property="og:image" content="http://xu6148152.github.io/interpolator.png">
 <meta property="og:image" content="http://xu6148152.github.io/LinearInterpolator.png">
@@ -54,10 +54,11 @@
 <meta property="og:image" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/progress.gif">
 <meta property="og:image" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/change_scene.gif">
 <meta property="article:published_time" content="2016-12-04T13:17:02.000Z">
-<meta property="article:modified_time" content="2016-12-25T10:33:39.000Z">
+<meta property="article:modified_time" content="2022-06-08T10:14:04.884Z">
 <meta property="article:author" content="Binea">
+<meta property="article:tag" content="View, Animation">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xu6148152.github.io/animator.png">
+<meta name="twitter:image" content="http://xu6148152.github.io/2016/12/04/Animator-at-Android/animator.png">
 
 
 <link rel="canonical" href="http://xu6148152.github.io/2016/12/04/Animator-at-Android/">
@@ -160,7 +161,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -235,7 +236,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2016-12-25 18:33:39" itemprop="dateModified" datetime="2016-12-25T18:33:39+08:00">2016-12-25</time>
+      <time title="Modified: 2022-06-08 18:14:04" itemprop="dateModified" datetime="2022-06-08T18:14:04+08:00">2022-06-08</time>
     </span>
 
   
@@ -257,7 +258,8 @@
     <div class="post-body" itemprop="articleBody">
         <h3 id="Animator"><a href="#Animator" class="headerlink" title="Animator"></a>Animator</h3><p>其是<code>Android3.0</code>之后加入的作用于对象属性的动画,<code>Animator</code>是所有属性动画的基类，其下有<code>ValueAnimator</code>,<code>AnimatorSet</code>,由<code>ValueAnimator</code>再拓展出<code>ObjectAnimator</code>,<code>TimeAnimator</code></p>
 <p>其整体结构图</p>
-<p><img data-src="/./animator.png" alt="animator"></p>
+<img data-src="/2016/12/04/Animator-at-Android/animator.png" class="" title="animator">
+
 <h4 id="ValueAnimator"><a href="#ValueAnimator" class="headerlink" title="ValueAnimator"></a>ValueAnimator</h4><p>为作用对象提供简单的能够计算动画时间和值得时间引擎，它运行在自定义的<code>Handler</code>里面以确保所有的属性改变都会在<code>UI</code>线程。主要<code>API</code>:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ValueAnimator <span class="title function_">ofInt</span><span class="params">(<span class="type">int</span>... values)</span> </span><br><span class="line">ValueAnimator <span class="title function_">ofArgb</span><span class="params">(<span class="type">int</span>... values)</span> <span class="comment">//颜色值变化</span></span><br><span class="line">ValueAnimator <span class="title function_">ofFloat</span><span class="params">(<span class="type">float</span>... values)</span> </span><br><span class="line">ValueAnimator <span class="title function_">ofPropertyValuesHolder</span><span class="params">(PropertyValuesHolder... values)</span></span><br><span class="line">ValueAnimator <span class="title function_">ofObject</span><span class="params">(TypeEvaluator evaluator, Object... values)</span></span><br></pre></td></tr></table></figure>
 
@@ -627,6 +629,9 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/View-Animation/" rel="tag"># View, Animation</a>
+          </div>
 
         
 

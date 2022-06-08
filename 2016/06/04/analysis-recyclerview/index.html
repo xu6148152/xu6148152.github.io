@@ -22,20 +22,20 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:  从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。  RecyclerViewDataObserver 数据观察器 Recycler View循环复用系统，核心部件 SavedState Recy">
+    <meta name="description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:   从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。  RecyclerViewDataObserver 数据观察器 Recycler View循环复用系统，核心部件 SavedState Rec">
 <meta property="og:type" content="article">
 <meta property="og:title" content="recyclerview-structure">
 <meta property="og:url" content="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:  从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。  RecyclerViewDataObserver 数据观察器 Recycler View循环复用系统，核心部件 SavedState Recy">
+<meta property="og:description" content="本系列主要分析RecyclerView的源码。本文主要分析RecyclerView的源码结构，以及其各机构的作用。首先来看一下RecyclerView的源码结构:   从图上可以看出RecyclerView依赖了很多别的类。接下来我们首先介绍各个类的作用。  RecyclerViewDataObserver 数据观察器 Recycler View循环复用系统，核心部件 SavedState Rec">
 <meta property="og:locale">
-<meta property="og:image" content="http://xu6148152.github.io/RecyclerView.jpg">
+<meta property="og:image" content="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/RecyclerView.jpg">
 <meta property="article:published_time" content="2016-06-04T08:51:53.000Z">
-<meta property="article:modified_time" content="2016-06-04T08:58:30.000Z">
+<meta property="article:modified_time" content="2022-06-08T10:12:50.815Z">
 <meta property="article:author" content="Binea">
 <meta property="article:tag" content="Android source analysis">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://xu6148152.github.io/RecyclerView.jpg">
+<meta name="twitter:image" content="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/RecyclerView.jpg">
 
 
 <link rel="canonical" href="http://xu6148152.github.io/2016/06/04/analysis-recyclerview/">
@@ -137,7 +137,7 @@
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">31</span>
+        <span class="site-state-item-count">32</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -204,9 +204,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
-      
 
-      <time title="Created: 2016-06-04 16:51:53 / Modified: 16:58:30" itemprop="dateCreated datePublished" datetime="2016-06-04T16:51:53+08:00">2016-06-04</time>
+      <time title="Created: 2016-06-04 16:51:53" itemprop="dateCreated datePublished" datetime="2016-06-04T16:51:53+08:00">2016-06-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-06-08 18:12:50" itemprop="dateModified" datetime="2022-06-08T18:12:50+08:00">2022-06-08</time>
     </span>
 
   
@@ -227,7 +233,8 @@
     
     <div class="post-body" itemprop="articleBody">
         <p>本系列主要分析<code>RecyclerView</code>的源码。本文主要分析<code>RecyclerView</code>的源码结构，以及其各机构的作用。首先来看一下<code>RecyclerView</code>的源码结构:</p>
-<p><img data-src="/./RecyclerView.jpg"></p>
+<img data-src="/2016/06/04/analysis-recyclerview/RecyclerView.jpg" class="">
+
 <p>从图上可以看出<code>RecyclerView</code>依赖了很多别的类。接下来我们首先介绍各个类的作用。</p>
 <ul>
 <li>RecyclerViewDataObserver 数据观察器</li>
