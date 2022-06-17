@@ -198,7 +198,7 @@
       <span class="post-meta-item-text">Posted on</span>
       
 
-      <time title="Created: 2022-06-17 18:31:51 / Modified: 18:34:31" itemprop="dateCreated datePublished" datetime="2022-06-17T18:31:51+08:00">2022-06-17</time>
+      <time title="Created: 2022-06-17 18:31:51 / Modified: 18:37:42" itemprop="dateCreated datePublished" datetime="2022-06-17T18:31:51+08:00">2022-06-17</time>
     </span>
 
   
@@ -221,7 +221,8 @@
 </ul>
 <p>系统针对这些场景都有各自的ANR监控机制</p>
 <h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_launch.png" class="" title="service启动">
-<p>ANR的监控是在<code>ActiveServices#realStartServiceLocked#bumpServiceExecutingLocked#scheduleServiceTimeoutLocked</code>建立</p>
+
+<p>ANR的监控是在<br><code>ActiveServices#realStartServiceLocked#bumpServiceExecutingLocked#scheduleServiceTimeoutLocked</code><br>建立的</p>
 <img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_anr_seq.png" class="" title="service anr时序图">
 
 <p>从上图能看出Service启动的时候会给AMS发送一个延时消息，如果service执行完成，那么会移除这个消息，否则这个消息执行<code>serviceTimeout</code>这里就会弹出<code>ANR</code>的弹窗</p>
