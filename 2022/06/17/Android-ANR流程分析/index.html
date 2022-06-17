@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="default">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 6.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"xu6148152.github.io","root":"/","images":"/images","scheme":"Gemini","darkmode":true,"version":"8.12.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="ANR的原因 后台Service执行超过20s 前台Service执行超过10s 按键或触摸事件超过5s 前台广播超过10s 后台广播超过60s ContentProvider超时  系统针对这些场景都有各自的ANR监控机制 原理分析Service ANR的监控是在ActiveServices#realStartServiceLocked#bumpServiceExecutingLocked#sc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android ANR流程分析">
+<meta property="og:url" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="ANR的原因 后台Service执行超过20s 前台Service执行超过10s 按键或触摸事件超过5s 前台广播超过10s 后台广播超过60s ContentProvider超时  系统针对这些场景都有各自的ANR监控机制 原理分析Service ANR的监控是在ActiveServices#realStartServiceLocked#bumpServiceExecutingLocked#sc">
+<meta property="og:locale">
+<meta property="og:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_launch.png">
+<meta property="og:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_anr_seq.png">
+<meta property="og:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/input.png">
+<meta property="og:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/input_seq.png">
+<meta property="og:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/broadcast_seq.png">
+<meta property="article:published_time" content="2022-06-17T10:31:51.000Z">
+<meta property="article:modified_time" content="2022-06-17T10:34:31.241Z">
+<meta property="article:author" content="Binea">
+<meta property="article:tag" content="源码分析, ANR">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_launch.png">
+
+
+<link rel="canonical" href="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"default","comments":true,"permalink":"http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/","path":"2022/06/17/Android-ANR流程分析/","title":"Android ANR流程分析"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Android ANR流程分析 | Blog</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#ANR%E7%9A%84%E5%8E%9F%E5%9B%A0"><span class="nav-number">1.</span> <span class="nav-text">ANR的原因</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原理分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Service"><span class="nav-number">2.1.</span> <span class="nav-text">Service</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Input"><span class="nav-number">2.2.</span> <span class="nav-text">Input</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Boradcast-%E5%B9%BF%E6%92%AD"><span class="nav-number">2.3.</span> <span class="nav-text">Boradcast(广播)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E5%B1%82%E5%A6%82%E4%BD%95%E5%88%A4%E5%AE%9AANR"><span class="nav-number">3.</span> <span class="nav-text">应用层如何判定ANR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#WatchDog%E6%9C%BA%E5%88%B6"><span class="nav-number">3.1.</span> <span class="nav-text">WatchDog机制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E5%90%ACSIGNALQUIT%E4%BF%A1%E5%8F%B7"><span class="nav-number">3.2.</span> <span class="nav-text">监听SIGNALQUIT信号</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Binea</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">33</span>
+        <span class="site-state-item-name">tags</span>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="default">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Android ANR流程分析 | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Android ANR流程分析
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-06-17 18:31:51 / Modified: 18:34:31" itemprop="dateCreated datePublished" datetime="2022-06-17T18:31:51+08:00">2022-06-17</time>
+    </span>
+
+  
+    <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">Views: </span>
+      <span id="busuanzi_value_page_pv"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h3 id="ANR的原因"><a href="#ANR的原因" class="headerlink" title="ANR的原因"></a>ANR的原因</h3><ul>
+<li>后台Service执行超过20s</li>
+<li>前台Service执行超过10s</li>
+<li>按键或触摸事件超过5s</li>
+<li>前台广播超过10s</li>
+<li>后台广播超过60s</li>
+<li>ContentProvider超时</li>
+</ul>
+<p>系统针对这些场景都有各自的ANR监控机制</p>
+<h3 id="原理分析"><a href="#原理分析" class="headerlink" title="原理分析"></a>原理分析</h3><h4 id="Service"><a href="#Service" class="headerlink" title="Service"></a>Service</h4><img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_launch.png" class="" title="service启动">
+<p>ANR的监控是在<code>ActiveServices#realStartServiceLocked#bumpServiceExecutingLocked#scheduleServiceTimeoutLocked</code>建立</p>
+<img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/service_anr_seq.png" class="" title="service anr时序图">
+
+<p>从上图能看出Service启动的时候会给AMS发送一个延时消息，如果service执行完成，那么会移除这个消息，否则这个消息执行<code>serviceTimeout</code>这里就会弹出<code>ANR</code>的弹窗</p>
+<span id="more"></span>
+
+
+<h4 id="Input"><a href="#Input" class="headerlink" title="Input"></a>Input</h4><p>当输入事件处理时间超过5s会产生ANR</p>
+<img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/input.png" class="" title="input事件系统">
+
+<p>从图中可以看到内核将原始事件写入到设备节点中，<code>InputReader</code>在自己的线程中不断地从<code>EventHub</code>中提取输入事件，加工处理后放到<code>InputDispatcher</code>的派发队列中，然后<code>InputDispatcher</code>将事件派发到合适的窗口。窗口再将这些事件交由<code>ViewRootImpl</code>处理。<br><code>InputDispatcher</code>和窗口之间的跨进程通信主要是通过<code>InputChannel</code>来完成。</p>
+<img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/input_seq.png" class="" title="input anr时序图">
+
+<p>图中findFocusedWindowTargetsLocked()方法会调用checkWindowReadyForMoreInputLocked（）;该方法检查窗口是否有能力再接收新的输入事件；可能会有一系列的场景阻碍事件的继续派发。</p>
+<ul>
+<li><p>窗口处于paused状态，不能处理输入事件(“Waiting because the [targetType] window is paused.”)</p>
+</li>
+<li><p>窗口还未向InputDispatcher注册，无法将事件派发到窗口(“Waiting because the [targetType] window’s input channel is not registered with the input dispatcher. The window may be in the process of being removed.”)</p>
+</li>
+<li><p>窗口和InputDispatcher的连接已经中断，即InputChannel不能正常工作(“Waiting because the [targetType] window’s input connection is [status]. The window may be in the process of being removed.”)</p>
+</li>
+<li><p>InputChannel已经饱和，不能再处理新的事件(“Waiting because the [targetType] window’s input channel is full. Outbound queue length: %d. Wait queue length: %d.”)</p>
+</li>
+<li><p>对于按键类型(KeyEvent)的输入事件，需要等待上一个事件处理完毕(“Waiting to send key event because the [targetType] window has not finished processing all of the input events that were previously delivered to it. Outbound queue length: %d. Wait queue length: %d.”)</p>
+</li>
+<li><p>对于触摸类型(TouchEvent)的输入事件，可以立即派发到当前的窗口，因为TouchEvent都是发生在用户当前可见的窗口。但有一种情况， 如果当前应用由于队列有太多的输入事件等待派发，导致发生了ANR，那TouchEvent事件就需要排队等待派发。<br>(“Waiting to send non-key event because the %s window has not finished processing certain input events that were delivered to it over %0.1fms ago. Wait queue length: %d. Wait queue head age: %0.1fms.”)</p>
+</li>
+</ul>
+<p>Activity.onCreate执行耗时操作，不管用户如何操作都不会发生ANR，因为输入事件相关监听机制还没有建立起来；InputChannel通道还没有建立。这时是不会响应输入事件，InputDispatcher还不能事件发送到应用窗口，ANR监听机制也还没有建立，所以此时是不会报告ANR的。</p>
+<h4 id="Boradcast-广播"><a href="#Boradcast-广播" class="headerlink" title="Boradcast(广播)"></a>Boradcast(广播)</h4><img data-src="/2022/06/17/Android-ANR%E6%B5%81%E7%A8%8B%E5%88%86%E6%9E%90/broadcast_seq.png" class="" title="broadcast anr时序图">
+<p>针对广播而言，只有有序广播有超时监控机制，无序广播没有。监控机制依然是采用延时message的形式。</p>
+<h3 id="应用层如何判定ANR"><a href="#应用层如何判定ANR" class="headerlink" title="应用层如何判定ANR"></a>应用层如何判定ANR</h3><h4 id="WatchDog机制"><a href="#WatchDog机制" class="headerlink" title="WatchDog机制"></a>WatchDog机制</h4><p>定时向主线程发送信号</p>
+<h4 id="监听SIGNALQUIT信号"><a href="#监听SIGNALQUIT信号" class="headerlink" title="监听SIGNALQUIT信号"></a>监听SIGNALQUIT信号</h4><p>向系统注册该信号</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90-ANR/" rel="tag"># 源码分析, ANR</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/06/08/fresco-memory-cache/" rel="prev" title="fresco之内存bitmap缓存">
+                  <i class="fa fa-chevron-left"></i> fresco之内存bitmap缓存
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Binea</span>
+</div>
+<div class="busuanzi-count">
+    <span class="post-meta-item" id="busuanzi_container_site_uv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+
+
+
+
+</body>
+</html>

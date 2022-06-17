@@ -125,12 +125,12 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">62</span>
+          <span class="site-state-item-count">63</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">32</span>
+        <span class="site-state-item-count">33</span>
         <span class="site-state-item-name">tags</span>
       </div>
   </nav>
@@ -159,6 +159,116 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2017/05/20/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89Python%E5%AF%B9%E8%B1%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Binea">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/05/20/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Python%E4%B9%8B%E8%87%AA%E5%AE%9A%E4%B9%89Python%E5%AF%B9%E8%B1%A1/" class="post-title-link" itemprop="url">深入理解Python之自定义Python对象</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2017-05-20 16:25:39 / Modified: 16:27:53" itemprop="dateCreated datePublished" datetime="2017-05-20T16:25:39+08:00">2017-05-20</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h3 id="对象展示"><a href="#对象展示" class="headerlink" title="对象展示"></a>对象展示</h3><p><code>Python</code>中有两种方式将对象以字符串的形式表示</p>
+<p><code>repr()</code></p>
+<blockquote>
+<p>返回开发者想要到的字符串形式</p>
+</blockquote>
+<p><code>str()</code></p>
+<blockquote>
+<p>返回用户想要的字符串形式</p>
+</blockquote>
+<p>通过实现特殊的方法<code>__repr__</code>和<code>__str__</code>来支持<code>repr()</code>和<code>str()</code></p>
+<p>有两个额外的方法来支持对象的展示形式<code>__bytes__</code>和<code>__format__</code>.<code>__byte__</code>方法和<code>__str__</code>类似，它被<code>bytes()</code>调用来显示对象的字节序列。<code>__format__</code>用于格式化对象显示</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Vector2d</span>:</span><br><span class="line">    typecode = <span class="string">&#x27;d&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, x, y</span>):</span><br><span class="line">        self.x = x</span><br><span class="line">        self.y = y</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__iter__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (i <span class="keyword">for</span> i <span class="keyword">in</span> (self.x, self.y))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__repr__</span>(<span class="params">self</span>):</span><br><span class="line">        class_name = <span class="built_in">type</span>(self).__name__</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&#x27;&#123;&#125;(&#123;!r&#125;, &#123;!r&#125;)&#x27;</span>.<span class="built_in">format</span>(class_name, *self)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__str__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">str</span>(<span class="built_in">tuple</span>(self))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__bytes__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">bytes</span>([<span class="built_in">ord</span>(self.typecode)]) + <span class="built_in">bytes</span>(array(self.typecode, self))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__eq__</span>(<span class="params">self, other</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">tuple</span>(self) == <span class="built_in">tuple</span>(other)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__abs__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> math.hypot(self.x, self.y)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__bool__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">bool</span>(<span class="built_in">abs</span>(self))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="替代构造函数"><a href="#替代构造函数" class="headerlink" title="替代构造函数"></a>替代构造函数</h3><p>因为能够以字节的形式导出<code>Vector2d</code>，因此需要一个方法能够从二进制序列中导出一个对象。标准库<code>array</code>中有这么一个方法<code>frombytes</code></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@classmethod</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">frombytes</span>(<span class="params">cls, octets</span>):</span><br><span class="line">    typecode = <span class="built_in">chr</span>(octets[<span class="number">0</span>])</span><br><span class="line">    memv = <span class="built_in">memoryview</span>(octets[<span class="number">1</span>:]).cast(typecode)</span><br><span class="line">    <span class="keyword">return</span> cls(*memv)</span><br></pre></td></tr></table></figure>
+
+<h4 id="classmethod-vs-staticmethod"><a href="#classmethod-vs-staticmethod" class="headerlink" title="classmethod vs staticmethod"></a>classmethod vs staticmethod</h4><p><code>classmethod</code>对类而不是实例进行操作，其改变了方法调用的方式，它接受类自身作为第一个参数，最常用于替代构造函数</p>
+<p><code>staticmethod</code>改变方法以便它收到的第一个参数不是特殊参数。静态方法就像一个纯净的函数存活在类中，而不是定义在模块层次</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Demo</span>:</span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">klassmeth</span>(<span class="params">*args</span>):</span><br><span class="line">        <span class="keyword">return</span> args</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">statmeth</span>(<span class="params">*args</span>):</span><br><span class="line">        <span class="keyword">return</span> args</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Demo.klassmeth())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Demo.klassmeth(<span class="string">&#x27;spam&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Demo.statmeth())</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(Demo.statmeth(<span class="string">&#x27;spam&#x27;</span>))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">result:</span><br><span class="line"></span><br><span class="line">(&lt;<span class="keyword">class</span> <span class="string">&#x27;__main__.Demo&#x27;</span>&gt;,)</span><br><span class="line">(&lt;<span class="keyword">class</span> <span class="string">&#x27;__main__.Demo&#x27;</span>&gt;, <span class="string">&#x27;spam&#x27;</span>)</span><br><span class="line">()</span><br><span class="line">(<span class="string">&#x27;spam&#x27;</span>,)</span><br></pre></td></tr></table></figure>
+
+<h3 id="格式化显示"><a href="#格式化显示" class="headerlink" title="格式化显示"></a>格式化显示</h3><p>内置方法<code>format()</code>实际上调用<code>__format__(format_spec)</code>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">brl = <span class="number">1</span>/<span class="number">2.43</span></span><br><span class="line"><span class="built_in">format</span>(brl, <span class="string">&#x27;0.4f&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;1 BRL = &#123;rate:0.2f&#125; USD&#x27;</span>.<span class="built_in">format</span>(rate=brl) =&gt; <span class="string">&#x27;1 BRL = 0.41 USD&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">format</span>(<span class="number">42</span>, <span class="string">&#x27;b&#x27;</span>) =&gt; <span class="string">&#x27;101010&#x27;</span></span><br><span class="line"><span class="built_in">format</span>(<span class="number">2</span>/<span class="number">3</span>, <span class="string">&#x27;.1%&#x27;</span>) =&gt; <span class="string">&#x27;66.7%&#x27;</span></span><br><span class="line"></span><br><span class="line">now = datetime.now()</span><br><span class="line"><span class="built_in">format</span>(now, <span class="string">&#x27;%H:%M:%S&#x27;</span>) =&gt; <span class="string">&#x27;18:49:05&#x27;</span></span><br><span class="line"><span class="string">&quot;It&#x27;s now &#123;:%I:%M %p&#125;&quot;</span>.<span class="built_in">format</span>(now) =&gt; <span class="string">&quot;It&#x27;s now 06:49 PM&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>如果一个对象没有重写<code>__format__</code>那么将会调用<code>str()</code>，如果传入了格式化规格，那么会报错</li>
+</ul>
+<p>自定义格式化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">__format__</span>(<span class="params">self, format_spec=<span class="string">&#x27;&#x27;</span></span>):</span><br><span class="line">    <span class="keyword">if</span> format_spec.endswith(<span class="string">&#x27;p&#x27;</span>):</span><br><span class="line">        format_spec = format_spec[:-<span class="number">1</span>]</span><br><span class="line">        coords = (<span class="built_in">abs</span>(self), self.angle())</span><br><span class="line">        outer_fmt = <span class="string">&#x27;&lt;&#123;&#125;, &#123;&#125;&gt;&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        coords = self</span><br><span class="line">        outer_fmt = <span class="string">&#x27;(&#123;&#125;, &#123;&#125;)&#x27;</span></span><br><span class="line">    components = (<span class="built_in">format</span>(c, format_spec) <span class="keyword">for</span> c <span class="keyword">in</span> coords)</span><br><span class="line">    <span class="keyword">return</span> outer_fmt.<span class="built_in">format</span>(*components)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hashable-Vector2"><a href="#Hashable-Vector2" class="headerlink" title="Hashable Vector2"></a>Hashable Vector2</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">x</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__x</span><br><span class="line"></span><br><span class="line"><span class="meta">    @property</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">y</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> self.__y</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__iter__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (i <span class="keyword">for</span> i <span class="keyword">in</span> (self.__x, self.__y))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__hash__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">hash</span>(self.__x) ^ <span class="built_in">hash</span>(self.__y)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="Python中私有和保护的属性"><a href="#Python中私有和保护的属性" class="headerlink" title="Python中私有和保护的属性"></a>Python中私有和保护的属性</h3><p><code>Python</code>无法像<code>Java</code>那样创建<code>private</code>属性。但可以通过<code>__</code>前缀来表示属性是私有的,<code>_</code>用于表示受保护的</p>
+<h3 id="使用-slot-节省空间"><a href="#使用-slot-节省空间" class="headerlink" title="使用__slot__节省空间"></a>使用__slot__节省空间</h3><p>默认情况，<code>Python</code>存储对象属性在<code>__dict__</code>。当你处理大数据量的时候，<code>__slots__</code>能够节省很多内存</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__slots__ = (<span class="string">&#x27;__x&#x27;</span>, <span class="string">&#x27;__y&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>通过定义<code>__slots__</code>来告诉解释器，这是这个所有的属性，<code>Python</code>会将它们存在每个对象的一个类似<code>tuple</code>的结构中</p>
+<h4 id="slots-的弊端"><a href="#slots-的弊端" class="headerlink" title="__slots__的弊端"></a>__slots__的弊端</h4><ul>
+<li>必须为每个子类重新定义<code>__slots__</code>，因为继承属性会被忽略</li>
+<li>对象只能拥有<code>__slots__</code>中的属性，除非将<code>__dict__</code>包括在<code>__slots__</code>中</li>
+<li>对象不能够作为弱引用的目标，除非将<code>__weakref__</code>放到<code>__slots__</code></li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -2008,109 +2118,6 @@
 <h3 id="Rxjava2-0"><a href="#Rxjava2-0" class="headerlink" title="Rxjava2.0"></a>Rxjava2.0</h3><blockquote>
 <p>待续</p>
 </blockquote>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://xu6148152.github.io/2016/12/31/2016%E6%80%BB%E7%BB%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Binea">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2016/12/31/2016%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">2016总结</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-      
-
-      <time title="Created: 2016-12-31 17:52:55 / Modified: 18:00:12" itemprop="dateCreated datePublished" datetime="2016-12-31T17:52:55+08:00">2016-12-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>2016年即将过去。在此对于过去一年自己所做的进行一次简单的总结。</p>
-<h4 id="满意的地方"><a href="#满意的地方" class="headerlink" title="满意的地方"></a>满意的地方</h4><ul>
-<li><code>github</code>坚持更新，有时间就会练习算法，对常用数据结构和算法进行了一次全面的复习</li>
-<li>看了很多书。见识增加了很多。包括并不仅局限于下列书籍。但是，看得多，忘得也多，还是得多实践。<ul>
-<li>Head First</li>
-<li>Java 并发编程实战</li>
-<li>Effective JavaScript</li>
-<li>设计模式</li>
-<li>深入理解java虚拟机高级特性</li>
-</ul>
-</li>
-<li>坚持写博客。</li>
-<li>技能树多项开发，主技能<code>Android开发, Java</code>,其余辅助技能<code>JavaScript</code>,<code>Python</code>，<code>Groovy</code>, <code>Kotlin</code>都多多少少有所涉猎。对于跨平台开发积累了一定的经验(RN)。</li>
-<li>对于<code>Android</code>源码有进一步的理解</li>
-<li>分析很多源码，但很多又忘了(尴尬)</li>
-<li>开始使用<code>gitbook</code>来做总结</li>
-</ul>
-<h4 id="不满意的地方"><a href="#不满意的地方" class="headerlink" title="不满意的地方"></a>不满意的地方</h4><ul>
-<li>书虽然看得很多，也学到很多新的知识，但是暂时没有可以应用的地方</li>
-<li>对于大型项目的整体把控能力还有需要提高。</li>
-<li>做了很多项目，但其实从项目本身获取到的技术提升并不多</li>
-<li>生活上并没有什么大的改善，依然是死宅</li>
-<li>分析表达能力需要接着提高</li>
-</ul>
-<h4 id="2017年的期待"><a href="#2017年的期待" class="headerlink" title="2017年的期待"></a>2017年的期待</h4><ul>
-<li>继续拓展，深挖自己的技术，希望能够将自己所学到的技术都能应用到真实项目中</li>
-<li>希望能够去一趟日本</li>
-<li>能够接触更多与机器学习相关的东西</li>
-<li>坚持写博客，坚持逛<code>github</code></li>
-<li>每天再晚也要学一会</li>
-<li>学习更多关于多媒体开发方面的知识</li>
-<li>学习<code>K(Keep)P(Problem)T(Try)</code>总结</li>
-<li>架构&#x2F;中间件的学习</li>
-</ul>
 
       
     </div>
